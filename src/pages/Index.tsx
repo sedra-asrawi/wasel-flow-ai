@@ -18,12 +18,12 @@ const Index = () => {
     restaurantAddress: "Jumeirah Beach Road, Dubai",
     deliveryAddress: "Dubai Marina, Tower 23, Apt 4B",
     items: [
-      { name: "Grilled Salmon", quantity: 1, price: 95 },
-      { name: "Caesar Salad", quantity: 1, price: 35 },
-      { name: "Chocolate Cake", quantity: 1, price: 25 }
+      { name: "Grilled Salmon", quantity: 1, price: 8.500 },
+      { name: "Caesar Salad", quantity: 1, price: 3.250 },
+      { name: "Chocolate Cake", quantity: 1, price: 2.750 }
     ],
-    total: 155,
-    deliveryFee: 15,
+    total: 14.500,
+    deliveryFee: 1.500,
     estimatedTime: "25-30 mins",
     priority: "high" as const
   };
