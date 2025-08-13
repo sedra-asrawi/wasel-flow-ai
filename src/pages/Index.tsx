@@ -148,10 +148,6 @@ const Index = () => {
               <p className="text-sm text-muted-foreground">Proceed to scan QR code</p>
             </div>
           )}
-          
-          <Button variant="outline" className="w-full">
-            Decline Order
-          </Button>
         </div>
       </div>
 
