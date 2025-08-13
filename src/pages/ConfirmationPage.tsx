@@ -67,7 +67,7 @@ const ConfirmationPage = () => {
     customerPhone: "+971 50 123 4567",
     deliveryAddress: "Dubai Marina, Tower 23, Apt 4B",
     estimatedTime: "15 mins",
-    total: 170
+    total: 16
   };
 
   return (
@@ -183,7 +183,7 @@ const ConfirmationPage = () => {
 
             <div className="flex justify-between pt-2 border-t">
               <span className="font-semibold">Total Amount</span>
-              <span className="font-semibold">AED {mockOrder.total}</span>
+              <span className="font-semibold">KWD {mockOrder.total}</span>
             </div>
           </CardContent>
         </Card>

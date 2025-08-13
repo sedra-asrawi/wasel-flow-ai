@@ -20,9 +20,9 @@ const DashboardPage = () => {
     todayDeliveries: 12,
     points: 2450,
     earnings: {
-      today: 340,
-      week: 2180,
-      month: 8920
+      today: 105,
+      week: 670,
+      month: 2750
     },
     performance: {
       onTimeRate: 96,
@@ -39,9 +39,9 @@ const DashboardPage = () => {
   ];
 
   const recentOrders = [
-    { id: "ORD-001", restaurant: "Al Fanar Restaurant", amount: 85, time: "2 hours ago", status: "completed" },
-    { id: "ORD-002", restaurant: "Shake Shack", amount: 45, time: "3 hours ago", status: "completed" },
-    { id: "ORD-003", restaurant: "Tim Hortons", amount: 28, time: "4 hours ago", status: "completed" }
+    { id: "ORD-001", restaurant: "Al Fanar Restaurant", amount: 26.250, time: "2 hours ago", status: "completed" },
+    { id: "ORD-002", restaurant: "Shake Shack", amount: 13.750, time: "3 hours ago", status: "completed" },
+    { id: "ORD-003", restaurant: "Tim Hortons", amount: 8.500, time: "4 hours ago", status: "completed" }
   ];
 
   return (
@@ -91,15 +91,15 @@ const DashboardPage = () => {
           <CardContent>
             <div className="grid grid-cols-3 gap-4 text-center">
               <div>
-                <p className="text-lg font-bold">AED {driverStats.earnings.today}</p>
+                <p className="text-lg font-bold">KWD {driverStats.earnings.today}</p>
                 <p className="text-xs text-muted-foreground">Today</p>
               </div>
               <div>
-                <p className="text-lg font-bold">AED {driverStats.earnings.week}</p>
+                <p className="text-lg font-bold">KWD {driverStats.earnings.week}</p>
                 <p className="text-xs text-muted-foreground">This Week</p>
               </div>
               <div>
-                <p className="text-lg font-bold">AED {driverStats.earnings.month}</p>
+                <p className="text-lg font-bold">KWD {driverStats.earnings.month}</p>
                 <p className="text-xs text-muted-foreground">This Month</p>
               </div>
             </div>
@@ -213,7 +213,7 @@ const DashboardPage = () => {
                     <p className="text-xs text-muted-foreground">{order.id} • {order.time}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-medium text-sm">AED {order.amount}</p>
+                    <p className="font-medium text-sm">KWD {order.amount}</p>
                     <Badge variant="secondary" className="text-xs">
                       Completed
                     </Badge>

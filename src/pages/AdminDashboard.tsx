@@ -27,7 +27,7 @@ const AdminDashboard = () => {
       rating: 4.9,
       totalDeliveries: 847,
       todayDeliveries: 12,
-      earnings: 8920,
+      earnings: 2750,
       status: "active",
       joinDate: "2023-01-15",
       location: "Dubai Marina",
@@ -41,7 +41,7 @@ const AdminDashboard = () => {
       rating: 4.8,
       totalDeliveries: 756,
       todayDeliveries: 8,
-      earnings: 7850,
+      earnings: 2420,
       status: "active",
       joinDate: "2023-02-20",
       location: "Downtown Dubai",
@@ -55,7 +55,7 @@ const AdminDashboard = () => {
       rating: 4.7,
       totalDeliveries: 623,
       todayDeliveries: 15,
-      earnings: 6540,
+      earnings: 2020,
       status: "active",
       joinDate: "2023-03-10",
       location: "Jumeirah",
@@ -69,7 +69,7 @@ const AdminDashboard = () => {
       rating: 4.6,
       totalDeliveries: 589,
       todayDeliveries: 6,
-      earnings: 5890,
+      earnings: 1815,
       status: "offline",
       joinDate: "2023-04-05",
       location: "Deira",
@@ -83,7 +83,7 @@ const AdminDashboard = () => {
       rating: 4.5,
       totalDeliveries: 534,
       todayDeliveries: 10,
-      earnings: 5234,
+      earnings: 1615,
       status: "active",
       joinDate: "2023-05-12",
       location: "Bur Dubai",
@@ -97,7 +97,7 @@ const AdminDashboard = () => {
       rating: 4.4,
       totalDeliveries: 467,
       todayDeliveries: 4,
-      earnings: 4670,
+      earnings: 1440,
       status: "break",
       joinDate: "2023-06-18",
       location: "Al Barsha",
@@ -190,7 +190,7 @@ const AdminDashboard = () => {
               <div className="flex items-center space-x-2">
                 <DollarSign className="h-8 w-8 text-wasel-orange" />
                 <div>
-                  <p className="text-2xl font-bold">AED {totalStats.totalEarnings.toLocaleString()}</p>
+                  <p className="text-2xl font-bold">KWD {totalStats.totalEarnings.toLocaleString()}</p>
                   <p className="text-xs text-muted-foreground">Total Earnings</p>
                 </div>
               </div>
@@ -283,7 +283,7 @@ const AdminDashboard = () => {
                     </div>
 
                     <div className="text-right">
-                      <p className="text-lg font-bold text-wasel-green">AED {driver.earnings.toLocaleString()}</p>
+                      <p className="text-lg font-bold text-wasel-green">KWD {driver.earnings.toLocaleString()}</p>
                       <p className="text-xs text-muted-foreground">Monthly Earnings</p>
                       <Badge variant="outline" className="mt-1">
                         {driver.vehicle}
