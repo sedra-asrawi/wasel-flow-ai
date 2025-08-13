@@ -141,7 +141,7 @@ const ProfilePage = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Bot className="h-5 w-5 text-wasel-purple" />
+              <Bot className="h-5 w-5 text-primary" />
               Wasel AI Assistant
             </CardTitle>
           </CardHeader>
@@ -173,7 +173,7 @@ const ProfilePage = () => {
               <Button 
                 size="sm" 
                 onClick={handleSendMessage}
-                className="bg-wasel-purple hover:bg-wasel-purple/90"
+                className="bg-primary hover:bg-primary/90"
               >
                 <Send className="h-4 w-4" />
               </Button>
