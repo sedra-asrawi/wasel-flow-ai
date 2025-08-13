@@ -137,7 +137,7 @@ const Index = () => {
           {!orderAccepted ? (
             <Button 
               onClick={handlePickup} 
-              className="w-full h-12 bg-gradient-success text-white font-semibold"
+              className="w-full h-12 bg-foreground text-background font-semibold"
               size="lg"
             >
               Start Pickup
