@@ -14,209 +14,167 @@ import {
 
 const DashboardPage = () => {
   const driverStats = {
-    name: "Mohammed Hassan",
-    rating: 4.9,
-    totalDeliveries: 847,
-    todayDeliveries: 12,
-    points: 2450,
+    name: "Omar Hassan",
+    driverId: "123456",
+    rating: 4.8,
+    totalDeliveries: 1200,
+    points: 1200,
     earnings: {
+      total: 2500,
       today: 105,
       week: 670,
       month: 2750
     },
     performance: {
+      completionRate: 95,
       onTimeRate: 96,
-      customerRating: 4.9,
-      completionRate: 98
+      customerRating: 4.8
     }
   };
 
-  const achievements = [
-    { title: "Speed Demon", description: "Complete 50 deliveries in under 20 mins", points: 100, achieved: true },
-    { title: "Customer Favorite", description: "Maintain 4.8+ rating for 30 days", points: 200, achieved: true },
-    { title: "Perfect Week", description: "Complete a week without any issues", points: 150, achieved: false },
-    { title: "Early Bird", description: "Start 10 shifts before 7 AM", points: 75, achieved: false }
+  const recentActivity = [
+    { id: "ORD-7890", time: "10:00 AM - 11:00 AM", status: "completed" },
+    { id: "ORD-7891", time: "11:30 AM - 12:30 PM", status: "completed" },
+    { id: "ORD-7892", time: "1:00 PM - 2:00 PM", status: "completed" }
   ];
 
-  const recentOrders = [
-    { id: "ORD-001", restaurant: "Al Boom Steak House", amount: 26.250, time: "2 hours ago", status: "completed" },
-    { id: "ORD-002", restaurant: "Hardee's Kuwait", amount: 13.750, time: "3 hours ago", status: "completed" },
-    { id: "ORD-003", restaurant: "Freej Swaileh", amount: 8.500, time: "4 hours ago", status: "completed" }
+  const driverRankings = [
+    { name: "Ethan Carter", deliveries: 1200, rating: 4.8 },
+    { name: "Liam Harper", deliveries: 1150, rating: 4.7 },
+    { name: "Noah Bennett", deliveries: 1100, rating: 4.6 }
   ];
 
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
-      <header className="bg-gradient-primary text-white p-4">
-        <div className="max-w-md mx-auto">
-          <h1 className="text-2xl font-bold">Dashboard</h1>
-          <p className="text-blue-100">Your performance overview</p>
+      <header className="bg-gradient-primary text-white p-6">
+        <div className="max-w-md mx-auto text-center">
+          <div className="w-20 h-20 bg-white/20 rounded-full mx-auto mb-4 flex items-center justify-center">
+            <span className="text-2xl font-bold text-white">
+              {driverStats.name.split(" ").map(n => n[0]).join("")}
+            </span>
+          </div>
+          <h1 className="text-xl font-bold">{driverStats.name}</h1>
+          <p className="text-sm opacity-90">Driver ID: {driverStats.driverId}</p>
         </div>
       </header>
 
-      <div className="max-w-md mx-auto p-4 space-y-4">
-        {/* Driver Overview */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <span>Welcome back, {driverStats.name}!</span>
-              <div className="flex items-center gap-1">
-                <Star className="h-4 w-4 text-yellow-500 fill-current" />
-                <span className="text-sm font-medium">{driverStats.rating}</span>
-              </div>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="text-center">
-                <p className="text-2xl font-bold text-primary">{driverStats.todayDeliveries}</p>
-                <p className="text-xs text-muted-foreground">Today's Deliveries</p>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold text-wasel-green">{driverStats.points}</p>
-                <p className="text-xs text-muted-foreground">Points Earned</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      <div className="max-w-md mx-auto p-4 space-y-6">
+        {/* Key Metrics */}
+        <div className="grid grid-cols-2 gap-4">
+          <Card className="text-center">
+            <CardContent className="pt-6">
+              <div className="text-3xl font-bold text-primary">{driverStats.totalDeliveries}</div>
+              <div className="text-sm text-muted-foreground">Total Deliveries</div>
+            </CardContent>
+          </Card>
+          <Card className="text-center">
+            <CardContent className="pt-6">
+              <div className="text-3xl font-bold text-wasel-orange">{driverStats.rating}</div>
+              <div className="text-sm text-muted-foreground">Average Rating</div>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Earnings */}
+        <Card className="text-center">
+          <CardContent className="pt-6">
+            <div className="text-3xl font-bold text-wasel-green">KWD {driverStats.earnings.total}</div>
+            <div className="text-sm text-muted-foreground">Earnings</div>
+          </CardContent>
+        </Card>
+
+        {/* Performance Overview */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <DollarSign className="h-5 w-5 text-wasel-green" />
-              Earnings
-            </CardTitle>
+            <CardTitle>Performance Overview</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-3 gap-4 text-center">
+            <div className="space-y-4">
               <div>
-                <p className="text-lg font-bold">KWD {driverStats.earnings.today}</p>
-                <p className="text-xs text-muted-foreground">Today</p>
-              </div>
-              <div>
-                <p className="text-lg font-bold">KWD {driverStats.earnings.week}</p>
-                <p className="text-xs text-muted-foreground">This Week</p>
-              </div>
-              <div>
-                <p className="text-lg font-bold">KWD {driverStats.earnings.month}</p>
-                <p className="text-xs text-muted-foreground">This Month</p>
+                <h4 className="font-semibold mb-2">Deliveries Over Time</h4>
+                <div className="text-2xl font-bold">{driverStats.totalDeliveries}</div>
+                <div className="text-sm text-muted-foreground">Last 30 Days +15%</div>
+                <div className="mt-4 h-24 bg-muted/50 rounded-lg flex items-end justify-center">
+                  <div className="text-xs text-muted-foreground">Performance Chart</div>
+                </div>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Performance Metrics */}
+        {/* Points & Completion Rate */}
+        <div className="grid grid-cols-2 gap-4">
+          <Card className="text-center">
+            <CardContent className="pt-6">
+              <div className="text-2xl font-bold text-primary">{driverStats.points}</div>
+              <div className="text-sm text-muted-foreground">Points</div>
+            </CardContent>
+          </Card>
+          <Card className="text-center">
+            <CardContent className="pt-6">
+              <div className="text-2xl font-bold text-wasel-green">{driverStats.performance.completionRate}%</div>
+              <div className="text-sm text-muted-foreground">Completion Rate</div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Recent Activity */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-primary" />
-              Performance
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-sm">On-time Delivery</span>
-                <span className="text-sm font-medium">{driverStats.performance.onTimeRate}%</span>
-              </div>
-              <div className="w-full bg-muted rounded-full h-2">
-                <div 
-                  className="bg-gradient-success h-2 rounded-full" 
-                  style={{ width: `${driverStats.performance.onTimeRate}%` }}
-                ></div>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-sm">Customer Rating</span>
-                <span className="text-sm font-medium">{driverStats.performance.customerRating}/5.0</span>
-              </div>
-              <div className="w-full bg-muted rounded-full h-2">
-                <div 
-                  className="bg-gradient-warning h-2 rounded-full" 
-                  style={{ width: `${(driverStats.performance.customerRating / 5) * 100}%` }}
-                ></div>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-sm">Completion Rate</span>
-                <span className="text-sm font-medium">{driverStats.performance.completionRate}%</span>
-              </div>
-              <div className="w-full bg-muted rounded-full h-2">
-                <div 
-                  className="bg-gradient-primary h-2 rounded-full" 
-                  style={{ width: `${driverStats.performance.completionRate}%` }}
-                ></div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Achievements */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Trophy className="h-5 w-5 text-wasel-orange" />
-              Achievements
+              <Package className="h-5 w-5 text-primary" />
+              Recent Activity
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {achievements.map((achievement, index) => (
+              {recentActivity.map((activity, index) => (
                 <div key={index} className="flex items-center justify-between p-3 rounded-lg border">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <h4 className="font-medium text-sm">{achievement.title}</h4>
-                      {achievement.achieved && (
-                        <Badge variant="secondary" className="text-xs">
-                          +{achievement.points} pts
-                        </Badge>
-                      )}
+                  <div className="flex items-center gap-3">
+                    <Package className="h-5 w-5 text-muted-foreground" />
+                    <div>
+                      <p className="font-medium text-sm">Order #{activity.id}</p>
+                      <p className="text-xs text-muted-foreground">{activity.time}</p>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1">{achievement.description}</p>
                   </div>
-                  <div className="ml-3">
-                    {achievement.achieved ? (
-                      <div className="w-6 h-6 bg-gradient-success rounded-full flex items-center justify-center">
-                        <Trophy className="h-3 w-3 text-white" />
-                      </div>
-                    ) : (
-                      <div className="w-6 h-6 border-2 border-muted rounded-full flex items-center justify-center">
-                        <Target className="h-3 w-3 text-muted-foreground" />
-                      </div>
-                    )}
-                  </div>
+                  <Badge variant="secondary" className="text-xs">
+                    Completed
+                  </Badge>
                 </div>
               ))}
             </div>
           </CardContent>
         </Card>
 
-        {/* Recent Orders */}
+        {/* Driver Rankings */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Package className="h-5 w-5 text-primary" />
-              Recent Orders
+              <Trophy className="h-5 w-5 text-wasel-orange" />
+              Driver Rankings
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {recentOrders.map((order, index) => (
+              {driverRankings.map((driver, index) => (
                 <div key={index} className="flex items-center justify-between p-3 rounded-lg border">
-                  <div>
-                    <p className="font-medium text-sm">{order.restaurant}</p>
-                    <p className="text-xs text-muted-foreground">{order.id} • {order.time}</p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-gradient-primary rounded-full flex items-center justify-center">
+                      <span className="text-xs font-bold text-white">
+                        {driver.name.split(" ").map(n => n[0]).join("")}
+                      </span>
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm">{driver.name}</p>
+                      <p className="text-xs text-muted-foreground">{driver.deliveries} Deliveries, {driver.rating} Rating</p>
+                    </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-medium text-sm">KWD {order.amount}</p>
-                    <Badge variant="secondary" className="text-xs">
-                      Completed
-                    </Badge>
+                    <div className="flex items-center gap-1">
+                      <Star className="h-3 w-3 text-yellow-500 fill-current" />
+                      <span className="text-xs font-medium">{driver.rating}</span>
+                    </div>
                   </div>
                 </div>
               ))}
