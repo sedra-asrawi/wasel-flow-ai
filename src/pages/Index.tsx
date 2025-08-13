@@ -102,7 +102,7 @@ const Index = () => {
                 {mockOrder.items.map((item, index) => (
                   <div key={index} className="flex justify-between text-sm">
                     <span>{item.quantity}x {item.name}</span>
-                    <span>AED {item.price}</span>
+                    <span>KWD {item.price}</span>
                   </div>
                 ))}
               </div>
@@ -112,15 +112,15 @@ const Index = () => {
             <div className="border-t pt-3 space-y-1">
               <div className="flex justify-between text-sm">
                 <span>Subtotal</span>
-                <span>AED {mockOrder.total}</span>
+                <span>KWD {mockOrder.total}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span>Delivery Fee</span>
-                <span>AED {mockOrder.deliveryFee}</span>
+                <span>KWD {mockOrder.deliveryFee}</span>
               </div>
               <div className="flex justify-between font-semibold">
                 <span>Total</span>
-                <span>AED {mockOrder.total + mockOrder.deliveryFee}</span>
+                <span>KWD {mockOrder.total + mockOrder.deliveryFee}</span>
               </div>
             </div>
 
