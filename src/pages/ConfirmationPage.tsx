@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Navigation } from "@/components/ui/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,7 +9,17 @@ import { MapPin, Clock, Phone } from "lucide-react";
 type OrderStatus = "pickup" | "delivery" | "delivered";
 
 const ConfirmationPage = () => {
+  const navigate = useNavigate();
   const [currentStatus, setCurrentStatus] = useState<OrderStatus>("pickup");
+
+  // Check if we're returning from delivery scan
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const status = urlParams.get("status");
+    if (status === "delivered") {
+      setCurrentStatus("delivered");
+    }
+  }, []);
 
   // Simulate status progression
   useEffect(() => {
@@ -41,7 +52,12 @@ const ConfirmationPage = () => {
     const statusOrder = ["pickup", "delivery", "delivered"] as const;
     const currentIndex = statusOrder.indexOf(currentStatus);
     if (currentIndex < statusOrder.length - 1) {
-      setCurrentStatus(statusOrder[currentIndex + 1]);
+      if (currentStatus === "delivery") {
+        // Before marking as delivered, go to scan page for delivery confirmation
+        navigate("/scan?type=delivery");
+      } else {
+        setCurrentStatus(statusOrder[currentIndex + 1]);
+      }
     }
   };
 

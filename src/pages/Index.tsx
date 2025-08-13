@@ -140,7 +140,7 @@ const Index = () => {
               className="w-full h-12 bg-gradient-success text-white font-semibold"
               size="lg"
             >
-              Accept & Start Pickup
+              Start Pickup
             </Button>
           ) : (
             <div className="text-center p-4 bg-accent/10 rounded-lg border border-accent/20">

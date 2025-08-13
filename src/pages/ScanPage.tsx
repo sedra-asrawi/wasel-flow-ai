@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Navigation } from "@/components/ui/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,6 +7,8 @@ import { QrCode, CheckCircle, AlertCircle, Camera } from "lucide-react";
 
 const ScanPage = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const scanType = searchParams.get("type") || "pickup"; // "pickup" or "delivery"
   const [isScanning, setIsScanning] = useState(false);
   const [scanResult, setScanResult] = useState<"success" | "error" | null>(null);
 
@@ -22,7 +24,13 @@ const ScanPage = () => {
       
       if (success) {
         setTimeout(() => {
-          navigate("/confirmation");
+          if (scanType === "delivery") {
+            // After successful delivery scan, go back to confirmation with delivered status
+            navigate("/confirmation?status=delivered");
+          } else {
+            // After successful pickup scan, go to confirmation
+            navigate("/confirmation");
+          }
         }, 2000);
       }
     }, 3000);
@@ -38,7 +46,9 @@ const ScanPage = () => {
       <header className="bg-gradient-primary text-white p-4">
         <div className="max-w-md mx-auto">
           <h1 className="text-2xl font-bold">Scan QR Code</h1>
-          <p className="text-blue-100">Verify order pickup</p>
+          <p className="text-blue-100">
+            {scanType === "delivery" ? "Confirm delivery completion" : "Verify order pickup"}
+          </p>
         </div>
       </header>
 
@@ -53,8 +63,10 @@ const ScanPage = () => {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              Scan the QR code on the receipt to verify that you're picking up the correct order.
-              This ensures order accuracy and prevents mix-ups.
+              {scanType === "delivery" 
+                ? "Scan the QR code to confirm successful delivery to the customer. This completes the order process."
+                : "Scan the QR code on the receipt to verify that you're picking up the correct order. This ensures order accuracy and prevents mix-ups."
+              }
             </p>
           </CardContent>
         </Card>
@@ -93,7 +105,9 @@ const ScanPage = () => {
                   </div>
                   <div>
                     <p className="font-semibold text-accent">Scan Successful!</p>
-                    <p className="text-sm text-muted-foreground">Order verified. Redirecting...</p>
+                    <p className="text-sm text-muted-foreground">
+                      {scanType === "delivery" ? "Delivery confirmed. Order completed!" : "Order verified. Redirecting..."}
+                    </p>
                   </div>
                 </div>
               )}
@@ -106,7 +120,10 @@ const ScanPage = () => {
                   <div>
                     <p className="font-semibold text-destructive">Scan Failed</p>
                     <p className="text-sm text-muted-foreground">
-                      Order mismatch detected. This order is not assigned to you.
+                      {scanType === "delivery" 
+                        ? "Unable to confirm delivery. Please try again or contact support."
+                        : "Order mismatch detected. This order is not assigned to you."
+                      }
                     </p>
                   </div>
                 </div>
