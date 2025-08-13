@@ -30,7 +30,7 @@ const AdminDashboard = () => {
       earnings: 2750,
       status: "active",
       joinDate: "2023-01-15",
-      location: "Dubai Marina",
+      location: "Hawalli",
       vehicle: "Motorcycle",
       onTimeRate: 96,
       rank: 1
@@ -44,7 +44,7 @@ const AdminDashboard = () => {
       earnings: 2420,
       status: "active",
       joinDate: "2023-02-20",
-      location: "Downtown Dubai",
+      location: "Kuwait City",
       vehicle: "Car",
       onTimeRate: 94,
       rank: 2
@@ -58,7 +58,7 @@ const AdminDashboard = () => {
       earnings: 2020,
       status: "active",
       joinDate: "2023-03-10",
-      location: "Jumeirah",
+      location: "Salmiya",
       vehicle: "Motorcycle",
       onTimeRate: 92,
       rank: 3
@@ -72,7 +72,7 @@ const AdminDashboard = () => {
       earnings: 1815,
       status: "offline",
       joinDate: "2023-04-05",
-      location: "Deira",
+      location: "Jabriya",
       vehicle: "Bicycle",
       onTimeRate: 89,
       rank: 4
@@ -86,7 +86,7 @@ const AdminDashboard = () => {
       earnings: 1615,
       status: "active",
       joinDate: "2023-05-12",
-      location: "Bur Dubai",
+      location: "Farwaniya",
       vehicle: "Motorcycle",
       onTimeRate: 87,
       rank: 5
@@ -100,7 +100,7 @@ const AdminDashboard = () => {
       earnings: 1440,
       status: "break",
       joinDate: "2023-06-18",
-      location: "Al Barsha",
+      location: "Ahmadi",
       vehicle: "Car",
       onTimeRate: 85,
       rank: 6

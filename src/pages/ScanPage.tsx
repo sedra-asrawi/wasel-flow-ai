@@ -182,7 +182,7 @@ const ScanPage = () => {
             </div>
             <div className="flex justify-between items-center text-sm mt-2">
               <span className="text-muted-foreground">Restaurant</span>
-              <span className="font-medium">Burj Al Arab Restaurant</span>
+              <span className="font-medium">Al-Boom Steak House</span>
             </div>
           </CardContent>
         </Card>

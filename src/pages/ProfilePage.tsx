@@ -26,13 +26,13 @@ const ProfilePage = () => {
   const driverProfile = {
     name: "Mohammed Hassan",
     email: "mohammed.hassan@example.com",
-    phone: "+971 50 123 4567",
+    phone: "+965 9999 1234",
     rating: 4.9,
     totalRatings: 1247,
     memberSince: "2023",
     vehicleType: "Motorcycle",
-    licenseNumber: "DXB-2024-7891",
-    location: "Dubai, UAE"
+    licenseNumber: "KWT-2024-7891",
+    location: "Kuwait City, Kuwait"
   };
 
   const handleSendMessage = () => {

@@ -39,9 +39,9 @@ const DashboardPage = () => {
   ];
 
   const recentOrders = [
-    { id: "ORD-001", restaurant: "Al Fanar Restaurant", amount: 26.250, time: "2 hours ago", status: "completed" },
-    { id: "ORD-002", restaurant: "Shake Shack", amount: 13.750, time: "3 hours ago", status: "completed" },
-    { id: "ORD-003", restaurant: "Tim Hortons", amount: 8.500, time: "4 hours ago", status: "completed" }
+    { id: "ORD-001", restaurant: "Al Boom Steak House", amount: 26.250, time: "2 hours ago", status: "completed" },
+    { id: "ORD-002", restaurant: "Hardee's Kuwait", amount: 13.750, time: "3 hours ago", status: "completed" },
+    { id: "ORD-003", restaurant: "Freej Swaileh", amount: 8.500, time: "4 hours ago", status: "completed" }
   ];
 
   return (

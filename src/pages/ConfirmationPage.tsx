@@ -64,8 +64,8 @@ const ConfirmationPage = () => {
   const mockOrder = {
     id: "ORD-2024-001",
     customerName: "Ahmed Al-Rashid",
-    customerPhone: "+971 50 123 4567",
-    deliveryAddress: "Dubai Marina, Tower 23, Apt 4B",
+    customerPhone: "+965 9999 1234",
+    deliveryAddress: "Salmiya, Block 12, Building 45, Apt 3A",
     estimatedTime: "15 mins",
     total: 16
   };
