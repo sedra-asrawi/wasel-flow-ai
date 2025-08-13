@@ -13,10 +13,10 @@ const Index = () => {
   const mockOrder = {
     id: "ORD-2024-001",
     customerName: "Ahmed Al-Rashid",
-    customerPhone: "+971 50 123 4567",
-    restaurant: "Burj Al Arab Restaurant",
-    restaurantAddress: "Jumeirah Beach Road, Dubai",
-    deliveryAddress: "Dubai Marina, Tower 23, Apt 4B",
+    customerPhone: "+965 9999 1234",
+    restaurant: "Al-Boom Steak House",
+    restaurantAddress: "Sharq, Kuwait City, Kuwait",
+    deliveryAddress: "Salmiya, Block 12, Building 45, Apt 3A",
     items: [
       { name: "Grilled Salmon", quantity: 1, price: 8.500 },
       { name: "Caesar Salad", quantity: 1, price: 3.250 },
