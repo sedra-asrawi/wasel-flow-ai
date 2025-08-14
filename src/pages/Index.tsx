@@ -4,11 +4,13 @@ import { Navigation } from "@/components/ui/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Clock, DollarSign, Phone } from "lucide-react";
+import { ChatInterface } from "@/components/ChatInterface";
+import { MapPin, Clock, DollarSign, Phone, MessageCircle } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
   const [orderAccepted, setOrderAccepted] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
 
   const mockOrder = {
     id: "ORD-2024-001",
@@ -65,12 +67,22 @@ const Index = () => {
             {/* Customer Info */}
             <div className="space-y-2">
               <h3 className="font-semibold text-sm">Customer</h3>
-              <div className="flex items-center gap-2 text-sm">
-                <span>{mockOrder.customerName}</span>
+            <div className="flex items-center gap-2 text-sm">
+              <span>{mockOrder.customerName}</span>
+              <div className="flex gap-1">
                 <Button variant="ghost" size="sm" className="h-auto p-1">
                   <Phone className="h-4 w-4" />
                 </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="h-auto p-1"
+                  onClick={() => setChatOpen(true)}
+                >
+                  <MessageCircle className="h-4 w-4" />
+                </Button>
               </div>
+            </div>
             </div>
 
             {/* Pickup Location */}
@@ -152,6 +164,19 @@ const Index = () => {
       </div>
 
       <Navigation />
+      
+      {/* Chat Interface */}
+      {chatOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <ChatInterface
+            orderId={mockOrder.id}
+            driverId="driver-123" // Mock driver ID
+            customerId="customer-456" // Mock customer ID
+            userType="driver"
+            onClose={() => setChatOpen(false)}
+          />
+        </div>
+      )}
     </div>
   );
 };
