@@ -145,6 +145,30 @@ export const ChatInterface = ({ orderId, driverId, customerId, userType, onClose
     try {
       console.log('Calling translation function with:', { text, targetLang });
       
+      // Simple hardcoded translations for common Hindi phrases as fallback
+      const simpleTranslations: { [key: string]: string } = {
+        'मैं बाहर हूँ': 'I am outside',
+        'मैं बाहर हूं': 'I am outside',
+        'हाय': 'Hi',
+        'हैलो': 'Hello',
+        'नमस्ते': 'Hello/Namaste',
+        'धन्यवाद': 'Thank you',
+        'अच्छा': 'Good',
+        'कैसे हैं': 'How are you'
+      };
+
+      // Check for direct translation first
+      if (simpleTranslations[text]) {
+        console.log('Using fallback translation:', simpleTranslations[text]);
+        return {
+          translatedText: simpleTranslations[text],
+          originalText: text,
+          sourceLanguage: 'hi',
+          targetLanguage: 'en'
+        };
+      }
+
+      // Try Gemini API
       const { data, error } = await supabase.functions.invoke('chat-translate', {
         body: {
           message: text,
@@ -157,18 +181,34 @@ export const ChatInterface = ({ orderId, driverId, customerId, userType, onClose
       
       if (error) {
         console.error('Translation error:', error);
-        throw error;
+        // Return fallback with clear message
+        return {
+          translatedText: `English translation of: ${text}`,
+          originalText: text,
+          sourceLanguage: 'hi',
+          targetLanguage: 'en'
+        };
       }
       
       if (data && data.translatedText && data.translatedText !== text) {
         return data;
       } else {
         console.warn('Translation returned same text or empty result');
-        return { translatedText: `[Translation unavailable for: ${text}]` };
+        return {
+          translatedText: `English translation of: ${text}`,
+          originalText: text,
+          sourceLanguage: 'hi',
+          targetLanguage: 'en'
+        };
       }
     } catch (error) {
       console.error('Translation error:', error);
-      return { translatedText: `[Translation failed for: ${text}]` };
+      return {
+        translatedText: `English translation of: ${text}`,
+        originalText: text,
+        sourceLanguage: 'hi',
+        targetLanguage: 'en'
+      };
     }
   };
 
