@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ModernCard, ModernCardContent, ModernCardHeader, ModernCardTitle } from "@/components/ui/modern-card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -262,13 +262,13 @@ export const ChatInterface = ({
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto h-[500px] flex flex-col overflow-hidden">
-      <CardHeader className="pb-3">
+    <ModernCard className="w-full max-w-md mx-auto h-[500px] flex flex-col overflow-hidden">
+      <ModernCardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg flex items-center gap-2">
+          <ModernCardTitle className="text-lg flex items-center gap-2">
             <MessageCircle className="h-5 w-5" />
             Chat with {userType === 'driver' ? 'Customer' : 'Driver'}
-          </CardTitle>
+          </ModernCardTitle>
           <Button variant="ghost" size="sm" onClick={onClose}>
             ×
           </Button>
@@ -289,9 +289,9 @@ export const ChatInterface = ({
             </SelectContent>
           </Select>
         </div>
-      </CardHeader>
+      </ModernCardHeader>
 
-      <CardContent className="flex-1 flex flex-col p-0 min-h-0">
+      <ModernCardContent className="flex-1 flex flex-col p-0 min-h-0">
         <ScrollArea className="flex-1 p-4">
           <div className="space-y-3">
             {messages.map((message) => (
@@ -365,7 +365,7 @@ export const ChatInterface = ({
             </Button>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </ModernCardContent>
+    </ModernCard>
   );
 };
