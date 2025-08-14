@@ -12,7 +12,8 @@ serve(async (req) => {
   }
 
   try {
-    const { message } = await req.json()
+    const body = await req.json()
+    const message = body.message || body.text
     
     console.log('Translation request for message:', message)
     
