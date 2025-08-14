@@ -147,15 +147,30 @@ const Index = () => {
         {/* Action Button */}
         <div className="space-y-3">
           {!orderAccepted ? (
-            <Button 
+            <button 
               onClick={handlePickup} 
-              className="w-full h-12 bg-foreground text-background font-semibold"
-              size="lg"
+              className="group relative w-full h-14 bg-gradient-to-r from-primary via-primary to-accent rounded-2xl font-bold text-lg text-white shadow-strong hover:shadow-glow transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.98] overflow-hidden"
             >
-              Start Pickup
-            </Button>
+              {/* Animated background overlay */}
+              <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              
+              {/* Shimmer effect */}
+              <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12" />
+              
+              {/* Button content */}
+              <div className="relative flex items-center justify-center gap-3">
+                <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center group-hover:rotate-180 transition-transform duration-500">
+                  <MapPin className="h-4 w-4" />
+                </div>
+                <span className="tracking-wide">Start Pickup</span>
+                <div className="w-2 h-2 rounded-full bg-white/40 group-hover:scale-150 transition-transform duration-300" />
+              </div>
+              
+              {/* Glow effect */}
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-primary to-accent opacity-0 group-hover:opacity-30 blur-xl scale-110 transition-all duration-300" />
+            </button>
           ) : (
-            <div className="text-center p-4 bg-accent/10 rounded-lg border border-accent/20">
+            <div className="text-center p-4 bg-gradient-success/10 rounded-2xl border border-accent/20 backdrop-blur-sm">
               <p className="text-accent font-medium">Order Accepted!</p>
               <p className="text-sm text-muted-foreground">Proceed to scan QR code</p>
             </div>
