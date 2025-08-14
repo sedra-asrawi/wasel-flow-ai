@@ -18,6 +18,9 @@ serve(async (req) => {
     
     const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY')
     
+    console.log('API Key exists:', !!GEMINI_API_KEY)
+    console.log('API Key length:', GEMINI_API_KEY?.length || 0)
+    
     if (!GEMINI_API_KEY) {
       console.error('GEMINI_API_KEY not found in environment')
       throw new Error('GEMINI_API_KEY not found')
@@ -35,11 +38,7 @@ serve(async (req) => {
         body: JSON.stringify({
           contents: [{
             parts: [{
-              text: `Translate the following text from ${sourceLanguage || 'auto-detected language'} to ${targetLanguage}. Only return the translated text, nothing else. Do not include explanations or notes.
-
-Text to translate: ${message}
-
-Translation:`
+              text: `You are a translator. Translate this text to English: "${message}"`
             }]
           }]
         })
