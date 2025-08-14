@@ -282,7 +282,7 @@ export const ChatInterface = ({ orderId, driverId, customerId, userType, onClose
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto h-[500px] flex flex-col">
+    <Card className="w-full max-w-md mx-auto h-[500px] flex flex-col overflow-hidden">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg flex items-center gap-2">
@@ -311,7 +311,7 @@ export const ChatInterface = ({ orderId, driverId, customerId, userType, onClose
         </div>
       </CardHeader>
 
-      <CardContent className="flex-1 flex flex-col p-0">
+      <CardContent className="flex-1 flex flex-col p-0 min-h-0">
         <ScrollArea className="flex-1 p-4">
           <div className="space-y-3">
             {messages.map((message) => (
@@ -365,7 +365,7 @@ export const ChatInterface = ({ orderId, driverId, customerId, userType, onClose
           <div ref={messagesEndRef} />
         </ScrollArea>
 
-        <div className="p-4 border-t">
+        <div className="p-4 border-t bg-card">
           <div className="flex gap-2">
             <Input
               value={newMessage}
@@ -373,11 +373,13 @@ export const ChatInterface = ({ orderId, driverId, customerId, userType, onClose
               onKeyPress={handleKeyPress}
               placeholder="Type your message..."
               disabled={isLoading}
+              className="flex-1"
             />
             <Button 
               onClick={sendMessage} 
               disabled={!newMessage.trim() || isLoading}
               size="icon"
+              className="shrink-0"
             >
               <Send className="h-4 w-4" />
             </Button>
