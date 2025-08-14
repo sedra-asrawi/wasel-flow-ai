@@ -10,8 +10,6 @@ import {
 
 const navigationItems = [
   { path: "/", icon: Package, label: "Orders" },
-  { path: "/scan", icon: QrCode, label: "Scan" },
-  { path: "/confirmation", icon: CheckCircle, label: "Confirm" },
   { path: "/dashboard", icon: BarChart3, label: "Dashboard" },
   { path: "/profile", icon: User, label: "Profile" },
 ];
