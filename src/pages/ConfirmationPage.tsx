@@ -104,7 +104,7 @@ const ConfirmationPage = () => {
               </div>
               <StatusCircle 
                 status={getStepStatus("delivery")} 
-                label="In Transit" 
+                label="In Route" 
               />
               <div className="flex-1 h-0.5 bg-muted mx-4 relative">
                 <div 
