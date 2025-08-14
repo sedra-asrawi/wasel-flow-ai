@@ -23,13 +23,15 @@ import {
 
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL!;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY!;
+// Check if Supabase environment variables are available
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Only create client if environment variables are available
+const supabase = supabaseUrl && supabaseAnonKey ? createClient(supabaseUrl, supabaseAnonKey) : null;
 
 // Use the Supabase client to get the functions URL
-const FUNCTIONS_BASE = `${supabaseUrl}/functions/v1`;
+const FUNCTIONS_BASE = supabaseUrl ? `${supabaseUrl}/functions/v1` : null;
 const PUBLIC_BEARER = supabaseAnonKey;
 
 const ProfilePage = () => {
@@ -66,7 +68,9 @@ const ProfilePage = () => {
     setChatHistory((prev) => [...prev, { type: "bot", message: "Thinking..." }]);
 
     try {
-      if (!FUNCTIONS_BASE) throw new Error("Supabase configuration is missing");
+      if (!FUNCTIONS_BASE || !PUBLIC_BEARER) {
+        throw new Error("Supabase configuration is not set up. Please connect your project to Supabase.");
+      }
 
       // If your function expects a user access token instead, get it via supabase.auth.getSession()
       // const { data: { session } } = await supabase.auth.getSession();
