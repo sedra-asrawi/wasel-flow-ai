@@ -11,12 +11,12 @@ import { useToast } from "@/components/ui/use-toast";
 
 interface Message {
   id: string;
-  sender_type: "driver" | "customer";
+  sender_type: 'driver' | 'customer';
   message: string;
-  original_message?: string | null;
+  original_message?: string;
   is_translated: boolean;
-  original_language?: string | null;
-  translated_language?: string | null;
+  original_language?: string;
+  translated_language?: string;
   created_at: string;
 }
 
@@ -24,44 +24,26 @@ interface ChatInterfaceProps {
   orderId: string;
   driverId: string;
   customerId: string;
-  userType: "driver" | "customer";
+  userType: 'driver' | 'customer';
   onClose: () => void;
 }
 
 const languages = [
-  { code: "en", name: "English" },
-  { code: "ar", name: "Arabic" },
-  { code: "hi", name: "Hindi" },
-  { code: "ur", name: "Urdu" },
-  { code: "tl", name: "Filipino" },
-  { code: "es", name: "Spanish" },
-  { code: "fr", name: "French" },
+  { code: 'en', name: 'English' },
+  { code: 'ar', name: 'Arabic' },
+  { code: 'hi', name: 'Hindi' },
+  { code: 'ur', name: 'Urdu' },
+  { code: 'tl', name: 'Filipino' },
+  { code: 'es', name: 'Spanish' },
+  { code: 'fr', name: 'French' },
 ];
-
-// ---------- string utils to prevent false "translated" blocks ----------
-const norm = (s: string) =>
-  s
-    .normalize("NFC")
-    .replace(/\s+/g, " ")
-    .trim();
-
-const areSame = (a?: string | null, b?: string | null) => {
-  if (!a || !b) return false;
-  return norm(a) === norm(b);
-};
-
-// quick detector for obvious non-Latin scripts (helps with debugging)
-const hasNonLatin = (s: string) =>
-  /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\u0900-\u097F\u0980-\u09FF\u0A00-\u0A7F\u0A80-\u0AFF\u0B00-\u0B7F\u0B80-\u0BFF\u0C00-\u0C7F\u0C80-\u0CFF\u0D00-\u0D7F\u0D80-\u0DFF\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]/.test(
-    s
-  );
 
 export const ChatInterface = ({
   orderId,
   driverId,
   customerId,
   userType,
-  onClose,
+  onClose
 }: ChatInterfaceProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
@@ -79,165 +61,131 @@ export const ChatInterface = ({
     scrollToBottom();
   }, [messages]);
 
-  // Initialize chat (create/find + load history)
   useEffect(() => {
-    const init = async () => {
-      try {
-        if (!orderId || !driverId || !customerId) return;
-
-        const { data: existingChat, error: chatError } = await supabase
-          .from("chats")
-          .select("id")
-          .eq("driver_id", driverId)
-          .eq("customer_id", customerId)
-          .eq("order_id", orderId)
-          .single();
-
-        if (chatError && chatError.code !== "PGRST116") {
-          throw chatError;
-        }
-
-        let currentChatId = existingChat?.id as string | undefined;
-
-        if (!currentChatId) {
-          const { data: newChat, error: createError } = await supabase
-            .from("chats")
-            .insert({
-              driver_id: driverId,
-              customer_id: customerId,
-              order_id: orderId,
-            })
-            .select("id")
-            .single();
-
-          if (createError) throw createError;
-          currentChatId = newChat!.id;
-        }
-
-        setChatId(currentChatId);
-
-        const { data: chatMessages, error: messagesError } = await supabase
-          .from("chat_messages")
-          .select("*")
-          .eq("chat_id", currentChatId)
-          .order("created_at", { ascending: true });
-
-        if (messagesError) throw messagesError;
-        setMessages((chatMessages || []) as Message[]);
-      } catch (error) {
-        console.error("Error initializing chat:", error);
-        toast({
-          title: "Error",
-          description: "Failed to initialize chat",
-          variant: "destructive",
-        });
-      }
-    };
-
-    init();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    initializeChat();
   }, [orderId, driverId, customerId]);
 
-  // Subscribe to real-time message inserts after chatId is known
-  useEffect(() => {
-    if (!chatId) return;
+  const initializeChat = async () => {
+    try {
+      // First, try to find existing chat
+      const { data: existingChat, error: chatError } = await supabase
+        .from('chats')
+        .select('id')
+        .eq('driver_id', driverId)
+        .eq('customer_id', customerId)
+        .eq('order_id', orderId)
+        .single();
 
-    const channel = supabase
-      .channel(`chat_${chatId}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "chat_messages",
-          filter: `chat_id=eq.${chatId}`,
-        },
-        (payload) => {
-          setMessages((prev) => {
-            const exists = prev.find(
-              (msg) =>
+      let currentChatId = existingChat?.id;
+
+      if (!currentChatId) {
+        // Create new chat if it doesn't exist
+        const { data: newChat, error: createError } = await supabase
+          .from('chats')
+          .insert({
+            driver_id: driverId,
+            customer_id: customerId,
+            order_id: orderId,
+          })
+          .select('id')
+          .single();
+
+        if (createError) throw createError;
+        currentChatId = newChat.id;
+      }
+
+      setChatId(currentChatId);
+
+      // Load existing messages
+      const { data: chatMessages, error: messagesError } = await supabase
+        .from('chat_messages')
+        .select('*')
+        .eq('chat_id', currentChatId)
+        .order('created_at', { ascending: true });
+
+      if (messagesError) throw messagesError;
+      setMessages((chatMessages || []) as Message[]);
+
+      // Subscribe to real-time updates (filter out duplicates)
+      const channel = supabase
+        .channel(`chat_${currentChatId}`)
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'chat_messages',
+            filter: `chat_id=eq.${currentChatId}`,
+          },
+          (payload) => {
+            // Only add if not already in messages (avoid duplicates from optimistic updates)
+            setMessages(prev => {
+              const exists = prev.find(msg => 
                 msg.message === payload.new.message &&
                 msg.sender_type === payload.new.sender_type &&
-                Math.abs(
-                  new Date(msg.created_at).getTime() -
-                    new Date(payload.new.created_at).getTime()
-                ) < 5000
-            );
-            if (!exists) {
-              return [...prev, payload.new as Message];
-            }
-            return prev;
-          });
-        }
-      )
-      .subscribe();
+                Math.abs(new Date(msg.created_at).getTime() - new Date(payload.new.created_at).getTime()) < 5000
+              );
+              if (!exists) {
+                return [...prev, payload.new as Message];
+              }
+              return prev;
+            });
+          }
+        )
+        .subscribe();
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [chatId]);
-
-  // -------- TRANSLATION --------
-  // Be defensive: try multiple payload shapes and read multiple response shapes.
-  const translateMessage = async (text: string, targetLang: string) => {
-    try {
-      // Try the most likely shape first
-      let resp = await supabase.functions.invoke("chat-translate", {
-        body: { text, target: targetLang, source: "auto" },
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    } catch (error) {
+      console.error('Error initializing chat:', error);
+      toast({
+        title: "Error",
+        description: "Failed to initialize chat",
+        variant: "destructive",
       });
-
-      // If the function expects different keys, try alternates
-      if ((resp.error || !resp.data) && hasNonLatin(text)) {
-        resp = await supabase.functions.invoke("chat-translate", {
-          body: { message: text, target_language: targetLang, source_language: "auto" },
-        });
-      }
-
-      const { data, error } = resp;
-
-      if (error || !data) {
-        console.warn("translateMessage: no data or error", error);
-        return { translatedText: text, detectedLanguage: "und" };
-      }
-
-      const translatedText: string =
-        data.translatedText ??
-        data.translated_text ??
-        data.translation ??
-        data.translated ??
-        data.text ??
-        text;
-
-      const detectedLanguage: string =
-        data.detectedLanguage ??
-        data.detected_language ??
-        data.source ??
-        data.source_language ??
-        "und";
-
-      return { translatedText, detectedLanguage };
-    } catch (err) {
-      console.error("translateMessage exception:", err);
-      return { translatedText: text, detectedLanguage: "und" };
     }
   };
 
-  // Always attempt translation to the selected target. If unchanged => not translated.
-  const detectLanguageAndTranslate = async (text: string, targetLang: string) => {
-    const { translatedText, detectedLanguage } = await translateMessage(text, targetLang);
-    
-    // Check if text was actually translated (different from original)
-    const isTranslated = !areSame(translatedText, text) && translatedText !== text;
-    
-    // For non-English text, always show as translated even if API didn't change it
-    const hasNonLatinChars = hasNonLatin(text);
-    const shouldShowAsTranslated = isTranslated || (hasNonLatinChars && targetLang === "en");
+  const translateMessage = async (text: string) => {
+    try {
+      console.log('Sending to OpenAI:', text);
+      const { data, error } = await supabase.functions.invoke('chat-translate', {
+        body: { message: text }
+      });
 
+      console.log('OpenAI response:', data, 'Error:', error);
+
+      if (error || !data) {
+        return text; // Return original if failed
+      }
+
+      return data.translatedText || text;
+    } catch (error) {
+      console.error('Translation error:', error);
+      return text; // Return original if failed
+    }
+  };
+
+  const detectLanguageAndTranslate = async (text: string) => {
+    // Check if text contains non-English characters
+    const nonEnglishPattern = /[\u0900-\u097F\u0600-\u06FF\u4E00-\u9FFF\u3040-\u309F\u30A0-\u30FF]/;
+    
+    if (nonEnglishPattern.test(text)) {
+      console.log('Non-English detected, getting translation from OpenAI');
+      const englishTranslation = await translateMessage(text);
+      return {
+        englishText: englishTranslation,
+        originalText: text,
+        isTranslated: true
+      };
+    }
+
+    // Text is already in English
     return {
-      translatedText: shouldShowAsTranslated ? translatedText : text,
-      originalText: shouldShowAsTranslated ? text : null,
-      isTranslated: shouldShowAsTranslated,
-      detectedLanguage,
+      englishText: text,
+      originalText: null,
+      isTranslated: false
     };
   };
 
@@ -248,49 +196,64 @@ export const ChatInterface = ({
     try {
       const originalMessage = newMessage.trim();
 
-      const result = await detectLanguageAndTranslate(originalMessage, preferredLanguage);
-      const userId = userType === "driver" ? driverId : customerId;
+      // Auto-detect and translate non-English languages to English
+      const translationResult = await detectLanguageAndTranslate(originalMessage);
 
-      const tempMessage: Message = {
-        id: crypto.randomUUID(),
-        sender_type: userType,
-        message: result.translatedText,
-        original_message: result.originalText ?? null,
-        original_language: result.isTranslated ? result.detectedLanguage || "auto" : null,
-        translated_language: result.isTranslated ? preferredLanguage : null,
-        is_translated: result.isTranslated,
-        created_at: new Date().toISOString(),
-      };
+      // Get current user ID (mock for now)
+      const userId = userType === 'driver' ? driverId : customerId;
 
-      // Optimistic UI
-      setMessages((prev) => [...prev, tempMessage]);
-      setNewMessage("");
+      console.log('Storing message:', {
+        message: translationResult.englishText,
+        original_message: translationResult.originalText,
+        is_translated: translationResult.isTranslated
+      });
 
-      // Persist
-      const { error } = await supabase.from("chat_messages").insert({
+      // Create the message object
+      const newMessageObj = {
+        id: crypto.randomUUID(), // Temporary ID
         chat_id: chatId,
         sender_id: userId,
         sender_type: userType,
-        message: result.translatedText,
-        original_message: result.originalText,
-        original_language: result.isTranslated ? result.detectedLanguage || "auto" : null,
-        translated_language: result.isTranslated ? preferredLanguage : null,
-        is_translated: result.isTranslated,
-      });
+        message: translationResult.englishText,
+        original_message: translationResult.originalText,
+        original_language: translationResult.isTranslated ? 'auto' : null,
+        translated_language: translationResult.isTranslated ? 'en' : null,
+        is_translated: translationResult.isTranslated,
+        created_at: new Date().toISOString(),
+      };
+
+      // Immediately add to local state for instant UI update
+      setMessages(prev => [...prev, newMessageObj as Message]);
+      setNewMessage(""); // Clear input immediately
+
+      // Then save to database
+      const { error } = await supabase
+        .from('chat_messages')
+        .insert({
+          chat_id: chatId,
+          sender_id: userId,
+          sender_type: userType,
+          message: translationResult.englishText,
+          original_message: translationResult.originalText,
+          original_language: translationResult.isTranslated ? 'auto' : null,
+          translated_language: translationResult.isTranslated ? 'en' : null,
+          is_translated: translationResult.isTranslated,
+        });
 
       if (error) {
-        setMessages((prev) => prev.filter((m) => m.id !== tempMessage.id));
+        // If database save fails, remove the optimistic message
+        setMessages(prev => prev.filter(msg => msg.id !== newMessageObj.id));
         throw error;
       }
 
       toast({
         title: "Message sent",
-        description: result.isTranslated
-          ? `Auto-translated to ${preferredLanguage.toUpperCase()}`
+        description: translationResult.isTranslated 
+          ? "Message auto-translated to English" 
           : "Message sent",
       });
     } catch (error) {
-      console.error("Error sending message:", error);
+      console.error('Error sending message:', error);
       toast({
         title: "Error",
         description: "Failed to send message",
@@ -301,8 +264,8 @@ export const ChatInterface = ({
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
     }
@@ -314,7 +277,7 @@ export const ChatInterface = ({
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg flex items-center gap-2">
             <MessageCircle className="h-5 w-5" />
-            Chat with {userType === "driver" ? "Customer" : "Driver"}
+            Chat with {userType === 'driver' ? 'Customer' : 'Driver'}
           </CardTitle>
           <Button variant="ghost" size="sm" onClick={onClose}>
             ×
@@ -325,7 +288,7 @@ export const ChatInterface = ({
           <Languages className="h-4 w-4" />
           <Select value={preferredLanguage} onValueChange={setPreferredLanguage}>
             <SelectTrigger className="w-32">
-              <SelectValue placeholder="Language" />
+              <SelectValue />
             </SelectTrigger>
             <SelectContent>
               {languages.map((lang) => (
@@ -341,60 +304,53 @@ export const ChatInterface = ({
       <CardContent className="flex-1 flex flex-col p-0 min-h-0">
         <ScrollArea className="flex-1 p-4">
           <div className="space-y-3">
-            {messages.map((message) => {
-              // Show translation block if message is marked as translated and has original text
-              const showTranslatedBlock = message.is_translated && 
-                                        message.original_message && 
-                                        message.original_message !== message.message;
-
-              return (
+            {messages.map((message) => (
+              <div
+                key={message.id}
+                className={`flex ${
+                  message.sender_type === userType ? 'justify-end' : 'justify-start'
+                }`}
+              >
                 <div
-                  key={message.id}
-                  className={`flex ${
-                    message.sender_type === userType ? "justify-end" : "justify-start"
+                  className={`max-w-[80%] rounded-lg p-3 ${
+                    message.sender_type === userType
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted'
                   }`}
                 >
-                  <div
-                    className={`max-w-[80%] rounded-lg p-3 ${
-                      message.sender_type === userType
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted"
-                    }`}
-                  >
-                    {showTranslatedBlock ? (
-                      <div className="space-y-2">
-                        {/* Original message */}
-                        <div className="border-b border-current/20 pb-2">
-                          <div className="flex items-center gap-2 mb-1">
-                            <Badge variant="outline" className="text-xs">
-                              Original ({(message.original_language || "AUTO").toUpperCase()})
-                            </Badge>
-                          </div>
-                          <p className="text-sm font-medium">{message.original_message}</p>
+                  {message.is_translated && message.original_message ? (
+                    <div className="space-y-2">
+                      {/* Original message */}
+                      <div className="border-b border-current/20 pb-2">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Badge variant="outline" className="text-xs">
+                            Original ({message.original_language?.toUpperCase()})
+                          </Badge>
                         </div>
-
-                        {/* English Translation */}
-                        <div>
-                          <div className="flex items-center gap-2 mb-1">
-                            <Badge variant="secondary" className="text-xs">
-                              <Languages className="h-3 w-3 mr-1" />
-                              English Translation
-                            </Badge>
-                          </div>
-                          <p className="text-sm font-medium">{message.message}</p>
-                        </div>
+                        <p className="text-sm font-medium">{message.original_message}</p>
                       </div>
-                    ) : (
-                      <p className="text-sm">{message.message}</p>
-                    )}
 
-                    <p className="text-xs opacity-70 mt-2">
-                      {new Date(message.created_at).toLocaleTimeString()}
-                    </p>
-                  </div>
+                      {/* Translated message */}
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <Badge variant="secondary" className="text-xs">
+                            <Languages className="h-3 w-3 mr-1" />
+                            English Translation
+                          </Badge>
+                        </div>
+                        <p className="text-sm font-medium">{message.message}</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-sm">{message.message}</p>
+                  )}
+
+                  <p className="text-xs opacity-70 mt-2">
+                    {new Date(message.created_at).toLocaleTimeString()}
+                  </p>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
           <div ref={messagesEndRef} />
         </ScrollArea>
@@ -404,7 +360,7 @@ export const ChatInterface = ({
             <Input
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
-              onKeyDown={handleKeyDown}
+              onKeyPress={handleKeyPress}
               placeholder="Type your message..."
               disabled={isLoading}
               className="flex-1"
