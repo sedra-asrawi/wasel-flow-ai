@@ -16,46 +16,58 @@ serve(async (req) => {
     
     console.log('Translation request:', { message, targetLanguage, sourceLanguage })
     
-    const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY')
+    const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY')
     
-    console.log('API Key exists:', !!GEMINI_API_KEY)
-    console.log('API Key length:', GEMINI_API_KEY?.length || 0)
+    console.log('OpenAI API Key exists:', !!OPENAI_API_KEY)
+    console.log('API Key length:', OPENAI_API_KEY?.length || 0)
     
-    if (!GEMINI_API_KEY) {
-      console.error('GEMINI_API_KEY not found in environment')
-      throw new Error('GEMINI_API_KEY not found')
+    if (!OPENAI_API_KEY) {
+      console.error('OPENAI_API_KEY not found in environment')
+      throw new Error('OPENAI_API_KEY not found')
     }
 
-    console.log('Making request to Gemini API...')
+    console.log('Making request to OpenAI API...')
     
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: `You are a translator. Translate this text to English: "${message}"`
-            }]
-          }]
-        })
-      }
-    )
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${OPENAI_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [
+          {
+            role: 'system',
+            content: `You are a professional translator. Translate the given text to ${targetLanguage}. ONLY return the translated text, nothing else. No explanations, no notes, no quotes - just the direct translation.`
+          },
+          {
+            role: 'user',
+            content: message
+          }
+        ],
+        max_tokens: 150,
+        temperature: 0.1,
+      })
+    })
 
-    console.log('Gemini API response status:', response.status)
+    console.log('OpenAI API response status:', response.status)
     
     const data = await response.json()
-    console.log('Gemini API response data:', JSON.stringify(data, null, 2))
+    console.log('OpenAI API response data:', JSON.stringify(data, null, 2))
     
     if (!response.ok) {
-      console.error('Gemini API error:', data)
-      throw new Error(data.error?.message || `Gemini API error: ${response.status}`)
+      console.error('OpenAI API error:', data)
+      
+      // Check for quota exceeded error
+      if (data.error?.code === 'insufficient_quota') {
+        throw new Error('OpenAI API quota exceeded. Please check your billing.')
+      }
+      
+      throw new Error(data.error?.message || `OpenAI API error: ${response.status}`)
     }
 
-    const translatedText = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || message
+    const translatedText = data.choices?.[0]?.message?.content?.trim() || message
     console.log('Extracted translation:', translatedText)
 
     return new Response(
