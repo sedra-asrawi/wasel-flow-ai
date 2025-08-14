@@ -47,7 +47,7 @@ const ProfilePage = () => {
     setChatHistory(prev => [...prev, { type: "bot", message: "Thinking..." }]);
 
     try {
-      const response = await fetch('/api/gemini-chat', {
+      const response = await fetch('/functions/v1/gemini-chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
