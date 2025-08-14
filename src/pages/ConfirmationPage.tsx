@@ -162,22 +162,22 @@ const ConfirmationPage = () => {
               <div className="flex items-center gap-2 text-sm">
                 <span className="text-muted-foreground">Customer:</span>
                 <span className="font-medium">{mockOrder.customerName}</span>
-                <div className="ml-auto flex gap-2">
+                <div className="ml-auto flex gap-1">
                   <Button 
                     size="sm" 
-                    variant="outline" 
+                    variant="ghost" 
                     onClick={handleContactCustomer}
+                    className="h-auto p-1"
                   >
-                    <Phone className="h-3 w-3 mr-1" />
-                    Call
+                    <Phone className="h-4 w-4" />
                   </Button>
                   <Button 
                     size="sm" 
-                    variant="outline" 
+                    variant="ghost" 
                     onClick={() => setChatOpen(true)}
+                    className="h-auto p-1"
                   >
-                    <MessageCircle className="h-3 w-3 mr-1" />
-                    Chat
+                    <MessageCircle className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
