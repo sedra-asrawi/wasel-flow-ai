@@ -145,7 +145,7 @@ export const ChatInterface = ({ orderId, driverId, customerId, userType, onClose
     try {
       console.log('Calling translation function with:', { text, targetLang });
       
-      // Simple hardcoded translations for common Hindi phrases as fallback
+      // Extended hardcoded translations for common Hindi phrases
       const simpleTranslations: { [key: string]: string } = {
         'मैं बाहर हूँ': 'I am outside',
         'मैं बाहर हूं': 'I am outside',
@@ -154,7 +154,22 @@ export const ChatInterface = ({ orderId, driverId, customerId, userType, onClose
         'नमस्ते': 'Hello/Namaste',
         'धन्यवाद': 'Thank you',
         'अच्छा': 'Good',
-        'कैसे हैं': 'How are you'
+        'कैसे हैं': 'How are you',
+        'मैं ठीक हूं': 'I am fine',
+        'आप कैसे हैं': 'How are you',
+        'मदद': 'Help',
+        'पानी': 'Water',
+        'खाना': 'Food',
+        'घर': 'Home',
+        'काम': 'Work',
+        'समय': 'Time',
+        'पैसा': 'Money',
+        'हां': 'Yes',
+        'नहीं': 'No',
+        'कहाँ': 'Where',
+        'कब': 'When',
+        'क्यों': 'Why',
+        'कैसे': 'How'
       };
 
       // Check for direct translation first
@@ -168,43 +183,77 @@ export const ChatInterface = ({ orderId, driverId, customerId, userType, onClose
         };
       }
 
-      // Try Gemini API
-      const { data, error } = await supabase.functions.invoke('chat-translate', {
-        body: {
-          message: text,
-          targetLanguage: targetLang,
-          sourceLanguage: 'auto'
-        }
-      });
+      // Try to create a reasonable English approximation for any Hindi text
+      const createFallbackTranslation = (hindiText: string): string => {
+        // Simple word-by-word replacement for common words
+        let englishText = hindiText;
+        
+        const wordMappings: { [key: string]: string } = {
+          'मैं': 'I',
+          'आप': 'you',
+          'हूं': 'am',
+          'हूँ': 'am',
+          'है': 'is',
+          'हैं': 'are',
+          'और': 'and',
+          'का': 'of',
+          'की': 'of',
+          'के': 'of',
+          'में': 'in',
+          'से': 'from',
+          'को': 'to',
+          'एक': 'one',
+          'दो': 'two',
+          'तीन': 'three',
+          'बाहर': 'outside',
+          'अंदर': 'inside',
+          'यहाँ': 'here',
+          'वहाँ': 'there',
+          'अब': 'now',
+          'फिर': 'then',
+          'बहुत': 'very',
+          'अच्छा': 'good',
+          'बुरा': 'bad'
+        };
 
-      console.log('Translation response:', data);
-      
-      if (error) {
-        console.error('Translation error:', error);
-        // Return fallback with clear message
-        return {
-          translatedText: `English translation of: ${text}`,
-          originalText: text,
-          sourceLanguage: 'hi',
-          targetLanguage: 'en'
-        };
+        // Replace known words
+        Object.entries(wordMappings).forEach(([hindi, english]) => {
+          englishText = englishText.replace(new RegExp(hindi, 'g'), english);
+        });
+
+        return `[Auto-translated: ${englishText}]`;
+      };
+
+      // Try Gemini API first
+      try {
+        const { data, error } = await supabase.functions.invoke('chat-translate', {
+          body: {
+            message: text,
+            targetLanguage: targetLang,
+            sourceLanguage: 'auto'
+          }
+        });
+
+        if (!error && data && data.translatedText && data.translatedText !== text) {
+          return data;
+        }
+      } catch (apiError) {
+        console.log('API translation failed, using fallback');
       }
-      
-      if (data && data.translatedText && data.translatedText !== text) {
-        return data;
-      } else {
-        console.warn('Translation returned same text or empty result');
-        return {
-          translatedText: `English translation of: ${text}`,
-          originalText: text,
-          sourceLanguage: 'hi',
-          targetLanguage: 'en'
-        };
-      }
+
+      // Use fallback translation
+      const fallbackTranslation = createFallbackTranslation(text);
+      return {
+        translatedText: fallbackTranslation,
+        originalText: text,
+        sourceLanguage: 'hi',
+        targetLanguage: 'en'
+      };
+
     } catch (error) {
       console.error('Translation error:', error);
       return {
-        translatedText: `English translation of: ${text}`,
+        translatedText: `[Hindi text: ${text}]`,
         originalText: text,
         sourceLanguage: 'hi',
         targetLanguage: 'en'
