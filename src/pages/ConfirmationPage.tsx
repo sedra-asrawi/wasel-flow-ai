@@ -4,13 +4,15 @@ import { Navigation } from "@/components/ui/navigation";
 import { Button } from "@/components/ui/button";
 import { ModernCard, ModernCardContent, ModernCardHeader, ModernCardTitle } from "@/components/ui/modern-card";
 import { StatusCircle } from "@/components/ui/status-circle";
-import { MapPin, Clock, Phone } from "lucide-react";
+import { ChatInterface } from "@/components/ChatInterface";
+import { MapPin, Clock, Phone, MessageCircle } from "lucide-react";
 
 type OrderStatus = "pickup" | "delivery" | "delivered";
 
 const ConfirmationPage = () => {
   const navigate = useNavigate();
   const [currentStatus, setCurrentStatus] = useState<OrderStatus>("pickup");
+  const [chatOpen, setChatOpen] = useState(false);
 
   // Auto-progress through statuses for demo - increased duration
   useEffect(() => {
@@ -160,15 +162,24 @@ const ConfirmationPage = () => {
               <div className="flex items-center gap-2 text-sm">
                 <span className="text-muted-foreground">Customer:</span>
                 <span className="font-medium">{mockOrder.customerName}</span>
-                <Button 
-                  size="sm" 
-                  variant="outline" 
-                  onClick={handleContactCustomer}
-                  className="ml-auto"
-                >
-                  <Phone className="h-3 w-3 mr-1" />
-                  Call
-                </Button>
+                <div className="ml-auto flex gap-2">
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    onClick={handleContactCustomer}
+                  >
+                    <Phone className="h-3 w-3 mr-1" />
+                    Call
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    onClick={() => setChatOpen(true)}
+                  >
+                    <MessageCircle className="h-3 w-3 mr-1" />
+                    Chat
+                  </Button>
+                </div>
               </div>
               
               <div className="flex items-center gap-2 text-sm">
@@ -236,6 +247,19 @@ const ConfirmationPage = () => {
       </div>
 
       <Navigation />
+      
+      {/* Chat Interface */}
+      {chatOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <ChatInterface
+            orderId={mockOrder.id}
+            driverId="00000000-0000-0000-0000-000000000001" // Mock driver UUID
+            customerId="00000000-0000-0000-0000-000000000002" // Mock customer UUID
+            userType="driver"
+            onClose={() => setChatOpen(false)}
+          />
+        </div>
+      )}
     </div>
   );
 };
