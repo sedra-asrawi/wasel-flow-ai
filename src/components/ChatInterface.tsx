@@ -148,6 +148,42 @@ export const ChatInterface = ({ orderId, driverId, customerId, userType, onClose
     }
   };
 
+  const detectLanguageAndTranslate = async (text: string) => {
+    // Simple language detection for Indian languages
+    const hindiPattern = /[\u0900-\u097F]/; // Devanagari script (Hindi)
+    const urduPattern = /[\u0600-\u06FF]/; // Arabic script (Urdu)
+    
+    let needsTranslation = false;
+    let detectedLanguage = 'en';
+    
+    if (hindiPattern.test(text)) {
+      needsTranslation = true;
+      detectedLanguage = 'hi';
+    } else if (urduPattern.test(text)) {
+      needsTranslation = true;
+      detectedLanguage = 'ur';
+    }
+    
+    if (needsTranslation) {
+      const translationData = await translateMessage(text, 'en');
+      return {
+        translatedText: translationData?.translatedText || text,
+        originalText: text,
+        sourceLanguage: detectedLanguage,
+        targetLanguage: 'en',
+        isTranslated: true
+      };
+    }
+    
+    return {
+      translatedText: text,
+      originalText: null,
+      sourceLanguage: null,
+      targetLanguage: null,
+      isTranslated: false
+    };
+  };
+
   const sendMessage = async () => {
     if (!newMessage.trim() || !chatId) return;
 
@@ -155,17 +191,9 @@ export const ChatInterface = ({ orderId, driverId, customerId, userType, onClose
     try {
       const originalMessage = newMessage.trim();
       
-      // Translate message if needed
-      let translatedMessage = originalMessage;
-      let translationData = null;
+      // Auto-detect and translate Indian languages to English
+      const translationResult = await detectLanguageAndTranslate(originalMessage);
       
-      if (preferredLanguage !== 'en') {
-        translationData = await translateMessage(originalMessage, preferredLanguage);
-        if (translationData) {
-          translatedMessage = translationData.translatedText;
-        }
-      }
-
       // Get current user ID (mock for now)
       const userId = userType === 'driver' ? driverId : customerId;
 
@@ -175,11 +203,11 @@ export const ChatInterface = ({ orderId, driverId, customerId, userType, onClose
           chat_id: chatId,
           sender_id: userId,
           sender_type: userType,
-          message: translatedMessage,
-          original_message: translationData ? originalMessage : null,
-          original_language: translationData ? 'en' : null,
-          translated_language: translationData ? preferredLanguage : null,
-          is_translated: !!translationData,
+          message: translationResult.translatedText,
+          original_message: translationResult.originalText,
+          original_language: translationResult.sourceLanguage,
+          translated_language: translationResult.targetLanguage,
+          is_translated: translationResult.isTranslated,
         });
 
       if (error) throw error;
@@ -187,7 +215,7 @@ export const ChatInterface = ({ orderId, driverId, customerId, userType, onClose
       setNewMessage("");
       toast({
         title: "Message sent",
-        description: translationData ? "Message translated and sent" : "Message sent",
+        description: translationResult.isTranslated ? "Message auto-translated to English" : "Message sent",
       });
     } catch (error) {
       console.error('Error sending message:', error);
