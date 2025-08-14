@@ -30,10 +30,6 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 // Only create client if environment variables are available
 const supabase = supabaseUrl && supabaseAnonKey ? createClient(supabaseUrl, supabaseAnonKey) : null;
 
-// Use the Supabase client to get the functions URL
-const FUNCTIONS_BASE = supabaseUrl ? `${supabaseUrl}/functions/v1` : null;
-const PUBLIC_BEARER = supabaseAnonKey;
-
 const ProfilePage = () => {
   const [chatMessage, setChatMessage] = useState("");
   const [chatHistory, setChatHistory] = useState<
@@ -68,35 +64,20 @@ const ProfilePage = () => {
     setChatHistory((prev) => [...prev, { type: "bot", message: "Thinking..." }]);
 
     try {
-      if (!FUNCTIONS_BASE || !PUBLIC_BEARER) {
+      if (!supabase) {
         throw new Error("Supabase configuration is not set up. Please connect your project to Supabase.");
       }
 
-      // If your function expects a user access token instead, get it via supabase.auth.getSession()
-      // const { data: { session } } = await supabase.auth.getSession();
-      // const authToken = session?.access_token || PUBLIC_BEARER;
-      const authToken = PUBLIC_BEARER;
-
-      const response = await fetch(`${FUNCTIONS_BASE}/gemini-chat`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${authToken}`,
-        },
-        body: JSON.stringify({ message: currentMessage }),
+      // Use Supabase client to invoke the edge function
+      const { data, error } = await supabase.functions.invoke('gemini-chat', {
+        body: { message: currentMessage },
       });
 
-      if (!response.ok) {
-        const text = await response.text();
-        throw new Error(`HTTP ${response.status}: ${text}`);
+      if (error) {
+        throw new Error(error.message || 'Failed to get response from AI');
       }
 
-      const contentType = response.headers.get("content-type") || "";
-      const data = contentType.includes("application/json")
-        ? await response.json()
-        : { response: await response.text() };
-
-      const botMessage = data.response || data.message || "Sorry, I couldn't process your request.";
+      const botMessage = data?.response || "Sorry, I couldn't process your request.";
 
       setChatHistory((prev) => {
         const history = [...prev];
