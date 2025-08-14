@@ -165,7 +165,10 @@ export const ChatInterface = ({ orderId, driverId, customerId, userType, onClose
     }
     
     if (needsTranslation) {
+      console.log('Translating text:', text, 'from', detectedLanguage, 'to English');
       const translationData = await translateMessage(text, 'en');
+      console.log('Translation result:', translationData);
+      
       return {
         translatedText: translationData?.translatedText || text,
         originalText: text,
@@ -300,10 +303,10 @@ export const ChatInterface = ({ orderId, driverId, customerId, userType, onClose
                         <div className="flex items-center gap-2 mb-1">
                           <Badge variant="secondary" className="text-xs">
                             <Languages className="h-3 w-3 mr-1" />
-                            Translated ({message.translated_language?.toUpperCase()})
+                            English Translation
                           </Badge>
                         </div>
-                        <p className="text-sm">{message.message}</p>
+                        <p className="text-sm font-medium">{message.message}</p>
                       </div>
                     </div>
                   ) : (
