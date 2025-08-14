@@ -170,8 +170,8 @@ const Index = () => {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <ChatInterface
             orderId={mockOrder.id}
-            driverId="driver-123" // Mock driver ID
-            customerId="customer-456" // Mock customer ID
+            driverId="00000000-0000-0000-0000-000000000001" // Mock driver UUID
+            customerId="00000000-0000-0000-0000-000000000002" // Mock customer UUID
             userType="driver"
             onClose={() => setChatOpen(false)}
           />
