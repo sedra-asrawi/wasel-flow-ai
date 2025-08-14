@@ -21,13 +21,7 @@ import {
   Bot,
 } from "lucide-react";
 
-import { createClient } from "@supabase/supabase-js";
-
-// For Lovable projects with native Supabase integration
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://rkomlawlybbbecglbsm.supabase.co';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrb21sYXdseWJiYmVjZ2xic20iLCJyb2xlIjoiYW5vbiIsImlhdCI6MTczNDQ0MzgxOCwiZXhwIjoyMDUwMDE5ODE4fQ.k0I7RbWLk7vhC_qLI75lxlwPGK2i0gg6QCYrAjRdV68';
-
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+import { supabase } from "@/integrations/supabase/client";
 
 const ProfilePage = () => {
   const [chatMessage, setChatMessage] = useState("");
