@@ -149,43 +149,33 @@ export const ChatInterface = ({
 
   const translateMessage = async (text: string) => {
     try {
-      console.log('Sending to OpenAI:', text);
+      console.log('Sending to Gemini for translation:', text);
       const { data, error } = await supabase.functions.invoke('chat-translate', {
         body: { message: text }
       });
 
-      console.log('OpenAI response:', data, 'Error:', error);
+      console.log('Translation response:', data, 'Error:', error);
 
       if (error || !data) {
-        return text; // Return original if failed
+        return { translatedText: text, isTranslated: false };
       }
 
-      return data.translatedText || text;
+      return {
+        translatedText: data.translatedText || text,
+        isTranslated: data.isTranslated || false
+      };
     } catch (error) {
       console.error('Translation error:', error);
-      return text; // Return original if failed
+      return { translatedText: text, isTranslated: false };
     }
   };
 
   const detectLanguageAndTranslate = async (text: string) => {
-    // Check if text contains non-English characters
-    const nonEnglishPattern = /[\u0900-\u097F\u0600-\u06FF\u4E00-\u9FFF\u3040-\u309F\u30A0-\u30FF]/;
-    
-    if (nonEnglishPattern.test(text)) {
-      console.log('Non-English detected, getting translation from OpenAI');
-      const englishTranslation = await translateMessage(text);
-      return {
-        englishText: englishTranslation,
-        originalText: text,
-        isTranslated: true
-      };
-    }
-
-    // Text is already in English
+    const result = await translateMessage(text);
     return {
-      englishText: text,
-      originalText: null,
-      isTranslated: false
+      englishText: result.translatedText,
+      originalText: result.isTranslated ? text : null,
+      isTranslated: result.isTranslated
     };
   };
 
