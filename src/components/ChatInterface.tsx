@@ -342,12 +342,10 @@ export const ChatInterface = ({
         <ScrollArea className="flex-1 p-4">
           <div className="space-y-3">
             {messages.map((message) => {
-              // Extra guard: even if DB says is_translated, don't show translated block
-              // if the strings are effectively the same.
-              const showTranslatedBlock =
-                !!message.is_translated &&
-                !!message.original_message &&
-                !areSame(message.original_message, message.message);
+              // Show translation block if message is marked as translated and has original text
+              const showTranslatedBlock = message.is_translated && 
+                                        message.original_message && 
+                                        message.original_message !== message.message;
 
               return (
                 <div
@@ -375,16 +373,12 @@ export const ChatInterface = ({
                           <p className="text-sm font-medium">{message.original_message}</p>
                         </div>
 
-                        {/* Translated message */}
+                        {/* English Translation */}
                         <div>
                           <div className="flex items-center gap-2 mb-1">
                             <Badge variant="secondary" className="text-xs">
                               <Languages className="h-3 w-3 mr-1" />
-                              {`Translation (${(
-                                message.translated_language ||
-                                preferredLanguage ||
-                                "en"
-                              ).toUpperCase()})`}
+                              English Translation
                             </Badge>
                           </div>
                           <p className="text-sm font-medium">{message.message}</p>
