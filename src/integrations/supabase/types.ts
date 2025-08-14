@@ -14,7 +14,80 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      chat_messages: {
+        Row: {
+          chat_id: string
+          created_at: string
+          id: string
+          is_translated: boolean | null
+          message: string
+          original_language: string | null
+          original_message: string | null
+          sender_id: string
+          sender_type: string
+          translated_language: string | null
+        }
+        Insert: {
+          chat_id: string
+          created_at?: string
+          id?: string
+          is_translated?: boolean | null
+          message: string
+          original_language?: string | null
+          original_message?: string | null
+          sender_id: string
+          sender_type: string
+          translated_language?: string | null
+        }
+        Update: {
+          chat_id?: string
+          created_at?: string
+          id?: string
+          is_translated?: boolean | null
+          message?: string
+          original_language?: string | null
+          original_message?: string | null
+          sender_id?: string
+          sender_type?: string
+          translated_language?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_chat_id_fkey"
+            columns: ["chat_id"]
+            isOneToOne: false
+            referencedRelation: "chats"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chats: {
+        Row: {
+          created_at: string
+          customer_id: string
+          driver_id: string
+          id: string
+          order_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          customer_id: string
+          driver_id: string
+          id?: string
+          order_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string
+          driver_id?: string
+          id?: string
+          order_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
