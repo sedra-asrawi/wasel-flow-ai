@@ -16,12 +16,12 @@ const ScanPage = () => {
     setIsScanning(true);
     setScanResult(null);
     
-    // Simulate scanning process
+    // Simulate scanning process - increased duration for better UX
     setTimeout(() => {
       setIsScanning(false);
       // Random success/error for demo
       setScanResult(Math.random() > 0.2 ? "success" : "error");
-    }, 2000);
+    }, 5000); // Changed from 2000 to 5000 (5 seconds)
   };
 
   const handleContinue = () => {

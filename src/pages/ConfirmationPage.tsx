@@ -12,7 +12,7 @@ const ConfirmationPage = () => {
   const navigate = useNavigate();
   const [currentStatus, setCurrentStatus] = useState<OrderStatus>("pickup");
 
-  // Auto-progress through statuses for demo
+  // Auto-progress through statuses for demo - increased duration
   useEffect(() => {
     const timer = setTimeout(() => {
       if (currentStatus === "pickup") {
@@ -20,7 +20,7 @@ const ConfirmationPage = () => {
       } else if (currentStatus === "delivery") {
         setCurrentStatus("delivered");
       }
-    }, 3000);
+    }, 8000); // Changed from 3000 to 8000 (8 seconds)
 
     return () => clearTimeout(timer);
   }, [currentStatus]);
