@@ -145,168 +145,59 @@ export const ChatInterface = ({ orderId, driverId, customerId, userType, onClose
     try {
       console.log('Calling translation function with:', { text, targetLang });
       
-      // Extended hardcoded translations for common Hindi phrases
-      const simpleTranslations: { [key: string]: string } = {
-        'मैं बाहर हूँ': 'I am outside',
-        'मैं बाहर हूं': 'I am outside',
-        'हाय': 'Hi',
-        'हैलो': 'Hello',
-        'नमस्ते': 'Hello/Namaste',
-        'धन्यवाद': 'Thank you',
-        'अच्छा': 'Good',
-        'कैसे हैं': 'How are you',
-        'मैं ठीक हूं': 'I am fine',
-        'आप कैसे हैं': 'How are you',
-        'मदद': 'Help',
-        'पानी': 'Water',
-        'खाना': 'Food',
-        'घर': 'Home',
-        'काम': 'Work',
-        'समय': 'Time',
-        'पैसा': 'Money',
-        'हां': 'Yes',
-        'नहीं': 'No',
-        'कहाँ': 'Where',
-        'कब': 'When',
-        'क्यों': 'Why',
-        'कैसे': 'How'
-      };
-
-      // Check for direct translation first
-      if (simpleTranslations[text]) {
-        console.log('Using fallback translation:', simpleTranslations[text]);
-        return {
-          translatedText: simpleTranslations[text],
-          originalText: text,
-          sourceLanguage: 'hi',
-          targetLanguage: 'en'
-        };
-      }
-
-      // Try to create a reasonable English approximation for any Hindi text
-      const createFallbackTranslation = (hindiText: string): string => {
-        // Simple word-by-word replacement for common words
-        let englishText = hindiText;
-        
-        const wordMappings: { [key: string]: string } = {
-          'मैं': 'I',
-          'आप': 'you',
-          'हूं': 'am',
-          'हूँ': 'am',
-          'है': 'is',
-          'हैं': 'are',
-          'और': 'and',
-          'का': 'of',
-          'की': 'of',
-          'के': 'of',
-          'में': 'in',
-          'से': 'from',
-          'को': 'to',
-          'एक': 'one',
-          'दो': 'two',
-          'तीन': 'three',
-          'बाहर': 'outside',
-          'अंदर': 'inside',
-          'यहाँ': 'here',
-          'वहाँ': 'there',
-          'अब': 'now',
-          'फिर': 'then',
-          'बहुत': 'very',
-          'अच्छा': 'good',
-          'बुरा': 'bad'
-        };
-
-        // Replace known words
-        Object.entries(wordMappings).forEach(([hindi, english]) => {
-          englishText = englishText.replace(new RegExp(hindi, 'g'), english);
-        });
-
-        return `[Auto-translated: ${englishText}]`;
-      };
-
-      // Try Gemini API first
-      try {
-        const { data, error } = await supabase.functions.invoke('chat-translate', {
-          body: {
-            message: text,
-            targetLanguage: targetLang,
-            sourceLanguage: 'auto'
-          }
-        });
-
-        if (!error && data && data.translatedText && data.translatedText !== text) {
-          return data;
+      const { data, error } = await supabase.functions.invoke('chat-translate', {
+        body: {
+          message: text,
+          targetLanguage: targetLang,
+          sourceLanguage: 'auto'
         }
-      } catch (apiError) {
-        console.log('API translation failed, using fallback');
+      });
+
+      console.log('Translation response:', data, 'Error:', error);
+      
+      if (error) {
+        console.error('Translation API error:', error);
+        return null;
       }
-
-      // Use fallback translation
-      const fallbackTranslation = createFallbackTranslation(text);
-      return {
-        translatedText: fallbackTranslation,
-        originalText: text,
-        sourceLanguage: 'hi',
-        targetLanguage: 'en'
-      };
-
+      
+      return data;
     } catch (error) {
       console.error('Translation error:', error);
-      return {
-        translatedText: `[Hindi text: ${text}]`,
-        originalText: text,
-        sourceLanguage: 'hi',
-        targetLanguage: 'en'
-      };
+      return null;
     }
   };
 
   const detectLanguageAndTranslate = async (text: string) => {
-    // Simple language detection for Indian languages
-    const hindiPattern = /[\u0900-\u097F]/; // Devanagari script (Hindi)
-    const urduPattern = /[\u0600-\u06FF]/; // Arabic script (Urdu)
+    // Check if text contains non-English characters (Hindi, Urdu, Arabic, Chinese, Japanese, etc.)
+    const nonEnglishPattern = /[\u0900-\u097F\u0600-\u06FF\u4E00-\u9FFF\u3040-\u309F\u30A0-\u30FF]/;
     
-    let needsTranslation = false;
-    let detectedLanguage = 'en';
-    
-    if (hindiPattern.test(text)) {
-      needsTranslation = true;
-      detectedLanguage = 'hi';
-    } else if (urduPattern.test(text)) {
-      needsTranslation = true;
-      detectedLanguage = 'ur';
-    }
-    
-    if (needsTranslation) {
-      console.log('Translating text:', text, 'from', detectedLanguage, 'to English');
+    if (nonEnglishPattern.test(text)) {
+      console.log('Non-English text detected, translating to English:', text);
       const translationData = await translateMessage(text, 'en');
-      console.log('Translation result:', translationData);
       
-      // Make sure we get actual English text
-      const englishText = translationData?.translatedText;
-      
-      if (!englishText || englishText === text) {
-        console.warn('Translation failed or returned same text');
+      if (translationData && translationData.translatedText) {
         return {
-          englishText: `[Could not translate: ${text}]`,
+          englishText: translationData.translatedText,
           originalText: text,
-          sourceLanguage: detectedLanguage,
+          sourceLanguage: 'auto',
+          targetLanguage: 'en',
+          isTranslated: true
+        };
+      } else {
+        // If translation fails, still show original and mark as needing translation
+        return {
+          englishText: `[Translation needed: ${text}]`,
+          originalText: text,
+          sourceLanguage: 'auto',
           targetLanguage: 'en',
           isTranslated: true
         };
       }
-      
-      return {
-        englishText: englishText,  // This will be stored as 'message'
-        originalText: text,        // This will be stored as 'original_message'
-        sourceLanguage: detectedLanguage,
-        targetLanguage: 'en',
-        isTranslated: true
-      };
     }
     
+    // Text is already in English, no translation needed
     return {
-      englishText: text,  // No translation needed
+      englishText: text,
       originalText: null,
       sourceLanguage: null,
       targetLanguage: null,
@@ -321,7 +212,7 @@ export const ChatInterface = ({ orderId, driverId, customerId, userType, onClose
     try {
       const originalMessage = newMessage.trim();
       
-      // Auto-detect and translate Indian languages to English
+      // Auto-detect and translate non-English languages to English
       const translationResult = await detectLanguageAndTranslate(originalMessage);
       
       // Get current user ID (mock for now)
