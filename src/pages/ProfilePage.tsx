@@ -21,12 +21,16 @@ import {
   Bot,
 } from "lucide-react";
 
-// If your function requires user auth, wire up supabase-js and pass access_token instead of ANON
-// import { createClient } from "@supabase/supabase-js";
-// const supabase = createClient(import.meta.env.VITE_SUPABASE_URL!, import.meta.env.VITE_SUPABASE_ANON_KEY!);
+import { createClient } from "@supabase/supabase-js";
 
-const FUNCTIONS_BASE = import.meta.env.VITE_SUPABASE_FUNCTIONS_URL as string; // e.g. https://<ref>.functions.supabase.co
-const PUBLIC_BEARER = import.meta.env.VITE_SUPABASE_ANON_KEY as string;       // used as Authorization for public function
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL!;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY!;
+
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+// Use the Supabase client to get the functions URL
+const FUNCTIONS_BASE = `${supabaseUrl}/functions/v1`;
+const PUBLIC_BEARER = supabaseAnonKey;
 
 const ProfilePage = () => {
   const [chatMessage, setChatMessage] = useState("");
@@ -62,7 +66,7 @@ const ProfilePage = () => {
     setChatHistory((prev) => [...prev, { type: "bot", message: "Thinking..." }]);
 
     try {
-      if (!FUNCTIONS_BASE) throw new Error("VITE_SUPABASE_FUNCTIONS_URL env is missing");
+      if (!FUNCTIONS_BASE) throw new Error("Supabase configuration is missing");
 
       // If your function expects a user access token instead, get it via supabase.auth.getSession()
       // const { data: { session } } = await supabase.auth.getSession();
