@@ -141,66 +141,46 @@ export const ChatInterface = ({ orderId, driverId, customerId, userType, onClose
     }
   };
 
-  const translateMessage = async (text: string, targetLang: string) => {
+  const translateMessage = async (text: string) => {
     try {
-      console.log('Calling translation function with:', { text, targetLang });
+      console.log('Sending to OpenAI:', text);
       
       const { data, error } = await supabase.functions.invoke('chat-translate', {
-        body: {
-          message: text,
-          targetLanguage: targetLang,
-          sourceLanguage: 'auto'
-        }
+        body: { message: text }
       });
 
-      console.log('Translation response:', data, 'Error:', error);
+      console.log('OpenAI response:', data, 'Error:', error);
       
-      if (error) {
-        console.error('Translation API error:', error);
-        return null;
+      if (error || !data) {
+        return text; // Return original if failed
       }
       
-      return data;
+      return data.translatedText || text;
     } catch (error) {
       console.error('Translation error:', error);
-      return null;
+      return text; // Return original if failed
     }
   };
 
   const detectLanguageAndTranslate = async (text: string) => {
-    // Check if text contains non-English characters (Hindi, Urdu, Arabic, Chinese, Japanese, etc.)
+    // Check if text contains non-English characters
     const nonEnglishPattern = /[\u0900-\u097F\u0600-\u06FF\u4E00-\u9FFF\u3040-\u309F\u30A0-\u30FF]/;
     
     if (nonEnglishPattern.test(text)) {
-      console.log('Non-English text detected, translating to English:', text);
-      const translationData = await translateMessage(text, 'en');
+      console.log('Non-English detected, getting translation from OpenAI');
+      const englishTranslation = await translateMessage(text);
       
-      if (translationData && translationData.translatedText) {
-        return {
-          englishText: translationData.translatedText,
-          originalText: text,
-          sourceLanguage: 'auto',
-          targetLanguage: 'en',
-          isTranslated: true
-        };
-      } else {
-        // If translation fails, still show original and mark as needing translation
-        return {
-          englishText: `[Translation needed: ${text}]`,
-          originalText: text,
-          sourceLanguage: 'auto',
-          targetLanguage: 'en',
-          isTranslated: true
-        };
-      }
+      return {
+        englishText: englishTranslation,
+        originalText: text,
+        isTranslated: true
+      };
     }
     
-    // Text is already in English, no translation needed
+    // Text is already in English
     return {
       englishText: text,
       originalText: null,
-      sourceLanguage: null,
-      targetLanguage: null,
       isTranslated: false
     };
   };
@@ -232,8 +212,8 @@ export const ChatInterface = ({ orderId, driverId, customerId, userType, onClose
         sender_type: userType,
         message: translationResult.englishText,
         original_message: translationResult.originalText,
-        original_language: translationResult.sourceLanguage,
-        translated_language: translationResult.targetLanguage,
+        original_language: translationResult.isTranslated ? 'auto' : null,
+        translated_language: translationResult.isTranslated ? 'en' : null,
         is_translated: translationResult.isTranslated,
         created_at: new Date().toISOString(),
       };
@@ -251,8 +231,8 @@ export const ChatInterface = ({ orderId, driverId, customerId, userType, onClose
           sender_type: userType,
           message: translationResult.englishText,
           original_message: translationResult.originalText,
-          original_language: translationResult.sourceLanguage,
-          translated_language: translationResult.targetLanguage,
+          original_language: translationResult.isTranslated ? 'auto' : null,
+          translated_language: translationResult.isTranslated ? 'en' : null,
           is_translated: translationResult.isTranslated,
         });
 
