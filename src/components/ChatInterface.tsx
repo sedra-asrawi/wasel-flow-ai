@@ -143,6 +143,8 @@ export const ChatInterface = ({ orderId, driverId, customerId, userType, onClose
 
   const translateMessage = async (text: string, targetLang: string) => {
     try {
+      console.log('Calling translation function with:', { text, targetLang });
+      
       const { data, error } = await supabase.functions.invoke('chat-translate', {
         body: {
           message: text,
@@ -151,11 +153,22 @@ export const ChatInterface = ({ orderId, driverId, customerId, userType, onClose
         }
       });
 
-      if (error) throw error;
-      return data;
+      console.log('Translation response:', data);
+      
+      if (error) {
+        console.error('Translation error:', error);
+        throw error;
+      }
+      
+      if (data && data.translatedText && data.translatedText !== text) {
+        return data;
+      } else {
+        console.warn('Translation returned same text or empty result');
+        return { translatedText: `[Translation unavailable for: ${text}]` };
+      }
     } catch (error) {
       console.error('Translation error:', error);
-      return null;
+      return { translatedText: `[Translation failed for: ${text}]` };
     }
   };
 
@@ -181,7 +194,18 @@ export const ChatInterface = ({ orderId, driverId, customerId, userType, onClose
       console.log('Translation result:', translationData);
       
       // Make sure we get actual English text
-      const englishText = translationData?.translatedText || 'Translation failed';
+      const englishText = translationData?.translatedText;
+      
+      if (!englishText || englishText === text) {
+        console.warn('Translation failed or returned same text');
+        return {
+          englishText: `[Could not translate: ${text}]`,
+          originalText: text,
+          sourceLanguage: detectedLanguage,
+          targetLanguage: 'en',
+          isTranslated: true
+        };
+      }
       
       return {
         englishText: englishText,  // This will be stored as 'message'

@@ -26,18 +26,18 @@ serve(async (req) => {
         'Authorization': `Bearer ${OPENAI_API_KEY}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [
-          {
-            role: 'system',
-            content: `You are a professional translator. Translate the given text from ${sourceLanguage || 'auto-detected language'} to ${targetLanguage}. Only return the translated text, nothing else. If the text is already in the target language, return it as is.`
-          },
-          {
-            role: 'user',
-            content: message
-          }
-        ],
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
+          messages: [
+            {
+              role: 'system',
+              content: `You are a professional translator. Translate the given text from ${sourceLanguage || 'auto-detected language'} to ${targetLanguage}. IMPORTANT: Only return the translated text in ${targetLanguage}, nothing else. Do not include any explanations, notes, or the original text. If the text is already in ${targetLanguage}, still provide a clear translation or return the text as is.`
+            },
+            {
+              role: 'user',
+              content: `Translate this text to ${targetLanguage}: ${message}`
+            }
+          ],
         temperature: 0.3,
       })
     })
