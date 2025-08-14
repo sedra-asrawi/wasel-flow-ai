@@ -11,6 +11,7 @@ import {
   DollarSign,
   Calendar
 } from "lucide-react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Area, AreaChart } from 'recharts';
 
 const DashboardPage = () => {
   const driverStats = {
@@ -31,6 +32,17 @@ const DashboardPage = () => {
       customerRating: 4.8
     }
   };
+
+  // Chart data for the last 7 days
+  const chartData = [
+    { day: 'Mon', deliveries: 12, earnings: 85 },
+    { day: 'Tue', deliveries: 19, earnings: 134 },
+    { day: 'Wed', deliveries: 15, earnings: 105 },
+    { day: 'Thu', deliveries: 22, earnings: 156 },
+    { day: 'Fri', deliveries: 28, earnings: 198 },
+    { day: 'Sat', deliveries: 35, earnings: 245 },
+    { day: 'Sun', deliveries: 18, earnings: 127 },
+  ];
 
   const recentActivity = [
     { id: "ORD-7890", time: "10:00 AM - 11:00 AM", status: "completed" },
@@ -95,8 +107,33 @@ const DashboardPage = () => {
                 <h4 className="font-semibold mb-2">Deliveries Over Time</h4>
                 <div className="text-2xl font-bold">{driverStats.totalDeliveries}</div>
                 <div className="text-sm text-muted-foreground">Last 30 Days +15%</div>
-                <div className="mt-4 h-24 bg-muted/50 rounded-lg flex items-end justify-center">
-                  <div className="text-xs text-muted-foreground">Performance Chart</div>
+                <div className="mt-4 h-32">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={chartData}>
+                      <defs>
+                        <linearGradient id="colorDeliveries" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
+                          <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0.05}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.3} />
+                      <XAxis 
+                        dataKey="day" 
+                        axisLine={false}
+                        tickLine={false}
+                        tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
+                      />
+                      <YAxis hide />
+                      <Area
+                        type="monotone"
+                        dataKey="deliveries"
+                        stroke="hsl(var(--primary))"
+                        fillOpacity={1}
+                        fill="url(#colorDeliveries)"
+                        strokeWidth={2}
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
                 </div>
               </div>
             </div>
