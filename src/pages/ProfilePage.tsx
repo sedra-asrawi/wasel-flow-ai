@@ -35,25 +35,42 @@ const ProfilePage = () => {
     location: "Kuwait City, Kuwait"
   };
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!chatMessage.trim()) return;
 
     const newMessage = { type: "user", message: chatMessage };
     setChatHistory(prev => [...prev, newMessage]);
+    const currentMessage = chatMessage;
     setChatMessage("");
 
-    // Simulate AI response
-    setTimeout(() => {
-      const responses = [
-        "I understand your concern. Let me help you with that.",
-        "That's a great question! Here's what I recommend...",
-        "I'll make sure to route this to the appropriate team.",
-        "Thanks for bringing this to my attention. Here's how we can resolve it:",
-        "I'm here to help! Can you provide more details about the issue?"
-      ];
-      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-      setChatHistory(prev => [...prev, { type: "bot", message: randomResponse }]);
-    }, 1000);
+    // Add loading message
+    setChatHistory(prev => [...prev, { type: "bot", message: "Thinking..." }]);
+
+    try {
+      const response = await fetch('/api/gemini-chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: currentMessage }),
+      });
+
+      const data = await response.json();
+      
+      // Remove loading message and add real response
+      setChatHistory(prev => {
+        const newHistory = [...prev];
+        newHistory.pop(); // Remove "Thinking..." message
+        return [...newHistory, { type: "bot", message: data.response || "Sorry, I couldn't process your request." }];
+      });
+    } catch (error) {
+      // Remove loading message and add error response
+      setChatHistory(prev => {
+        const newHistory = [...prev];
+        newHistory.pop(); // Remove "Thinking..." message
+        return [...newHistory, { type: "bot", message: "Sorry, I'm having trouble connecting right now. Please try again later." }];
+      });
+    }
   };
 
   return (
