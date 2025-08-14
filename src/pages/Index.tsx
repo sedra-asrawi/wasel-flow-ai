@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Navigation } from "@/components/ui/navigation";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ModernCard, ModernCardContent, ModernCardHeader, ModernCardTitle } from "@/components/ui/modern-card";
 import { Badge } from "@/components/ui/badge";
 import { ChatInterface } from "@/components/ChatInterface";
 import { MapPin, Clock, DollarSign, Phone, MessageCircle } from "lucide-react";
@@ -47,11 +47,11 @@ const Index = () => {
 
       {/* Order Details */}
       <div className="max-w-md mx-auto p-4 space-y-4">
-        <Card className="animate-slide-up">
-          <CardHeader className="pb-3">
+        <ModernCard className="animate-slide-up">
+          <ModernCardHeader className="pb-3">
             <div className="flex justify-between items-start">
               <div>
-                <CardTitle className="text-lg">{mockOrder.restaurant}</CardTitle>
+                <ModernCardTitle className="text-lg">{mockOrder.restaurant}</ModernCardTitle>
                 <p className="text-sm text-muted-foreground">Order #{mockOrder.id}</p>
               </div>
               <Badge 
@@ -61,9 +61,9 @@ const Index = () => {
                 {mockOrder.priority === "high" ? "High Priority" : "Standard"}
               </Badge>
             </div>
-          </CardHeader>
+          </ModernCardHeader>
           
-          <CardContent className="space-y-4">
+          <ModernCardContent className="space-y-4">
             {/* Customer Info */}
             <div className="space-y-2">
               <h3 className="font-semibold text-sm">Customer</h3>
@@ -141,8 +141,8 @@ const Index = () => {
               <Clock className="h-4 w-4" />
               <span>Estimated delivery: {mockOrder.estimatedTime}</span>
             </div>
-          </CardContent>
-        </Card>
+          </ModernCardContent>
+        </ModernCard>
 
         {/* Action Button */}
         <div className="space-y-3">

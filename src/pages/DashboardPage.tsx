@@ -1,5 +1,5 @@
 import { Navigation } from "@/components/ui/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ModernCard, ModernCardContent, ModernCardHeader, ModernCardTitle } from "@/components/ui/modern-card";
 import { Badge } from "@/components/ui/badge";
 import { 
   TrendingUp, 
@@ -62,34 +62,34 @@ const DashboardPage = () => {
       <div className="max-w-md mx-auto p-4 space-y-6">
         {/* Key Metrics */}
         <div className="grid grid-cols-2 gap-4">
-          <Card className="text-center">
-            <CardContent className="pt-6">
+          <ModernCard className="text-center">
+            <ModernCardContent className="pt-6">
               <div className="text-3xl font-bold text-primary">{driverStats.totalDeliveries}</div>
               <div className="text-sm text-muted-foreground">Total Deliveries</div>
-            </CardContent>
-          </Card>
-          <Card className="text-center">
-            <CardContent className="pt-6">
+            </ModernCardContent>
+          </ModernCard>
+          <ModernCard className="text-center">
+            <ModernCardContent className="pt-6">
               <div className="text-3xl font-bold text-wasel-orange">{driverStats.rating}</div>
               <div className="text-sm text-muted-foreground">Average Rating</div>
-            </CardContent>
-          </Card>
+            </ModernCardContent>
+          </ModernCard>
         </div>
 
         {/* Earnings */}
-        <Card className="text-center">
-          <CardContent className="pt-6">
+        <ModernCard className="text-center">
+          <ModernCardContent className="pt-6">
             <div className="text-3xl font-bold text-wasel-green">KWD {driverStats.earnings.total}</div>
             <div className="text-sm text-muted-foreground">Earnings</div>
-          </CardContent>
-        </Card>
+          </ModernCardContent>
+        </ModernCard>
 
         {/* Performance Overview */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Performance Overview</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <ModernCard>
+          <ModernCardHeader>
+            <ModernCardTitle>Performance Overview</ModernCardTitle>
+          </ModernCardHeader>
+          <ModernCardContent>
             <div className="space-y-4">
               <div>
                 <h4 className="font-semibold mb-2">Deliveries Over Time</h4>
@@ -100,34 +100,34 @@ const DashboardPage = () => {
                 </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </ModernCardContent>
+        </ModernCard>
 
         {/* Points & Completion Rate */}
         <div className="grid grid-cols-2 gap-4">
-          <Card className="text-center">
-            <CardContent className="pt-6">
+          <ModernCard className="text-center">
+            <ModernCardContent className="pt-6">
               <div className="text-2xl font-bold text-primary">{driverStats.points}</div>
               <div className="text-sm text-muted-foreground">Points</div>
-            </CardContent>
-          </Card>
-          <Card className="text-center">
-            <CardContent className="pt-6">
+            </ModernCardContent>
+          </ModernCard>
+          <ModernCard className="text-center">
+            <ModernCardContent className="pt-6">
               <div className="text-2xl font-bold text-wasel-green">{driverStats.performance.completionRate}%</div>
               <div className="text-sm text-muted-foreground">Completion Rate</div>
-            </CardContent>
-          </Card>
+            </ModernCardContent>
+          </ModernCard>
         </div>
 
         {/* Recent Activity */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+        <ModernCard>
+          <ModernCardHeader>
+            <ModernCardTitle className="flex items-center gap-2">
               <Package className="h-5 w-5 text-primary" />
               Recent Activity
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+            </ModernCardTitle>
+          </ModernCardHeader>
+          <ModernCardContent>
             <div className="space-y-3">
               {recentActivity.map((activity, index) => (
                 <div key={index} className="flex items-center justify-between p-3 rounded-lg border">
@@ -144,18 +144,18 @@ const DashboardPage = () => {
                 </div>
               ))}
             </div>
-          </CardContent>
-        </Card>
+          </ModernCardContent>
+        </ModernCard>
 
         {/* Driver Rankings */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+        <ModernCard>
+          <ModernCardHeader>
+            <ModernCardTitle className="flex items-center gap-2">
               <Trophy className="h-5 w-5 text-wasel-orange" />
               Driver Rankings
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+            </ModernCardTitle>
+          </ModernCardHeader>
+          <ModernCardContent>
             <div className="space-y-3">
               {driverRankings.map((driver, index) => (
                 <div key={index} className="flex items-center justify-between p-3 rounded-lg border">
@@ -179,8 +179,8 @@ const DashboardPage = () => {
                 </div>
               ))}
             </div>
-          </CardContent>
-        </Card>
+          </ModernCardContent>
+        </ModernCard>
       </div>
 
       <Navigation />
