@@ -14,41 +14,40 @@ serve(async (req) => {
   try {
     const { message, targetLanguage, sourceLanguage } = await req.json()
     
-    const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY')
+    const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY')
     
-    if (!OPENAI_API_KEY) {
-      throw new Error('OPENAI_API_KEY not found')
+    if (!GEMINI_API_KEY) {
+      throw new Error('GEMINI_API_KEY not found')
     }
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
-          model: 'gpt-4o-mini',
-          messages: [
-            {
-              role: 'system',
-              content: `You are a professional translator. Translate the given text from ${sourceLanguage || 'auto-detected language'} to ${targetLanguage}. IMPORTANT: Only return the translated text in ${targetLanguage}, nothing else. Do not include any explanations, notes, or the original text. If the text is already in ${targetLanguage}, still provide a clear translation or return the text as is.`
-            },
-            {
-              role: 'user',
-              content: `Translate this text to ${targetLanguage}: ${message}`
-            }
-          ],
-        temperature: 0.3,
-      })
-    })
+          contents: [{
+            parts: [{
+              text: `Translate the following text from ${sourceLanguage || 'auto-detected language'} to ${targetLanguage}. Only return the translated text, nothing else. Do not include explanations or notes.
+
+Text to translate: ${message}
+
+Translation:`
+            }]
+          }]
+        })
+      }
+    )
 
     const data = await response.json()
     
     if (!response.ok) {
-      throw new Error(data.error?.message || 'Failed to translate message')
+      throw new Error(data.error?.message || 'Failed to translate with Gemini')
     }
 
-    const translatedText = data.choices?.[0]?.message?.content || message
+    const translatedText = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || message
 
     return new Response(
       JSON.stringify({ 
