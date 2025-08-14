@@ -32,7 +32,7 @@ serve(async (req) => {
       body: JSON.stringify({
         contents: [{
           parts: [{
-            text: `If this text is in English, just return it as is. If it's in any other language, translate it to English. Only return the text, nothing else: "${message}"`
+            text: `If this text is in English, just return it as is. If it's in any other language, translate it to English. Only return the translated text, nothing else: "${message}"`
           }]
         }],
         generationConfig: {
@@ -42,14 +42,15 @@ serve(async (req) => {
       })
     })
 
+    if (!response.ok) {
+      const errorData = await response.json()
+      console.error('Gemini API error:', errorData)
+      throw new Error(`Gemini API failed: ${response.status}`)
+    }
+
     const data = await response.json()
     console.log('Gemini response:', data)
     
-    if (!response.ok) {
-      console.error('Gemini error:', data)
-      throw new Error(data.error?.message || 'Gemini API failed')
-    }
-
     const translatedText = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || message
 
     return new Response(

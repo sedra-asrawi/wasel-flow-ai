@@ -225,17 +225,18 @@ export const ChatInterface = ({
   // Always attempt translation to the selected target. If unchanged => not translated.
   const detectLanguageAndTranslate = async (text: string, targetLang: string) => {
     const { translatedText, detectedLanguage } = await translateMessage(text, targetLang);
-    const isTranslated = !areSame(translatedText, text);
-
-    // If function didn't translate but text looks non-Latin, surface a subtle hint for debugging
-    if (!isTranslated && hasNonLatin(text) && targetLang === "en") {
-      console.warn("Translator returned identical text for non-Latin input. Check edge function payload/target handling.");
-    }
+    
+    // Check if text was actually translated (different from original)
+    const isTranslated = !areSame(translatedText, text) && translatedText !== text;
+    
+    // For non-English text, always show as translated even if API didn't change it
+    const hasNonLatinChars = hasNonLatin(text);
+    const shouldShowAsTranslated = isTranslated || (hasNonLatinChars && targetLang === "en");
 
     return {
-      translatedText,
-      originalText: isTranslated ? text : null,
-      isTranslated,
+      translatedText: shouldShowAsTranslated ? translatedText : text,
+      originalText: shouldShowAsTranslated ? text : null,
+      isTranslated: shouldShowAsTranslated,
       detectedLanguage,
     };
   };
