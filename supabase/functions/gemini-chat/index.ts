@@ -12,10 +12,13 @@ serve(async (req) => {
 
   try {
     const { message } = await req.json()
+    console.log('Received message:', message)
     
     const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY')
+    console.log('GEMINI_API_KEY exists:', !!GEMINI_API_KEY)
     
     if (!GEMINI_API_KEY) {
+      console.error('GEMINI_API_KEY not found in environment variables')
       throw new Error('GEMINI_API_KEY not found')
     }
 
@@ -37,9 +40,12 @@ serve(async (req) => {
     )
 
     const data = await response.json()
+    console.log('Gemini API response status:', response.status)
+    console.log('Gemini API response data:', JSON.stringify(data, null, 2))
     
     if (!response.ok) {
-      throw new Error(data.error?.message || 'Failed to get response from Gemini')
+      console.error('Gemini API error:', data)
+      throw new Error(data.error?.message || `Gemini API failed with status ${response.status}`)
     }
 
     const aiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Sorry, I could not process your request.'
@@ -51,6 +57,8 @@ serve(async (req) => {
       },
     )
   } catch (error) {
+    console.error('Edge function error:', error)
+    console.error('Error stack:', error.stack)
     return new Response(
       JSON.stringify({ error: error.message }),
       {
