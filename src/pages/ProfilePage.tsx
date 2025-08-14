@@ -23,12 +23,11 @@ import {
 
 import { createClient } from "@supabase/supabase-js";
 
-// Check if Supabase environment variables are available
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// For Lovable projects with native Supabase integration
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://rkomlawlybbbecglbsm.supabase.co';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrb21sYXdseWJiYmVjZ2xic20iLCJyb2xlIjoiYW5vbiIsImlhdCI6MTczNDQ0MzgxOCwiZXhwIjoyMDUwMDE5ODE4fQ.k0I7RbWLk7vhC_qLI75lxlwPGK2i0gg6QCYrAjRdV68';
 
-// Only create client if environment variables are available
-const supabase = supabaseUrl && supabaseAnonKey ? createClient(supabaseUrl, supabaseAnonKey) : null;
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 const ProfilePage = () => {
   const [chatMessage, setChatMessage] = useState("");
@@ -64,10 +63,6 @@ const ProfilePage = () => {
     setChatHistory((prev) => [...prev, { type: "bot", message: "Thinking..." }]);
 
     try {
-      if (!supabase) {
-        throw new Error("Supabase configuration is not set up. Please connect your project to Supabase.");
-      }
-
       // Use Supabase client to invoke the edge function
       const { data, error } = await supabase.functions.invoke('gemini-chat', {
         body: { message: currentMessage },
