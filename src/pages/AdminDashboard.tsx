@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ModernCard, ModernCardContent, ModernCardHeader, ModernCardTitle } from "@/components/ui/modern-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -149,8 +149,8 @@ const AdminDashboard = () => {
       <div className="max-w-7xl mx-auto p-6 space-y-6">
         {/* Overview Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-          <Card>
-            <CardContent className="p-4">
+          <ModernCard>
+            <ModernCardContent className="p-4">
               <div className="flex items-center space-x-2">
                 <Users className="h-8 w-8 text-primary" />
                 <div>
@@ -158,11 +158,11 @@ const AdminDashboard = () => {
                   <p className="text-xs text-muted-foreground">Total Drivers</p>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </ModernCardContent>
+          </ModernCard>
 
-          <Card>
-            <CardContent className="p-4">
+          <ModernCard>
+            <ModernCardContent className="p-4">
               <div className="flex items-center space-x-2">
                 <TrendingUp className="h-8 w-8 text-wasel-green" />
                 <div>
@@ -170,11 +170,11 @@ const AdminDashboard = () => {
                   <p className="text-xs text-muted-foreground">Active Now</p>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </ModernCardContent>
+          </ModernCard>
 
-          <Card>
-            <CardContent className="p-4">
+          <ModernCard>
+            <ModernCardContent className="p-4">
               <div className="flex items-center space-x-2">
                 <Package className="h-8 w-8 text-wasel-blue" />
                 <div>
@@ -182,11 +182,11 @@ const AdminDashboard = () => {
                   <p className="text-xs text-muted-foreground">Total Deliveries</p>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </ModernCardContent>
+          </ModernCard>
 
-          <Card>
-            <CardContent className="p-4">
+          <ModernCard>
+            <ModernCardContent className="p-4">
               <div className="flex items-center space-x-2">
                 <DollarSign className="h-8 w-8 text-wasel-orange" />
                 <div>
@@ -194,11 +194,11 @@ const AdminDashboard = () => {
                   <p className="text-xs text-muted-foreground">Total Earnings</p>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </ModernCardContent>
+          </ModernCard>
 
-          <Card>
-            <CardContent className="p-4">
+          <ModernCard>
+            <ModernCardContent className="p-4">
               <div className="flex items-center space-x-2">
                 <Star className="h-8 w-8 text-yellow-500 fill-current" />
                 <div>
@@ -206,15 +206,15 @@ const AdminDashboard = () => {
                   <p className="text-xs text-muted-foreground">Average Rating</p>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </ModernCardContent>
+          </ModernCard>
         </div>
 
         {/* Driver Management */}
-        <Card>
-          <CardHeader>
+        <ModernCard>
+          <ModernCardHeader>
             <div className="flex justify-between items-center">
-              <CardTitle className="text-xl">Driver Rankings & Performance</CardTitle>
+              <ModernCardTitle className="text-xl">Driver Rankings & Performance</ModernCardTitle>
               <div className="flex items-center space-x-2">
                 <Search className="h-4 w-4 text-muted-foreground" />
                 <Input
@@ -225,11 +225,11 @@ const AdminDashboard = () => {
                 />
               </div>
             </div>
-          </CardHeader>
-          <CardContent>
+          </ModernCardHeader>
+          <ModernCardContent>
             <div className="space-y-4">
               {filteredDrivers.map((driver) => (
-                <Card key={driver.id} className="p-4">
+                <ModernCard key={driver.id} className="p-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
                       <div className="flex items-center space-x-2">
@@ -290,19 +290,19 @@ const AdminDashboard = () => {
                       </Badge>
                     </div>
                   </div>
-                </Card>
+                </ModernCard>
               ))}
             </div>
-          </CardContent>
-        </Card>
+          </ModernCardContent>
+        </ModernCard>
 
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Top Performers</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <ModernCard>
+            <ModernCardHeader>
+              <ModernCardTitle className="text-lg">Top Performers</ModernCardTitle>
+            </ModernCardHeader>
+            <ModernCardContent>
               <div className="space-y-3">
                 {driversData.slice(0, 3).map((driver, index) => (
                   <div key={driver.id} className="flex items-center justify-between">
@@ -314,14 +314,14 @@ const AdminDashboard = () => {
                   </div>
                 ))}
               </div>
-            </CardContent>
-          </Card>
+            </ModernCardContent>
+          </ModernCard>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Performance Alerts</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <ModernCard>
+            <ModernCardHeader>
+              <ModernCardTitle className="text-lg">Performance Alerts</ModernCardTitle>
+            </ModernCardHeader>
+            <ModernCardContent>
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm">Low rating alerts</span>
@@ -336,14 +336,14 @@ const AdminDashboard = () => {
                   <Badge variant="outline">1</Badge>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </ModernCardContent>
+          </ModernCard>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Quick Actions</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
+          <ModernCard>
+            <ModernCardHeader>
+              <ModernCardTitle className="text-lg">Quick Actions</ModernCardTitle>
+            </ModernCardHeader>
+            <ModernCardContent className="space-y-2">
               <Button className="w-full" variant="outline">
                 Export Driver Data
               </Button>
@@ -353,8 +353,8 @@ const AdminDashboard = () => {
               <Button className="w-full" variant="outline">
                 Generate Reports
               </Button>
-            </CardContent>
-          </Card>
+            </ModernCardContent>
+          </ModernCard>
         </div>
       </div>
     </div>

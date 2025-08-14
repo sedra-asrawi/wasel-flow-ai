@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Navigation } from "@/components/ui/navigation";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ModernCard, ModernCardContent, ModernCardHeader, ModernCardTitle } from "@/components/ui/modern-card";
 import { StatusCircle } from "@/components/ui/status-circle";
 import { MapPin, Clock, Phone } from "lucide-react";
 
@@ -12,36 +12,34 @@ const ConfirmationPage = () => {
   const navigate = useNavigate();
   const [currentStatus, setCurrentStatus] = useState<OrderStatus>("pickup");
 
-  // Check if we're returning from delivery scan
+  // Auto-progress through statuses for demo
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const status = urlParams.get("status");
-    if (status === "delivered") {
-      setCurrentStatus("delivered");
-    }
-  }, []);
-
-  // Simulate status progression
-  useEffect(() => {
-    const statusProgression = ["pickup", "delivery", "delivered"] as const;
-    let currentIndex = 0;
-
-    const interval = setInterval(() => {
-      currentIndex++;
-      if (currentIndex < statusProgression.length) {
-        setCurrentStatus(statusProgression[currentIndex]);
-      } else {
-        clearInterval(interval);
+    const timer = setTimeout(() => {
+      if (currentStatus === "pickup") {
+        setCurrentStatus("delivery");
+      } else if (currentStatus === "delivery") {
+        setCurrentStatus("delivered");
       }
-    }, 5000);
+    }, 3000);
 
-    return () => clearInterval(interval);
-  }, []);
+    return () => clearTimeout(timer);
+  }, [currentStatus]);
+
+  const mockOrder = {
+    id: "ORD-2024-001",
+    customerName: "Ahmed Al-Rashid",
+    restaurant: "Al-Boom Steak House",
+    customerAddress: "Block 5, Street 12, Hawalli, Kuwait",
+    restaurantAddress: "Al-Boom Center, Kuwait City",
+    total: 12.750,
+    phone: "+965 9876 5432",
+    estimatedTime: "25-30 mins"
+  };
 
   const getStepStatus = (step: OrderStatus) => {
-    const statusOrder = ["pickup", "delivery", "delivered"];
-    const currentIndex = statusOrder.indexOf(currentStatus);
-    const stepIndex = statusOrder.indexOf(step);
+    const statuses: OrderStatus[] = ["pickup", "delivery", "delivered"];
+    const currentIndex = statuses.indexOf(currentStatus);
+    const stepIndex = statuses.indexOf(step);
     
     if (stepIndex < currentIndex) return "completed";
     if (stepIndex === currentIndex) return "active";
@@ -49,25 +47,23 @@ const ConfirmationPage = () => {
   };
 
   const handleNextStep = () => {
-    const statusOrder = ["pickup", "delivery", "delivered"] as const;
-    const currentIndex = statusOrder.indexOf(currentStatus);
-    if (currentIndex < statusOrder.length - 1) {
-      if (currentStatus === "delivery") {
-        // Before marking as delivered, go to scan page for delivery confirmation
-        navigate("/scan?type=delivery");
-      } else {
-        setCurrentStatus(statusOrder[currentIndex + 1]);
-      }
+    if (currentStatus === "pickup") {
+      setCurrentStatus("delivery");
+    } else if (currentStatus === "delivery") {
+      setCurrentStatus("delivered");
+    } else {
+      navigate("/");
     }
   };
 
-  const mockOrder = {
-    id: "ORD-2024-001",
-    customerName: "Ahmed Al-Rashid",
-    customerPhone: "+965 9999 1234",
-    deliveryAddress: "Salmiya, Block 12, Building 45, Apt 3A",
-    estimatedTime: "15 mins",
-    total: 16
+  const handleContactCustomer = () => {
+    window.location.href = `tel:${mockOrder.phone}`;
+  };
+
+  const handleNavigate = () => {
+    const address = currentStatus === "pickup" ? mockOrder.restaurantAddress : mockOrder.customerAddress;
+    const encodedAddress = encodeURIComponent(address);
+    window.open(`https://maps.google.com/maps?q=${encodedAddress}`, '_blank');
   };
 
   return (
@@ -82,11 +78,11 @@ const ConfirmationPage = () => {
 
       <div className="max-w-md mx-auto p-4 space-y-6">
         {/* Status Progress */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Delivery Progress</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <ModernCard>
+          <ModernCardHeader>
+            <ModernCardTitle className="text-lg">Delivery Progress</ModernCardTitle>
+          </ModernCardHeader>
+          <ModernCardContent>
             <div className="flex justify-between items-center mb-6">
               <StatusCircle 
                 status={getStepStatus("pickup")} 
@@ -96,22 +92,28 @@ const ConfirmationPage = () => {
                 <div 
                   className={`h-full transition-all duration-500 ${
                     getStepStatus("delivery") === "completed" || getStepStatus("delivery") === "active" 
-                      ? "bg-gradient-success" 
+                      ? "bg-primary" 
                       : "bg-muted"
                   }`}
+                  style={{ 
+                    width: getStepStatus("delivery") === "completed" || getStepStatus("delivery") === "active" ? "100%" : "0%" 
+                  }}
                 />
               </div>
               <StatusCircle 
                 status={getStepStatus("delivery")} 
-                label="En Route" 
+                label="In Transit" 
               />
               <div className="flex-1 h-0.5 bg-muted mx-4 relative">
                 <div 
                   className={`h-full transition-all duration-500 ${
                     getStepStatus("delivered") === "completed" 
-                      ? "bg-gradient-success" 
+                      ? "bg-primary" 
                       : "bg-muted"
                   }`}
+                  style={{ 
+                    width: getStepStatus("delivered") === "completed" ? "100%" : "0%" 
+                  }}
                 />
               </div>
               <StatusCircle 
@@ -120,18 +122,17 @@ const ConfirmationPage = () => {
               />
             </div>
 
-            {/* Current Status Message */}
-            <div className="text-center p-4 bg-muted/50 rounded-lg">
+            <div className="text-center p-4 bg-muted/30 rounded-lg">
               {currentStatus === "pickup" && (
                 <div>
-                  <p className="font-medium text-primary">Order Confirmed!</p>
-                  <p className="text-sm text-muted-foreground">QR code scan successful. Ready for pickup.</p>
+                  <p className="font-medium text-primary">Ready for Pickup</p>
+                  <p className="text-sm text-muted-foreground">Head to the restaurant to collect the order</p>
                 </div>
               )}
               {currentStatus === "delivery" && (
                 <div>
-                  <p className="font-medium text-wasel-orange">On the way!</p>
-                  <p className="text-sm text-muted-foreground">Heading to delivery location.</p>
+                  <p className="font-medium text-primary">On the Way</p>
+                  <p className="text-sm text-muted-foreground">Delivering to customer location</p>
                 </div>
               )}
               {currentStatus === "delivered" && (
@@ -141,15 +142,15 @@ const ConfirmationPage = () => {
                 </div>
               )}
             </div>
-          </CardContent>
-        </Card>
+          </ModernCardContent>
+        </ModernCard>
 
         {/* Order Details */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Order Details</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        <ModernCard>
+          <ModernCardHeader>
+            <ModernCardTitle className="text-lg">Order Details</ModernCardTitle>
+          </ModernCardHeader>
+          <ModernCardContent className="space-y-4">
             <div className="flex justify-between">
               <span className="text-muted-foreground">Order #</span>
               <span className="font-medium">{mockOrder.id}</span>
@@ -159,19 +160,25 @@ const ConfirmationPage = () => {
               <div className="flex items-center gap-2 text-sm">
                 <span className="text-muted-foreground">Customer:</span>
                 <span className="font-medium">{mockOrder.customerName}</span>
-                <Button variant="ghost" size="sm" className="h-auto p-1">
-                  <Phone className="h-4 w-4" />
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  onClick={handleContactCustomer}
+                  className="ml-auto"
+                >
+                  <Phone className="h-3 w-3 mr-1" />
+                  Call
                 </Button>
               </div>
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex items-start gap-2 text-sm">
-                <MapPin className="h-4 w-4 text-wasel-green mt-0.5" />
-                <div>
-                  <p className="font-medium">Delivery Address</p>
-                  <p className="text-muted-foreground">{mockOrder.deliveryAddress}</p>
-                </div>
+              
+              <div className="flex items-center gap-2 text-sm">
+                <MapPin className="h-4 w-4 text-muted-foreground" />
+                <span className="text-muted-foreground">
+                  {currentStatus === "pickup" ? "Pickup from:" : "Deliver to:"}
+                </span>
+                <span className="font-medium flex-1">
+                  {currentStatus === "pickup" ? mockOrder.restaurant : mockOrder.customerAddress}
+                </span>
               </div>
             </div>
 
@@ -185,8 +192,8 @@ const ConfirmationPage = () => {
               <span className="font-semibold">Total Amount</span>
               <span className="font-semibold">KWD {mockOrder.total}</span>
             </div>
-          </CardContent>
-        </Card>
+          </ModernCardContent>
+        </ModernCard>
 
         {/* Action Buttons */}
         <div className="space-y-3">
@@ -201,24 +208,29 @@ const ConfirmationPage = () => {
           
           {currentStatus === "delivery" && (
             <Button 
-              onClick={handleNextStep}
+              onClick={() => navigate('/scan?type=delivery')}
               className="w-full h-12 bg-gradient-success text-white font-semibold"
             >
-              Mark as Delivered
+              Complete Delivery
             </Button>
           )}
-
+          
           {currentStatus === "delivered" && (
             <Button 
+              onClick={() => navigate('/')}
               className="w-full h-12 bg-gradient-primary text-white font-semibold"
-              onClick={() => window.location.href = "/"}
             >
-              Complete Order
+              Back to Orders
             </Button>
           )}
-
-          <Button variant="outline" className="w-full">
-            Contact Support
+          
+          <Button 
+            onClick={handleNavigate}
+            variant="outline" 
+            className="w-full h-12"
+          >
+            <MapPin className="h-4 w-4 mr-2" />
+            Navigate with Maps
           </Button>
         </div>
       </div>

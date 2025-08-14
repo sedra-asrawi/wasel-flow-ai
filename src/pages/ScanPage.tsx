@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Navigation } from "@/components/ui/navigation";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ModernCard, ModernCardContent, ModernCardHeader, ModernCardTitle } from "@/components/ui/modern-card";
 import { QrCode, CheckCircle, AlertCircle, Camera } from "lucide-react";
 
 const ScanPage = () => {
@@ -14,29 +14,27 @@ const ScanPage = () => {
 
   const handleScan = () => {
     setIsScanning(true);
+    setScanResult(null);
     
     // Simulate scanning process
     setTimeout(() => {
       setIsScanning(false);
-      // Simulate successful scan (90% success rate)
-      const success = Math.random() > 0.1;
-      setScanResult(success ? "success" : "error");
-      
-      if (success) {
-        setTimeout(() => {
-          if (scanType === "delivery") {
-            // After successful delivery scan, go back to confirmation with delivered status
-            navigate("/confirmation?status=delivered");
-          } else {
-            // After successful pickup scan, go to confirmation
-            navigate("/confirmation");
-          }
-        }, 2000);
-      }
-    }, 3000);
+      // Random success/error for demo
+      setScanResult(Math.random() > 0.2 ? "success" : "error");
+    }, 2000);
   };
 
-  const resetScan = () => {
+  const handleContinue = () => {
+    if (scanResult === "success") {
+      if (scanType === "pickup") {
+        navigate("/confirmation");
+      } else {
+        navigate("/");
+      }
+    }
+  };
+
+  const handleRetry = () => {
     setScanResult(null);
   };
 
@@ -54,26 +52,26 @@ const ScanPage = () => {
 
       <div className="max-w-md mx-auto p-4 space-y-6">
         {/* Instructions */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
+        <ModernCard>
+          <ModernCardHeader>
+            <ModernCardTitle className="text-lg flex items-center gap-2">
               <QrCode className="h-5 w-5 text-primary" />
               Order Verification
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+            </ModernCardTitle>
+          </ModernCardHeader>
+          <ModernCardContent>
             <p className="text-sm text-muted-foreground">
               {scanType === "delivery" 
                 ? "Scan the QR code to confirm successful delivery to the customer. This completes the order process."
                 : "Scan the QR code on the receipt to verify that you're picking up the correct order. This ensures order accuracy and prevents mix-ups."
               }
             </p>
-          </CardContent>
-        </Card>
+          </ModernCardContent>
+        </ModernCard>
 
         {/* Scanner Area */}
-        <Card className="relative overflow-hidden">
-          <CardContent className="p-0">
+        <ModernCard className="relative overflow-hidden">
+          <ModernCardContent className="p-0">
             <div className="aspect-square bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center relative">
               {!isScanning && !scanResult && (
                 <div className="text-center space-y-4">
@@ -85,51 +83,46 @@ const ScanPage = () => {
                   </p>
                 </div>
               )}
-
-              {isScanning && (
-                <div className="text-center space-y-4">
-                  <div className="w-20 h-20 border-4 border-primary rounded-lg flex items-center justify-center mx-auto animate-pulse-glow">
-                    <QrCode className="h-8 w-8 text-primary" />
-                  </div>
-                  <p className="text-sm font-medium">Scanning...</p>
-                  <div className="w-full bg-muted rounded-full h-2 mx-auto max-w-40">
-                    <div className="bg-primary h-2 rounded-full animate-pulse" style={{ width: "100%" }}></div>
-                  </div>
-                </div>
-              )}
-
+              
               {scanResult === "success" && (
-                <div className="text-center space-y-4 animate-slide-up">
+                <div className="text-center space-y-4">
                   <div className="w-20 h-20 bg-gradient-success rounded-full flex items-center justify-center mx-auto">
                     <CheckCircle className="h-10 w-10 text-white" />
                   </div>
                   <div>
                     <p className="font-semibold text-accent">Scan Successful!</p>
                     <p className="text-sm text-muted-foreground">
-                      {scanType === "delivery" ? "Delivery confirmed. Order completed!" : "Order verified. Redirecting..."}
+                      {scanType === "delivery" ? "Delivery confirmed" : "Order verified"}
                     </p>
                   </div>
                 </div>
               )}
-
+              
               {scanResult === "error" && (
-                <div className="text-center space-y-4 animate-slide-up">
-                  <div className="w-20 h-20 bg-gradient-to-br from-destructive to-destructive/80 rounded-full flex items-center justify-center mx-auto">
+                <div className="text-center space-y-4">
+                  <div className="w-20 h-20 bg-destructive rounded-full flex items-center justify-center mx-auto">
                     <AlertCircle className="h-10 w-10 text-white" />
                   </div>
                   <div>
                     <p className="font-semibold text-destructive">Scan Failed</p>
                     <p className="text-sm text-muted-foreground">
-                      {scanType === "delivery" 
-                        ? "Unable to confirm delivery. Please try again or contact support."
-                        : "Order mismatch detected. This order is not assigned to you."
-                      }
+                      Invalid QR code. Please try again.
                     </p>
                   </div>
                 </div>
               )}
-
-              {/* Scanning frame overlay */}
+              
+              {isScanning && (
+                <div className="text-center">
+                  <div className="w-20 h-20 border-4 border-primary rounded-full flex items-center justify-center mx-auto animate-pulse">
+                    <QrCode className="h-8 w-8 text-primary" />
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-4">
+                    Scanning...
+                  </p>
+                </div>
+              )}
+              
               {isScanning && (
                 <div className="absolute inset-4 border-2 border-primary rounded-lg">
                   <div className="absolute top-0 left-0 w-6 h-6 border-l-4 border-t-4 border-primary rounded-tl-lg"></div>
@@ -139,8 +132,8 @@ const ScanPage = () => {
                 </div>
               )}
             </div>
-          </CardContent>
-        </Card>
+          </ModernCardContent>
+        </ModernCard>
 
         {/* Action Buttons */}
         <div className="space-y-3">
@@ -150,20 +143,31 @@ const ScanPage = () => {
               className="w-full h-12 bg-gradient-primary text-white font-semibold"
               size="lg"
             >
+              <QrCode className="h-5 w-5 mr-2" />
               Start Scanning
             </Button>
           )}
-
+          
+          {scanResult === "success" && (
+            <Button 
+              onClick={handleContinue}
+              className="w-full h-12 bg-gradient-success text-white font-semibold"
+              size="lg"
+            >
+              Continue
+            </Button>
+          )}
+          
           {scanResult === "error" && (
             <Button 
-              onClick={resetScan} 
-              className="w-full h-12"
-              variant="outline"
+              onClick={handleRetry}
+              className="w-full h-12 bg-gradient-primary text-white font-semibold"
+              size="lg"
             >
               Try Again
             </Button>
           )}
-
+          
           <Button 
             variant="ghost" 
             className="w-full"
@@ -174,8 +178,8 @@ const ScanPage = () => {
         </div>
 
         {/* Order Info */}
-        <Card>
-          <CardContent className="pt-6">
+        <ModernCard>
+          <ModernCardContent className="pt-6">
             <div className="flex justify-between items-center text-sm">
               <span className="text-muted-foreground">Current Order</span>
               <span className="font-medium">ORD-2024-001</span>
@@ -184,8 +188,8 @@ const ScanPage = () => {
               <span className="text-muted-foreground">Restaurant</span>
               <span className="font-medium">Al-Boom Steak House</span>
             </div>
-          </CardContent>
-        </Card>
+          </ModernCardContent>
+        </ModernCard>
       </div>
 
       <Navigation />
