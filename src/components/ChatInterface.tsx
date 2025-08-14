@@ -100,7 +100,7 @@ export const ChatInterface = ({ orderId, driverId, customerId, userType, onClose
       if (messagesError) throw messagesError;
       setMessages((chatMessages || []) as Message[]);
 
-      // Subscribe to real-time updates
+      // Subscribe to real-time updates (filter out duplicates)
       const channel = supabase
         .channel(`chat_${currentChatId}`)
         .on(
@@ -112,7 +112,18 @@ export const ChatInterface = ({ orderId, driverId, customerId, userType, onClose
             filter: `chat_id=eq.${currentChatId}`,
           },
           (payload) => {
-            setMessages(prev => [...prev, payload.new as Message]);
+            // Only add if not already in messages (avoid duplicates from optimistic updates)
+            setMessages(prev => {
+              const exists = prev.find(msg => 
+                msg.message === payload.new.message && 
+                msg.sender_type === payload.new.sender_type &&
+                Math.abs(new Date(msg.created_at).getTime() - new Date(payload.new.created_at).getTime()) < 5000
+              );
+              if (!exists) {
+                return [...prev, payload.new as Message];
+              }
+              return prev;
+            });
           }
         )
         .subscribe();
@@ -209,22 +220,44 @@ export const ChatInterface = ({ orderId, driverId, customerId, userType, onClose
         is_translated: translationResult.isTranslated
       });
 
+      // Create the message object
+      const newMessageObj = {
+        id: crypto.randomUUID(), // Temporary ID
+        chat_id: chatId,
+        sender_id: userId,
+        sender_type: userType,
+        message: translationResult.englishText,
+        original_message: translationResult.originalText,
+        original_language: translationResult.sourceLanguage,
+        translated_language: translationResult.targetLanguage,
+        is_translated: translationResult.isTranslated,
+        created_at: new Date().toISOString(),
+      };
+
+      // Immediately add to local state for instant UI update
+      setMessages(prev => [...prev, newMessageObj as Message]);
+      setNewMessage(""); // Clear input immediately
+
+      // Then save to database
       const { error } = await supabase
         .from('chat_messages')
         .insert({
           chat_id: chatId,
           sender_id: userId,
           sender_type: userType,
-          message: translationResult.englishText,  // Store English text here
-          original_message: translationResult.originalText,  // Store original Hindi/Urdu here
+          message: translationResult.englishText,
+          original_message: translationResult.originalText,
           original_language: translationResult.sourceLanguage,
           translated_language: translationResult.targetLanguage,
           is_translated: translationResult.isTranslated,
         });
 
-      if (error) throw error;
+      if (error) {
+        // If database save fails, remove the optimistic message
+        setMessages(prev => prev.filter(msg => msg.id !== newMessageObj.id));
+        throw error;
+      }
 
-      setNewMessage("");
       toast({
         title: "Message sent",
         description: translationResult.isTranslated ? "Message auto-translated to English" : "Message sent",
