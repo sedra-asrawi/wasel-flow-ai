@@ -16,41 +16,40 @@ serve(async (req) => {
     
     console.log('Translation request for message:', message)
     
-    const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY')
+    const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY')
     
-    if (!OPENAI_API_KEY) {
-      console.error('OPENAI_API_KEY not found')
-      throw new Error('OPENAI_API_KEY not found')
+    if (!GEMINI_API_KEY) {
+      console.error('GEMINI_API_KEY not found')
+      throw new Error('GEMINI_API_KEY not found')
     }
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [
-          {
-            role: 'user',
-            content: `If this text is in English, just return it as is. If it's in any other language, translate it to English. Only return the text, nothing else: "${message}"`
-          }
-        ],
-        max_tokens: 100,
-        temperature: 0,
+        contents: [{
+          parts: [{
+            text: `If this text is in English, just return it as is. If it's in any other language, translate it to English. Only return the text, nothing else: "${message}"`
+          }]
+        }],
+        generationConfig: {
+          temperature: 0,
+          maxOutputTokens: 100,
+        }
       })
     })
 
     const data = await response.json()
-    console.log('OpenAI response:', data)
+    console.log('Gemini response:', data)
     
     if (!response.ok) {
-      console.error('OpenAI error:', data)
-      throw new Error(data.error?.message || 'OpenAI API failed')
+      console.error('Gemini error:', data)
+      throw new Error(data.error?.message || 'Gemini API failed')
     }
 
-    const translatedText = data.choices?.[0]?.message?.content?.trim() || message
+    const translatedText = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || message
 
     return new Response(
       JSON.stringify({ 
