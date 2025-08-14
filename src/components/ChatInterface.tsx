@@ -169,9 +169,12 @@ export const ChatInterface = ({ orderId, driverId, customerId, userType, onClose
       const translationData = await translateMessage(text, 'en');
       console.log('Translation result:', translationData);
       
+      // Make sure we get actual English text
+      const englishText = translationData?.translatedText || 'Translation failed';
+      
       return {
-        translatedText: translationData?.translatedText || text,
-        originalText: text,
+        englishText: englishText,  // This will be stored as 'message'
+        originalText: text,        // This will be stored as 'original_message'
         sourceLanguage: detectedLanguage,
         targetLanguage: 'en',
         isTranslated: true
@@ -179,7 +182,7 @@ export const ChatInterface = ({ orderId, driverId, customerId, userType, onClose
     }
     
     return {
-      translatedText: text,
+      englishText: text,  // No translation needed
       originalText: null,
       sourceLanguage: null,
       targetLanguage: null,
@@ -200,14 +203,20 @@ export const ChatInterface = ({ orderId, driverId, customerId, userType, onClose
       // Get current user ID (mock for now)
       const userId = userType === 'driver' ? driverId : customerId;
 
+      console.log('Storing message:', {
+        message: translationResult.englishText,
+        original_message: translationResult.originalText,
+        is_translated: translationResult.isTranslated
+      });
+
       const { error } = await supabase
         .from('chat_messages')
         .insert({
           chat_id: chatId,
           sender_id: userId,
           sender_type: userType,
-          message: translationResult.translatedText,
-          original_message: translationResult.originalText,
+          message: translationResult.englishText,  // Store English text here
+          original_message: translationResult.originalText,  // Store original Hindi/Urdu here
           original_language: translationResult.sourceLanguage,
           translated_language: translationResult.targetLanguage,
           is_translated: translationResult.isTranslated,
