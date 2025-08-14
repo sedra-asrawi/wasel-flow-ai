@@ -283,21 +283,34 @@ export const ChatInterface = ({ orderId, driverId, customerId, userType, onClose
                       : 'bg-muted'
                   }`}
                 >
-                  <p className="text-sm">{message.message}</p>
-                  {message.is_translated && (
-                    <div className="mt-2 pt-2 border-t border-current/20">
-                      <Badge variant="secondary" className="text-xs">
-                        <Languages className="h-3 w-3 mr-1" />
-                        Translated
-                      </Badge>
-                      {message.original_message && (
-                        <p className="text-xs opacity-70 mt-1">
-                          Original: {message.original_message}
-                        </p>
-                      )}
+                  {message.is_translated && message.original_message ? (
+                    <div className="space-y-2">
+                      {/* Original message */}
+                      <div className="border-b border-current/20 pb-2">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Badge variant="outline" className="text-xs">
+                            Original ({message.original_language?.toUpperCase()})
+                          </Badge>
+                        </div>
+                        <p className="text-sm font-medium">{message.original_message}</p>
+                      </div>
+                      
+                      {/* Translated message */}
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <Badge variant="secondary" className="text-xs">
+                            <Languages className="h-3 w-3 mr-1" />
+                            Translated ({message.translated_language?.toUpperCase()})
+                          </Badge>
+                        </div>
+                        <p className="text-sm">{message.message}</p>
+                      </div>
                     </div>
+                  ) : (
+                    <p className="text-sm">{message.message}</p>
                   )}
-                  <p className="text-xs opacity-70 mt-1">
+                  
+                  <p className="text-xs opacity-70 mt-2">
                     {new Date(message.created_at).toLocaleTimeString()}
                   </p>
                 </div>
