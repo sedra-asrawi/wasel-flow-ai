@@ -1,27 +1,44 @@
-import { useState } from "react";
+// ===============================
+// 1) FRONTEND (React + Vite)
+// File: src/pages/ProfilePage.tsx
+// ===============================
+import { useState, useRef, useEffect } from "react";
 import { Navigation } from "@/components/ui/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { 
-  User, 
-  Star, 
-  MessageCircle, 
-  Settings, 
-  Phone, 
+import {
+  User,
+  Star,
+  MessageCircle,
+  Settings,
+  Phone,
   Mail,
   MapPin,
   Send,
-  Bot
+  Bot,
 } from "lucide-react";
+
+// If your function requires user auth, wire up supabase-js and pass access_token instead of ANON
+// import { createClient } from "@supabase/supabase-js";
+// const supabase = createClient(import.meta.env.VITE_SUPABASE_URL!, import.meta.env.VITE_SUPABASE_ANON_KEY!);
+
+const FUNCTIONS_BASE = import.meta.env.VITE_SUPABASE_FUNCTIONS_URL as string; // e.g. https://<ref>.functions.supabase.co
+const PUBLIC_BEARER = import.meta.env.VITE_SUPABASE_ANON_KEY as string;       // used as Authorization for public function
 
 const ProfilePage = () => {
   const [chatMessage, setChatMessage] = useState("");
-  const [chatHistory, setChatHistory] = useState([
-    { type: "bot", message: "Hello! I'm Wasel AI. How can I help you today?" },
-  ]);
+  const [chatHistory, setChatHistory] = useState<
+    { type: "user" | "bot" | "system"; message: string }[]
+  >([{ type: "bot", message: "Hello! I'm Wasel AI. How can I help you today?" }]);
+  const [isSending, setIsSending] = useState(false);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
+  }, [chatHistory]);
 
   const driverProfile = {
     name: "Mohammed Hassan",
@@ -32,51 +49,78 @@ const ProfilePage = () => {
     memberSince: "2023",
     vehicleType: "Motorcycle",
     licenseNumber: "KWT-2024-7891",
-    location: "Kuwait City, Kuwait"
+    location: "Kuwait City, Kuwait",
   };
 
   const handleSendMessage = async () => {
-    if (!chatMessage.trim()) return;
+    if (!chatMessage.trim() || isSending) return;
 
-    const newMessage = { type: "user", message: chatMessage };
-    setChatHistory(prev => [...prev, newMessage]);
-    const currentMessage = chatMessage;
+    const currentMessage = chatMessage.trim();
     setChatMessage("");
-
-    // Add loading message
-    setChatHistory(prev => [...prev, { type: "bot", message: "Thinking..." }]);
+    setChatHistory((prev) => [...prev, { type: "user", message: currentMessage }]);
+    setIsSending(true);
+    setChatHistory((prev) => [...prev, { type: "bot", message: "Thinking..." }]);
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/gemini-chat`, {
-        method: 'POST',
+      if (!FUNCTIONS_BASE) throw new Error("VITE_SUPABASE_FUNCTIONS_URL env is missing");
+
+      // If your function expects a user access token instead, get it via supabase.auth.getSession()
+      // const { data: { session } } = await supabase.auth.getSession();
+      // const authToken = session?.access_token || PUBLIC_BEARER;
+      const authToken = PUBLIC_BEARER;
+
+      const response = await fetch(`${FUNCTIONS_BASE}/gemini-chat`, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken}`,
         },
         body: JSON.stringify({ message: currentMessage }),
       });
 
-      const data = await response.json();
-      
-      // Remove loading message and add real response
-      setChatHistory(prev => {
-        const newHistory = [...prev];
-        newHistory.pop(); // Remove "Thinking..." message
-        return [...newHistory, { type: "bot", message: data.response || "Sorry, I couldn't process your request." }];
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`HTTP ${response.status}: ${text}`);
+      }
+
+      const contentType = response.headers.get("content-type") || "";
+      const data = contentType.includes("application/json")
+        ? await response.json()
+        : { response: await response.text() };
+
+      const botMessage = data.response || data.message || "Sorry, I couldn't process your request.";
+
+      setChatHistory((prev) => {
+        const history = [...prev];
+        for (let i = history.length - 1; i >= 0; i--) {
+          if (history[i].type === "bot" && history[i].message === "Thinking...") {
+            history.splice(i, 1);
+            break;
+          }
+        }
+        return [...history, { type: "bot", message: botMessage }];
       });
-    } catch (error) {
-      // Remove loading message and add error response
-      setChatHistory(prev => {
-        const newHistory = [...prev];
-        newHistory.pop(); // Remove "Thinking..." message
-        return [...newHistory, { type: "bot", message: "Sorry, I'm having trouble connecting right now. Please try again later." }];
+    } catch (error: any) {
+      setChatHistory((prev) => {
+        const history = [...prev];
+        for (let i = history.length - 1; i >= 0; i--) {
+          if (history[i].type === "bot" && history[i].message === "Thinking...") {
+            history.splice(i, 1);
+            break;
+          }
+        }
+        return [
+          ...history,
+          { type: "bot", message: `Sorry, I'm having trouble: ${error?.message || "Network error"}` },
+        ];
       });
+    } finally {
+      setIsSending(false);
     }
   };
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      {/* Header */}
       <header className="bg-gradient-primary text-white p-4">
         <div className="max-w-md mx-auto">
           <h1 className="text-2xl font-bold">Profile</h1>
@@ -85,14 +129,13 @@ const ProfilePage = () => {
       </header>
 
       <div className="max-w-md mx-auto p-4 space-y-4">
-        {/* Profile Info */}
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center space-x-4">
               <Avatar className="h-16 w-16">
                 <AvatarImage src="/placeholder-avatar.jpg" />
                 <AvatarFallback className="bg-gradient-primary text-white text-lg">
-                  {driverProfile.name.split(" ").map(n => n[0]).join("")}
+                  {driverProfile.name.split(" ").map((n) => n[0]).join("")}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1">
@@ -102,19 +145,14 @@ const ProfilePage = () => {
                     <Star className="h-4 w-4 text-yellow-500 fill-current" />
                     <span className="text-sm font-medium">{driverProfile.rating}</span>
                   </div>
-                  <span className="text-xs text-muted-foreground">
-                    ({driverProfile.totalRatings} reviews)
-                  </span>
+                  <span className="text-xs text-muted-foreground">({driverProfile.totalRatings} reviews)</span>
                 </div>
-                <Badge variant="secondary" className="mt-2">
-                  Driver since {driverProfile.memberSince}
-                </Badge>
+                <Badge variant="secondary" className="mt-2">Driver since {driverProfile.memberSince}</Badge>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Contact Information */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -138,7 +176,6 @@ const ProfilePage = () => {
           </CardContent>
         </Card>
 
-        {/* Vehicle Information */}
         <Card>
           <CardHeader>
             <CardTitle>Vehicle Details</CardTitle>
@@ -155,7 +192,6 @@ const ProfilePage = () => {
           </CardContent>
         </Card>
 
-        {/* Wasel AI Chatbot */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -164,35 +200,26 @@ const ProfilePage = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {/* Chat History */}
-            <div className="space-y-3 max-h-60 overflow-y-auto">
+            <div ref={scrollRef} className="space-y-3 max-h-60 overflow-y-auto pr-1">
               {chatHistory.map((chat, index) => (
                 <div key={index} className={`flex ${chat.type === "user" ? "justify-end" : "justify-start"}`}>
-                  <div className={`max-w-[80%] p-3 rounded-lg text-sm ${
-                    chat.type === "user" 
-                      ? "bg-primary text-white" 
-                      : "bg-muted text-foreground"
-                  }`}>
+                  <div className={`max-w-[80%] p-3 rounded-lg text-sm ${chat.type === "user" ? "bg-primary text-white" : "bg-muted text-foreground"}`}>
                     {chat.message}
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* Chat Input */}
             <div className="flex gap-2">
               <Input
                 placeholder="Ask Wasel AI anything..."
                 value={chatMessage}
                 onChange={(e) => setChatMessage(e.target.value)}
-                onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
+                onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSendMessage()}
+                disabled={isSending}
                 className="flex-1"
               />
-              <Button 
-                size="sm" 
-                onClick={handleSendMessage}
-                className="bg-primary hover:bg-primary/90"
-              >
+              <Button size="sm" onClick={handleSendMessage} className="bg-primary hover:bg-primary/90" disabled={isSending}>
                 <Send className="h-4 w-4" />
               </Button>
             </div>
@@ -203,7 +230,6 @@ const ProfilePage = () => {
           </CardContent>
         </Card>
 
-        {/* Quick Actions */}
         <Card>
           <CardHeader>
             <CardTitle>Quick Actions</CardTitle>
@@ -231,3 +257,122 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
+
+
+// =====================================
+// 2) SUPABASE EDGE FUNCTION (Deno)
+// Folder: supabase/functions/gemini-chat
+// File: index.ts
+// =====================================
+// Usage: store your Google key privately in Supabase secrets
+//   supabase secrets set GEMINI_API_KEY=AIza...  (do NOT put it in frontend)
+// Then deploy:
+//   supabase functions deploy gemini-chat
+//   supabase functions invoke gemini-chat --no-verify-jwt --body '{"message":"hi"}'
+
+import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
+
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+};
+
+const GEMINI_MODEL = "gemini-1.5-flash"; // or gemini-1.5-pro if you prefer
+
+serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: { ...CORS_HEADERS } });
+  }
+
+  try {
+    if (req.method !== "POST") {
+      return new Response(JSON.stringify({ error: "Method not allowed" }), {
+        status: 405,
+        headers: { "Content-Type": "application/json", ...CORS_HEADERS },
+      });
+    }
+
+    const { message } = await req.json().catch(() => ({ message: "" }));
+    if (!message || typeof message !== "string") {
+      return new Response(JSON.stringify({ error: "Missing 'message' string" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json", ...CORS_HEADERS },
+      });
+    }
+
+    const apiKey = Deno.env.get("GEMINI_API_KEY");
+    if (!apiKey) {
+      return new Response(JSON.stringify({ error: "GEMINI_API_KEY not set" }), {
+        status: 500,
+        headers: { "Content-Type": "application/json", ...CORS_HEADERS },
+      });
+    }
+
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`;
+
+    const body = {
+      contents: [
+        {
+          role: "user",
+          parts: [{ text: message }],
+        },
+      ],
+    };
+
+    const geminiRes = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+
+    const raw = await geminiRes.json().catch(async () => ({ error: await geminiRes.text() }));
+
+    if (!geminiRes.ok) {
+      return new Response(
+        JSON.stringify({ error: raw?.error || raw, status: geminiRes.status }),
+        { status: 500, headers: { "Content-Type": "application/json", ...CORS_HEADERS } },
+      );
+    }
+
+    // Extract text safely from Gemini response
+    let text = "";
+    try {
+      const candidates = raw.candidates ?? [];
+      const parts = candidates[0]?.content?.parts ?? [];
+      text = parts.map((p: any) => p.text).filter(Boolean).join("
+");
+    } catch (_) {
+      text = JSON.stringify(raw);
+    }
+
+    return new Response(JSON.stringify({ response: text || "(empty response)" }), {
+      headers: { "Content-Type": "application/json", ...CORS_HEADERS },
+    });
+  } catch (e) {
+    return new Response(JSON.stringify({ error: e?.message || "Unknown error" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json", ...CORS_HEADERS },
+    });
+  }
+});
+
+
+// =====================================
+// 3) supabase.toml (optional but recommended CORS)
+// File: supabase/functions/gemini-chat/supabase.toml
+// =====================================
+// Uncomment or include if you want per-function settings
+// [project]
+// id = "<your-project-ref>"
+// [functions.gemini-chat]
+// verify_jwt = false   # set true if you want JWT verification; if true, send a real access token from client
+
+
+// =====================================
+// 4) .env (Vite, DO NOT include GEMINI key)
+// File: .env.local
+// =====================================
+// VITE_SUPABASE_URL=https://<your-project-ref>.supabase.co
+// VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIs... (anon key)
+// VITE_SUPABASE_FUNCTIONS_URL=https://<your-project-ref>.functions.supabase.co
