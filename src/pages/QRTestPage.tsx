@@ -11,8 +11,8 @@ import { useNavigate } from "react-router-dom";
 const QRTestPage = () => {
   const [qrImageUrl, setQrImageUrl] = useState<string>("");
   const [isGenerating, setIsGenerating] = useState(false);
-  const [customerName, setCustomerName] = useState("Mohammed Hassan");
-  const [driverId, setDriverId] = useState("1");
+  const [customerName, setCustomerName] = useState("Ahmed Al-Rashid");
+  const [driverId, setDriverId] = useState("2");
   const { toast } = useToast();
   const navigate = useNavigate();
 
