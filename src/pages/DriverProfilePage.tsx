@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Navigation } from "@/components/ui/navigation";
 import { Button } from "@/components/ui/button";
 import { ModernCard, ModernCardContent, ModernCardHeader, ModernCardTitle } from "@/components/ui/modern-card";
 import { StatsCard } from "@/components/ui/stats-card";
@@ -124,7 +123,7 @@ const DriverProfilePage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <div className="min-h-screen bg-background">{/* Removed pb-24 since no bottom navigation */}
       {/* Header with back button */}
       <header className="relative bg-gradient-primary text-white p-4">
         <div className="max-w-md mx-auto">
@@ -288,8 +287,6 @@ const DriverProfilePage = () => {
           </ModernCardContent>
         </ModernCard>
       </div>
-
-      <Navigation />
     </div>
   );
 };
