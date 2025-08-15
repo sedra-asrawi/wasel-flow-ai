@@ -14,18 +14,7 @@ const ConfirmationPage = () => {
   const [currentStatus, setCurrentStatus] = useState<OrderStatus>("pickup");
   const [chatOpen, setChatOpen] = useState(false);
 
-  // Auto-progress through statuses for demo - increased duration
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (currentStatus === "pickup") {
-        setCurrentStatus("delivery");
-      } else if (currentStatus === "delivery") {
-        setCurrentStatus("delivered");
-      }
-    }, 8000); // Changed from 3000 to 8000 (8 seconds)
-
-    return () => clearTimeout(timer);
-  }, [currentStatus]);
+  // Removed auto-progress - circles stay in their current state
 
   const mockOrder = {
     id: "ORD-2024-001",
