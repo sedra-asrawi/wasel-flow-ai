@@ -227,9 +227,6 @@ const ScanPage = () => {
                     <h3 className="text-xl font-bold text-destructive animate-fade-in">
                       ⚠️ Verification Failed
                     </h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      {verificationResult?.reason || "Invalid QR code. Please try again."}
-                    </p>
                   </div>
                 </div>
               </div>
