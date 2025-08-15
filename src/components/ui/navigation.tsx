@@ -78,7 +78,7 @@ export const Navigation = ({
         return cn(
           "rounded-xl transition-all duration-300",
           isActive 
-            ? getActiveColorClass() 
+            ? "text-[#82c0cc]" 
             : "text-muted-foreground"
         );
       default:
