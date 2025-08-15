@@ -41,14 +41,13 @@ serve(async (req) => {
 
     console.log('Driver found:', driverData.full_name);
 
-    // Use Gemini AI to analyze QR data and verify it matches the driver
-    const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
-    if (!geminiApiKey) {
-      throw new Error('GEMINI_API_KEY is not set');
+    // Use OpenAI instead of Gemini for better reliability
+    const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
+    if (!openaiApiKey) {
+      throw new Error('OPENAI_API_KEY is not set');
     }
 
-    const prompt = `
-You are a QR code verification AI for a delivery service. Analyze the following QR code data and determine if it's valid for the given driver and scan type.
+    const prompt = `You are a QR code verification AI for a delivery service. Analyze the following QR code data and determine if it's valid for the given driver and scan type.
 
 QR Code Data: "${qrData}"
 Driver ID: ${driverId}
@@ -71,30 +70,34 @@ Respond with a JSON object:
   "scanType": "${scanType}"
 }
 
-Be strict in validation - only return isValid: true if you're confident this QR code is legitimate for this driver and scan type.
-`;
+Be strict in validation - only return isValid: true if you're confident this QR code is legitimate for this driver and scan type.`;
 
-    const geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${geminiApiKey}`, {
+    const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
+        'Authorization': `Bearer ${openaiApiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        contents: [{
-          parts: [{ text: prompt }]
-        }]
+        model: 'gpt-4.1-2025-04-14',
+        messages: [
+          { role: 'system', content: 'You are a helpful AI assistant that analyzes QR codes for delivery verification. Always respond with valid JSON.' },
+          { role: 'user', content: prompt }
+        ],
+        max_tokens: 500,
+        temperature: 0.1
       }),
     });
 
-    if (!geminiResponse.ok) {
-      throw new Error(`Gemini API error: ${geminiResponse.status}`);
+    if (!openaiResponse.ok) {
+      throw new Error(`OpenAI API error: ${openaiResponse.status}`);
     }
 
-    const geminiData = await geminiResponse.json();
-    const aiResponseText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
+    const openaiData = await openaiResponse.json();
+    const aiResponseText = openaiData.choices?.[0]?.message?.content;
 
     if (!aiResponseText) {
-      throw new Error('No response from Gemini AI');
+      throw new Error('No response from OpenAI');
     }
 
     console.log('AI Response:', aiResponseText);
