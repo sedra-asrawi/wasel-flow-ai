@@ -17,6 +17,7 @@ serve(async (req) => {
     const { qrData, driverId, scanType } = await req.json();
 
     console.log('QR Verification Request:', { qrData, driverId, scanType });
+    console.log('Processing verification for driver ID:', driverId);
 
     if (!qrData || !driverId || !scanType) {
       throw new Error('Missing required parameters: qrData, driverId, scanType');
@@ -41,77 +42,34 @@ serve(async (req) => {
 
     console.log('Driver found:', driverData.full_name);
 
-    // Use OpenAI instead of Gemini for better reliability
-    const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
-    if (!openaiApiKey) {
-      throw new Error('OPENAI_API_KEY is not set');
-    }
+    // Simple validation without AI for testing
+    console.log('Performing simple validation test');
+    
+    // Parse QR data manually
+    const qrParts = qrData.split('|');
+    const driverIdMatch = qrParts.find(part => part.startsWith('DRIVER_ID:'));
+    const orderIdMatch = qrParts.find(part => part.startsWith('ORDER_ID:'));
+    
+    const extractedDriverId = driverIdMatch ? driverIdMatch.split(':')[1] : null;
+    const extractedOrderId = orderIdMatch ? orderIdMatch.split(':')[1] : null;
+    
+    console.log('Extracted from QR:', { extractedDriverId, extractedOrderId });
+    
+    // Simple validation
+    const isValid = extractedDriverId === driverId.toString();
+    const confidence = isValid ? 95 : 10;
+    const reason = isValid ? 
+      `QR code verified: Driver ID ${extractedDriverId} matches expected ${driverId}` :
+      `Driver ID mismatch: QR contains ${extractedDriverId}, expected ${driverId}`;
 
-    const prompt = `You are a QR code verification AI for a delivery service. Analyze the following QR code data and determine if it's valid for the given driver and scan type.
-
-QR Code Data: "${qrData}"
-Driver ID: ${driverId}
-Driver Name: ${driverData.full_name}
-Scan Type: ${scanType} (pickup or delivery)
-
-Your task:
-1. Parse the QR code data to extract relevant information (order ID, driver ID, etc.)
-2. Verify if the QR code contains the correct driver ID (${driverId})
-3. Check if the QR code format is appropriate for the scan type (${scanType})
-4. Determine if this is a valid QR code for delivery operations
-
-Respond with a JSON object:
-{
-  "isValid": boolean,
-  "confidence": number (0-100),
-  "extractedDriverId": string or null,
-  "extractedOrderId": string or null,
-  "reason": string (explanation of why it's valid or invalid),
-  "scanType": "${scanType}"
-}
-
-Be strict in validation - only return isValid: true if you're confident this QR code is legitimate for this driver and scan type.`;
-
-    const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${openaiApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-4.1-2025-04-14',
-        messages: [
-          { role: 'system', content: 'You are a helpful AI assistant that analyzes QR codes for delivery verification. Always respond with valid JSON.' },
-          { role: 'user', content: prompt }
-        ],
-        max_tokens: 500,
-        temperature: 0.1
-      }),
-    });
-
-    if (!openaiResponse.ok) {
-      throw new Error(`OpenAI API error: ${openaiResponse.status}`);
-    }
-
-    const openaiData = await openaiResponse.json();
-    const aiResponseText = openaiData.choices?.[0]?.message?.content;
-
-    if (!aiResponseText) {
-      throw new Error('No response from OpenAI');
-    }
-
-    console.log('AI Response:', aiResponseText);
-
-    // Parse AI response (handle potential markdown formatting)
-    let aiResult;
-    try {
-      const jsonMatch = aiResponseText.match(/\{[\s\S]*\}/);
-      const jsonString = jsonMatch ? jsonMatch[0] : aiResponseText;
-      aiResult = JSON.parse(jsonString);
-    } catch (parseError) {
-      console.error('Failed to parse AI response:', parseError);
-      throw new Error('Invalid AI response format');
-    }
+    const aiResult = {
+      isValid,
+      confidence,
+      extractedDriverId,
+      extractedOrderId,
+      reason,
+      scanType
+    };
 
     // Additional validation logic based on database
     let finalResult = {
