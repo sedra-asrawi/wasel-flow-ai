@@ -198,13 +198,13 @@ const ScanPage = () => {
                     <div className="absolute -inset-2 bg-wasel-green/20 rounded-full animate-ping"></div>
                   </div>
                   <div className="space-y-3">
-                    <h3 className="text-xl font-bold text-green-800 animate-fade-in">
+                    <h3 className="text-xl font-bold text-wasel-blue animate-fade-in">
                       ✅ AI Verification Successful!
                     </h3>
                     {verificationResult?.confidence && (
-                      <div className="inline-flex items-center gap-2 px-3 py-1 bg-green-100 rounded-full border border-green-200">
-                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                        <span className="text-xs font-medium text-green-700">
+                      <div className="inline-flex items-center gap-2 px-3 py-1 bg-wasel-green/10 rounded-full border border-wasel-green/30">
+                        <div className="w-2 h-2 bg-wasel-green rounded-full animate-pulse"></div>
+                        <span className="text-xs font-medium text-wasel-blue">
                           {verificationResult.confidence}% Confidence
                         </span>
                       </div>
