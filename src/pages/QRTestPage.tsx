@@ -16,7 +16,7 @@ const QRTestPage = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const generateQRCode = async () => {
+  const generateQRCode = async (orderType: "pickup" | "delivery") => {
     setIsGenerating(true);
     try {
       const response = await fetch(`https://exwfohcfjxmouilxfqmy.supabase.co/functions/v1/generate-test-qr`, {
@@ -25,7 +25,7 @@ const QRTestPage = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV4d2ZvaGNmanhtb3VpbHhmcW15Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUxOTQ5NjAsImV4cCI6MjA3MDc3MDk2MH0.wxUgqYdKtjOeurLOGZw3YqjCSPOEcP5FX4SnKp78CP0`,
         },
-        body: JSON.stringify({ driverId: parseInt(driverId), customerName, orderType: "both" })
+        body: JSON.stringify({ driverId: parseInt(driverId), customerName, orderType })
       });
 
       if (!response.ok) {
@@ -39,7 +39,7 @@ const QRTestPage = () => {
 
       toast({
         title: "QR Code Generated!",
-        description: `Test QR code ready for scanning (pickup & delivery)`,
+        description: `Test ${orderType} QR code ready for scanning`,
       });
     } catch (error) {
       console.error('QR generation error:', error);
@@ -101,7 +101,7 @@ const QRTestPage = () => {
           </ModernCardContent>
         </ModernCard>
 
-        {/* Generator Button */}
+        {/* Generator Buttons */}
         <ModernCard>
           <ModernCardHeader>
             <ModernCardTitle className="flex items-center gap-2">
@@ -110,15 +110,25 @@ const QRTestPage = () => {
             </ModernCardTitle>
           </ModernCardHeader>
           <ModernCardContent className="space-y-4">
-            <Button 
-              onClick={generateQRCode}
-              disabled={isGenerating || !customerName.trim() || !driverId.trim()}
-              className="w-full"
-            >
-              {isGenerating ? "Generating..." : "Generate Universal QR Code"}
-            </Button>
+            <div className="grid grid-cols-2 gap-3">
+              <Button 
+                onClick={() => generateQRCode("pickup")}
+                disabled={isGenerating || !customerName.trim() || !driverId.trim()}
+                className="w-full"
+              >
+                {isGenerating ? "Generating..." : "Pickup QR"}
+              </Button>
+              <Button 
+                onClick={() => generateQRCode("delivery")}
+                disabled={isGenerating || !customerName.trim() || !driverId.trim()}
+                variant="outline"
+                className="w-full"
+              >
+                {isGenerating ? "Generating..." : "Delivery QR"}
+              </Button>
+            </div>
             <p className="text-xs text-muted-foreground text-center">
-              This QR code will work for both pickup and delivery
+              Generate separate QR codes for pickup and delivery operations
             </p>
           </ModernCardContent>
         </ModernCard>
