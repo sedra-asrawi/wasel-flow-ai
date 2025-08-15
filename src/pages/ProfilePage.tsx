@@ -1,3 +1,7 @@
+// ===============================
+// 1) FRONTEND (React + Vite)
+// File: src/pages/ProfilePage.tsx
+// ===============================
 import { useState, useRef, useEffect } from "react";
 import { Navigation } from "@/components/ui/navigation";
 import { Button } from "@/components/ui/button";
@@ -19,7 +23,6 @@ import {
   Truck,
   ArrowLeft,
   Award,
-  Loader2,
 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -36,12 +39,17 @@ const ProfilePage = () => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [chatHistory]);
 
-  // Mock driver data
-  const displayName = 'Ahmed Hassan';
-  const driverId = '12345';
-  const trustScore = 95;
-  const completedDeliveries = 48;
-  const activeDeliveries = 2;
+  const driverProfile = {
+    name: "Mohammed Hassan",
+    email: "mohammed.hassan@example.com",
+    phone: "+965 9999 1234",
+    rating: 4.9,
+    totalRatings: 1247,
+    memberSince: "2023",
+    vehicleType: "Motorcycle",
+    licenseNumber: "KWT-2024-7891",
+    location: "Kuwait City, Kuwait",
+  };
 
   const handleSendMessage = async () => {
     if (!chatMessage.trim() || isSending) return;
@@ -114,7 +122,7 @@ const ProfilePage = () => {
                     className="object-cover"
                   />
                   <AvatarFallback className="bg-gradient-primary text-white text-2xl">
-                    {displayName.split(" ").map((n) => n[0]).join("")}
+                    {driverProfile.name.split(" ").map((n) => n[0]).join("")}
                   </AvatarFallback>
                 </Avatar>
                 <div className="absolute -bottom-2 -right-2 bg-green-500 rounded-full p-1">
@@ -122,9 +130,8 @@ const ProfilePage = () => {
                 </div>
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-foreground">{displayName}</h2>
-                <p className="text-sm text-muted-foreground">Driver ID: {driverId}</p>
-                <p className="text-sm text-muted-foreground">ahmed@jahez.com</p>
+                <h2 className="text-2xl font-bold text-foreground">{driverProfile.name}</h2>
+                <p className="text-sm text-muted-foreground">Driver ID: 123456</p>
               </div>
             </div>
           </ModernCardContent>
@@ -132,9 +139,9 @@ const ProfilePage = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-3 gap-3">
-          <StatsCard value={trustScore.toString()} label="Trust Score" variant="primary" />
-          <StatsCard value={completedDeliveries.toString()} label="Completed" variant="success" />
-          <StatsCard value={activeDeliveries.toString()} label="Active" variant="secondary" />
+          <StatsCard value="1200" label="Points" variant="primary" />
+          <StatsCard value="4.8" label="Rating" variant="success" />
+          <StatsCard value="95%" label="Completion Rate" variant="secondary" />
         </div>
 
         {/* Activity Section */}
@@ -237,10 +244,7 @@ const ProfilePage = () => {
               <MessageCircle className="h-5 w-5 mr-3" />
               Contact Support
             </Button>
-            <Button 
-              variant="outline" 
-              className="w-full justify-start h-14 rounded-2xl text-destructive hover:text-destructive border-destructive/20"
-            >
+            <Button variant="outline" className="w-full justify-start h-14 rounded-2xl text-destructive hover:text-destructive border-destructive/20">
               <User className="h-5 w-5 mr-3" />
               Sign Out
             </Button>

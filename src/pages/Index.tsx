@@ -39,17 +39,9 @@ const Index = () => {
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
       <header className="bg-gradient-primary text-white p-4">
-        <div className="max-w-md mx-auto flex justify-between items-center">
-          <div>
-            <h1 className="text-2xl font-bold">Wasel Driver</h1>
-            <p className="text-blue-100">New order available</p>
-          </div>
-          <Button 
-            variant="ghost" 
-            className="text-white hover:bg-white/20"
-          >
-            Menu
-          </Button>
+        <div className="max-w-md mx-auto">
+          <h1 className="text-2xl font-bold">Wasel Driver</h1>
+          <p className="text-blue-100">New order available</p>
         </div>
       </header>
 

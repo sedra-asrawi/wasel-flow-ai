@@ -8,7 +8,7 @@ const ModernCard = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-3xl bg-gradient-card border border-border/20 text-card-foreground shadow-soft backdrop-blur-sm transition-shadow duration-500 ease-out",
+      "rounded-3xl bg-gradient-card border border-border/20 text-card-foreground shadow-soft hover:shadow-medium transition-all duration-300 hover:scale-[1.02] backdrop-blur-sm",
       className
     )}
     {...props}
