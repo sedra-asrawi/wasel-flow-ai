@@ -25,17 +25,17 @@ const AuthPage = () => {
 
   // Redirect if user is already logged in
   useEffect(() => {
-    if (!loading && user && userRole) {
-      console.log('User already logged in, redirecting based on role:', userRole);
-      if (userRole === 'admin') {
-        navigate('/admin');
-      } else if (userRole === 'wasel') {
+    if (!loading && user) {
+      console.log('User already logged in, redirecting based on email:', user.email);
+      if (user.email === 'ahmed@jahez.com') {
+        navigate('/profile');
+      } else if (user.email === 'nour@wasel.com') {
         navigate('/dashboard');
       } else {
-        navigate('/profile'); // Drivers go to profile page
+        navigate('/profile'); // Default to profile for other users
       }
     }
-  }, [user, userRole, loading, navigate]);
+  }, [user, loading, navigate]);
 
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -58,11 +58,20 @@ const AuthPage = () => {
       }
 
       if (data.user) {
+        console.log('Login successful for:', data.user.email);
         toast({
           title: "Welcome back!",
           description: "You have been logged in successfully.",
         });
-        // Redirection will be handled by useAuth hook
+        
+        // Redirect based on email
+        if (data.user.email === 'ahmed@jahez.com') {
+          navigate('/profile');
+        } else if (data.user.email === 'nour@wasel.com') {
+          navigate('/dashboard');
+        } else {
+          navigate('/profile'); // Default to profile
+        }
       }
     } catch (error) {
       toast({
@@ -112,7 +121,14 @@ const AuthPage = () => {
         });
 
         if (data.user.email_confirmed_at) {
-          // Redirection will be handled by useAuth hook
+          // Redirect based on email
+          if (data.user.email === 'ahmed@jahez.com') {
+            navigate('/profile');
+          } else if (data.user.email === 'nour@wasel.com') {
+            navigate('/dashboard');
+          } else {
+            navigate('/profile'); // Default to profile
+          }
         } else {
           setIsLogin(true);
         }

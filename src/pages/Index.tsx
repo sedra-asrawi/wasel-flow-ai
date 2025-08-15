@@ -22,24 +22,19 @@ const Index = () => {
         return;
       }
       
-      // Redirect based on role
-      if (userRole === "admin") {
-        navigate("/admin");
+      // Redirect based on email
+      if (user.email === 'nour@wasel.com') {
+        // nour@wasel.com stays on this page (main dashboard)
         return;
       }
       
-      if (userRole === "wasel") {
-        navigate("/dashboard");
-        return;
-      }
-      
-      // Driver role goes to profile
-      if (userRole === "driver") {
+      // ahmed@jahez.com and others go to profile
+      if (user.email === 'ahmed@jahez.com') {
         navigate("/profile");
         return;
       }
     }
-  }, [user, userRole, loading, navigate]);
+  }, [user, loading, navigate]);
 
   if (loading) {
     return (
@@ -49,7 +44,7 @@ const Index = () => {
     );
   }
 
-  if (!user || userRole !== "driver") {
+  if (!user || user.email !== 'nour@wasel.com') {
     return null; // Will redirect via useEffect
   }
 
