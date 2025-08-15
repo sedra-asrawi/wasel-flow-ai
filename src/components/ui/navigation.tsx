@@ -26,11 +26,11 @@ export const Navigation = () => {
             <Link
               key={item.path}
               to={item.path}
-              className="relative flex-1 flex flex-col items-center justify-center h-16 mt-2 rounded-2xl transition-colors duration-300 ease-out z-10"
+              className="relative flex-1 flex flex-col items-center justify-center h-16 mt-2 rounded-xl transition-colors duration-300 ease-out z-10"
             >
               {/* Background square for active state */}
               {isActive && (
-                <div className="absolute inset-0 bg-gradient-primary rounded-2xl shadow-medium" />
+                <div className="absolute inset-0 bg-gradient-primary rounded-xl shadow-medium" />
               )}
               
               <Icon className={cn(
