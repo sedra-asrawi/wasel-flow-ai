@@ -20,6 +20,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const fetchUserRole = async (userId: string) => {
     try {
+      console.log('fetchUserRole: Starting role fetch for user:', userId);
       // Query user_profiles table directly using raw SQL to avoid type issues
       const { data, error } = await (supabase as any)
         .from('user_profiles')
@@ -27,15 +28,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         .eq('user_id', userId)
         .single();
       
+      console.log('fetchUserRole: Query result:', { data, error });
+      
       if (error) {
-        console.error('Error fetching user role:', error);
+        console.error('fetchUserRole: Error fetching user role:', error);
+        console.log('fetchUserRole: Setting default role to driver');
         setUserRole('driver'); // Default to driver
       } else {
-        console.log('User role found:', data?.role);
+        console.log('fetchUserRole: User role found:', data?.role);
         setUserRole(data?.role || 'driver');
       }
     } catch (error) {
-      console.error('Error in fetchUserRole:', error);
+      console.error('fetchUserRole: Exception in fetchUserRole:', error);
       setUserRole('driver'); // Default to driver
     }
   };
@@ -51,21 +55,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         
         if (session?.user) {
           await fetchUserRole(session.user.id);
+          setLoading(false); // Only set loading false after role is fetched
         } else {
           setUserRole(null);
+          setLoading(false);
         }
-        
-        setLoading(false);
       }
     );
 
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      console.log('useAuth: Initial session check:', session?.user?.id);
       setSession(session);
       setUser(session?.user ?? null);
       
       if (session?.user) {
-        fetchUserRole(session.user.id);
+        await fetchUserRole(session.user.id);
+        setLoading(false); // Only set loading false after role is fetched
       } else {
         setLoading(false);
       }
