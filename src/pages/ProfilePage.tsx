@@ -140,7 +140,7 @@ const ProfilePage = () => {
         {/* Stats Cards */}
         <div className="grid grid-cols-3 gap-3">
           <StatsCard value="1200" label="Points" variant="primary" />
-          <StatsCard value="4.8" label="Rating" variant="success" />
+          <StatsCard value="4.8" label="Rating" variant="success" showStar />
           <StatsCard value="95%" label="Completion Rate" variant="secondary" />
         </div>
 
