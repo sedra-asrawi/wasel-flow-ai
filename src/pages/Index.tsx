@@ -33,7 +33,11 @@ const Index = () => {
         return;
       }
       
-      // Driver role stays on this page
+      // Driver role goes to profile
+      if (userRole === "driver") {
+        navigate("/profile");
+        return;
+      }
     }
   }, [user, userRole, loading, navigate]);
 

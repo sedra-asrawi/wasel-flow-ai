@@ -32,7 +32,7 @@ const AuthPage = () => {
       } else if (userRole === 'wasel') {
         navigate('/dashboard');
       } else {
-        navigate('/');
+        navigate('/profile'); // Drivers go to profile page
       }
     }
   }, [user, userRole, loading, navigate]);
