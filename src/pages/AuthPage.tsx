@@ -32,22 +32,31 @@ const AuthPage = () => {
 
   const handleSuccessfulAuth = async (userId: string) => {
     try {
+      console.log('Checking role for user:', userId);
+      
       // Query user_profiles table directly to get role
       const { data, error } = await (supabase as any)
         .from('user_profiles')
         .select('role')
         .eq('user_id', userId)
-        .single();
+        .maybeSingle(); // Use maybeSingle to avoid errors when no data found
       
-      if (error) {
-        console.error('Error fetching user role:', error);
-        // Default redirect to dashboard if role fetch fails
-        navigate('/dashboard');
-        return;
-      }
+      console.log('Profile query result:', { data, error });
 
-      const userRole = data?.role;
-      console.log('User role on login:', userRole);
+      let userRole = 'driver'; // Default role
+      
+      if (!error && data) {
+        userRole = data.role;
+        console.log('Found user role:', userRole);
+      } else {
+        console.log('No profile found, using default role: driver');
+        // If no profile exists, treat as driver by default
+        toast({
+          title: "Account Setup",
+          description: "Using default permissions. Contact admin to set up your role.",
+          variant: "default",
+        });
+      }
 
       // Redirect based on role
       if (userRole === 'admin') {
@@ -75,10 +84,10 @@ const AuthPage = () => {
       console.error('Error during auth redirect:', error);
       toast({
         title: "Authentication error",
-        description: "Unable to verify your account. Please try again.",
+        description: "Unable to verify your account. Redirecting to main page.",
         variant: "destructive",
       });
-      navigate('/dashboard');
+      navigate('/'); // Go to main page as fallback
     }
   };
 
