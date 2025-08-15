@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 import QrScanner from 'qr-scanner';
 import { Button } from '@/components/ui/button';
 import { Camera, QrCode, RefreshCw } from 'lucide-react';
@@ -14,6 +14,33 @@ export const QRScanner = ({ onResult, onError, isActive }: QRScannerProps) => {
   const qrScannerRef = useRef<QrScanner | null>(null);
   const [hasCamera, setHasCamera] = useState(false);
   const [cameraError, setCameraError] = useState<string | null>(null);
+  const lastScanRef = useRef<string>('');
+  const scanTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Debounced scan result handler
+  const handleScanResult = useCallback((data: string) => {
+    // Prevent duplicate scans of the same data within 2 seconds
+    if (lastScanRef.current === data) {
+      return;
+    }
+
+    // Clear any existing timeout
+    if (scanTimeoutRef.current) {
+      clearTimeout(scanTimeoutRef.current);
+    }
+
+    // Add a small delay to ensure QR code is fully captured
+    scanTimeoutRef.current = setTimeout(() => {
+      lastScanRef.current = data;
+      console.log('QR Code detected:', data);
+      onResult(data);
+      
+      // Reset after processing
+      setTimeout(() => {
+        lastScanRef.current = '';
+      }, 3000);
+    }, 500); // 500ms delay to ensure stable reading
+  }, [onResult]);
 
   useEffect(() => {
     const initializeScanner = async () => {
@@ -34,8 +61,7 @@ export const QRScanner = ({ onResult, onError, isActive }: QRScannerProps) => {
         qrScannerRef.current = new QrScanner(
           videoRef.current,
           (result) => {
-            console.log('QR Code detected:', result.data);
-            onResult(result.data);
+            handleScanResult(result.data);
           },
           {
             onDecodeError: (error) => {
@@ -64,6 +90,9 @@ export const QRScanner = ({ onResult, onError, isActive }: QRScannerProps) => {
 
     // Cleanup function
     return () => {
+      if (scanTimeoutRef.current) {
+        clearTimeout(scanTimeoutRef.current);
+      }
       if (qrScannerRef.current) {
         qrScannerRef.current.stop();
         qrScannerRef.current.destroy();
