@@ -163,7 +163,6 @@ const Index = () => {
                   <MapPin className="h-4 w-4" />
                 </div>
                 <span className="tracking-wide">Start Pickup</span>
-                <div className="w-2 h-2 rounded-full bg-white/40 group-hover:scale-150 transition-transform duration-300" />
               </div>
               
               {/* Glow effect */}
