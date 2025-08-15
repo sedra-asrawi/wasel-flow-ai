@@ -274,21 +274,6 @@ export const ChatInterface = ({
           </Button>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Languages className="h-4 w-4" />
-          <Select value={preferredLanguage} onValueChange={setPreferredLanguage}>
-            <SelectTrigger className="w-32">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {languages.map((lang) => (
-                <SelectItem key={lang.code} value={lang.code}>
-                  {lang.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
       </ModernCardHeader>
 
       <ModernCardContent className="flex-1 flex flex-col p-0 min-h-0">
@@ -358,8 +343,7 @@ export const ChatInterface = ({
             <Button
               onClick={sendMessage}
               disabled={!newMessage.trim() || isLoading}
-              size="icon"
-              className="shrink-0"
+              className="shrink-0 h-10"
             >
               <Send className="h-4 w-4" />
             </Button>

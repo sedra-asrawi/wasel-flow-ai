@@ -203,7 +203,7 @@ const ConfirmationPage = () => {
           {currentStatus === "pickup" && (
             <Button 
               onClick={handleNextStep}
-              className="w-full h-12 bg-gradient-warning text-white font-semibold"
+              className="w-full h-12"
             >
               Start Delivery
             </Button>

@@ -1,0 +1,1 @@
+DELETE FROM chat_messages WHERE chat_id = '093f8345-9498-4438-9ec0-e2ba09f029b6';
