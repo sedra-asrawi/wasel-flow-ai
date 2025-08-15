@@ -82,6 +82,56 @@ const DriverProfilePage = () => {
     fetchDriverData();
   }, [driverId]);
 
+  const generatePerformanceReport = () => {
+    if (!driverData) return;
+
+    const reportData = [
+      ['Driver Performance Report'],
+      ['Generated on', new Date().toLocaleDateString()],
+      [''],
+      ['DRIVER INFORMATION'],
+      ['Name', driverData.name],
+      ['Driver ID', driverData.driver_id.toString()],
+      ['Location', driverData.location],
+      ['Vehicle Type', driverData.vehicle],
+      ['Member Since', new Date(driverData.join_date).getFullYear().toString()],
+      ['Current Status', driverData.status],
+      [''],
+      ['PERFORMANCE METRICS'],
+      ['Overall Rating', driverData.rating.toString()],
+      ['Current Rank', `#${driverData.rank}`],
+      ['Total Deliveries', driverData.total_deliveries.toString()],
+      ['Today\'s Deliveries', driverData.today_deliveries.toString()],
+      ['On-time Delivery Rate', `${driverData.on_time_rate}%`],
+      [''],
+      ['EARNINGS'],
+      ['Monthly Earnings', `KWD ${driverData.earnings.toLocaleString()}`],
+      ['Average per Delivery', `KWD ${(driverData.earnings / Math.max(driverData.total_deliveries, 1)).toFixed(2)}`],
+      [''],
+      ['PERFORMANCE ANALYSIS'],
+      ['Performance Grade', driverData.rating >= 4.5 ? 'Excellent' : driverData.rating >= 4.0 ? 'Good' : driverData.rating >= 3.5 ? 'Average' : 'Needs Improvement'],
+      ['Productivity Level', driverData.total_deliveries >= 500 ? 'High' : driverData.total_deliveries >= 200 ? 'Medium' : 'Low'],
+      ['Reliability Score', driverData.on_time_rate >= 95 ? 'Excellent' : driverData.on_time_rate >= 90 ? 'Good' : driverData.on_time_rate >= 85 ? 'Average' : 'Needs Improvement']
+    ];
+
+    const csvContent = reportData.map(row => 
+      Array.isArray(row) ? row.map(cell => `"${cell}"`).join(',') : `"${row}"`
+    ).join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `${driverData.name.replace(/\s+/g, '_')}_Performance_Report_${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "active": return "bg-gradient-success text-white";
@@ -280,7 +330,7 @@ const DriverProfilePage = () => {
               <Package className="h-5 w-5 mr-3" />
               View Delivery History
             </Button>
-            <Button variant="outline" className="w-full justify-start h-14 rounded-2xl">
+            <Button variant="outline" className="w-full justify-start h-14 rounded-2xl" onClick={generatePerformanceReport}>
               <TrendingUp className="h-5 w-5 mr-3" />
               Performance Reports
             </Button>
