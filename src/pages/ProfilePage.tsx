@@ -118,9 +118,8 @@ const ProfilePage = () => {
               <div className="relative">
                 <Avatar className="h-24 w-24 ring-4 ring-primary/20 overflow-hidden">
                   <AvatarImage 
-                    src="/lovable-uploads/a2f8743f-cb0a-4c08-9af7-c52f2f351a2d.png"
-                    className="object-cover object-top scale-150"
-                    style={{ objectPosition: 'center 20%' }}
+                    src="/lovable-uploads/ebbd92cb-f1c4-41e5-8075-503b91b8b3e5.png"
+                    className="object-cover"
                   />
                   <AvatarFallback className="bg-gradient-primary text-white text-2xl">
                     {driverProfile.name.split(" ").map((n) => n[0]).join("")}

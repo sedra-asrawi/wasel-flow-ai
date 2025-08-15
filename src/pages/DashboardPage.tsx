@@ -63,10 +63,9 @@ const DashboardPage = () => {
         <div className="max-w-md mx-auto text-center">
           <div className="w-20 h-20 rounded-full mx-auto mb-4 overflow-hidden border-2 border-white/30">
             <img 
-              src="/lovable-uploads/a2f8743f-cb0a-4c08-9af7-c52f2f351a2d.png" 
+              src="/lovable-uploads/ebbd92cb-f1c4-41e5-8075-503b91b8b3e5.png" 
               alt="Driver Avatar"
-              className="w-full h-full object-cover object-top scale-150"
-              style={{ objectPosition: 'center 20%' }}
+              className="w-full h-full object-cover"
             />
           </div>
           <h1 className="text-xl font-bold">{driverStats.name}</h1>
