@@ -72,7 +72,7 @@ export const Navigation = ({
       case "minimal":
         return cn(
           "transition-colors duration-300",
-          isActive ? getActiveColorClass() : getInactiveColorClass()
+          isActive ? "text-[#82c0cc]" : getInactiveColorClass()
         );
       case "filled":
         return cn(
@@ -84,7 +84,7 @@ export const Navigation = ({
       default:
         return cn(
           "rounded-xl transition-all duration-300 ease-out",
-          isActive ? getActiveColorClass() : getInactiveColorClass()
+          isActive ? "text-[#82c0cc]" : getInactiveColorClass()
         );
     }
   };
