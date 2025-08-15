@@ -117,8 +117,12 @@ const ProfilePage = () => {
           <ModernCardContent className="pt-8 pb-6">
             <div className="flex flex-col items-center text-center space-y-4">
               <div className="relative">
-                <Avatar className="h-24 w-24 ring-4 ring-primary/20">
-                  <AvatarImage src="/lovable-uploads/a2f8743f-cb0a-4c08-9af7-c52f2f351a2d.png" />
+                <Avatar className="h-24 w-24 ring-4 ring-primary/20 overflow-hidden">
+                  <AvatarImage 
+                    src="/lovable-uploads/a2f8743f-cb0a-4c08-9af7-c52f2f351a2d.png"
+                    className="object-cover object-top scale-150"
+                    style={{ objectPosition: 'center 20%' }}
+                  />
                   <AvatarFallback className="bg-gradient-primary text-white text-2xl">
                     {driverProfile.name.split(" ").map((n) => n[0]).join("")}
                   </AvatarFallback>

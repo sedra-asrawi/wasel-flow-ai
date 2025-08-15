@@ -65,7 +65,8 @@ const DashboardPage = () => {
             <img 
               src="/lovable-uploads/a2f8743f-cb0a-4c08-9af7-c52f2f351a2d.png" 
               alt="Driver Avatar"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover object-top scale-150"
+              style={{ objectPosition: 'center 20%' }}
             />
           </div>
           <h1 className="text-xl font-bold">{driverStats.name}</h1>
