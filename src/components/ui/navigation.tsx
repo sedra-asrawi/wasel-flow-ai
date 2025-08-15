@@ -30,7 +30,7 @@ export const Navigation = () => {
             >
               <Icon className={cn(
                 "h-6 w-6 mb-1 transition-all duration-300 relative z-10",
-                isActive ? "text-transparent bg-gradient-primary bg-clip-text" : "text-muted-foreground"
+                isActive ? "text-primary" : "text-muted-foreground"
               )} />
               
               <span className={cn(
