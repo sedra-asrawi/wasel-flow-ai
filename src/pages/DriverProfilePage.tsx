@@ -200,9 +200,11 @@ const DriverProfilePage = () => {
                     {driverData.name.split(" ").map((n) => n[0]).join("")}
                   </AvatarFallback>
                 </Avatar>
-                <div className="absolute -top-2 -right-2 flex items-center space-x-1">
-                  <span className="text-2xl font-bold text-muted-foreground">#{driverData.rank}</span>
-                  {getRankBadge(driverData.rank)}
+                <div className="absolute -top-1 -right-1 bg-background rounded-full p-1 shadow-md border-2 border-primary/20">
+                  <div className="flex items-center space-x-1 px-2 py-1">
+                    <span className="text-sm font-bold text-foreground">#{driverData.rank}</span>
+                    {getRankBadge(driverData.rank)}
+                  </div>
                 </div>
               </div>
               <div>
