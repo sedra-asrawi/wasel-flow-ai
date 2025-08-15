@@ -8,73 +8,66 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 202 25% 92%;
-    --foreground: 229 12% 17%;
+    --background: 30 25% 98%;
+    --foreground: 225 11% 38%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 229 12% 17%;
+    --card: 30 25% 98%;
+    --card-foreground: 225 11% 38%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 229 12% 17%;
+    --popover: 30 25% 98%;
+    --popover-foreground: 225 11% 38%;
 
-    --primary: 359 83% 65%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 165 35% 82%;
+    --primary-foreground: 225 11% 38%;
 
-    --secondary: 181 77% 25%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 177 16% 62%;
+    --secondary-foreground: 225 11% 38%;
 
-    --muted: 202 25% 88%;
-    --muted-foreground: 229 12% 45%;
+    --muted: 165 35% 88%;
+    --muted-foreground: 225 11% 50%;
 
-    --accent: 359 83% 65%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 177 16% 62%;
+    --accent-foreground: 30 25% 98%;
 
     --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive-foreground: 30 25% 98%;
 
-    --border: 202 25% 85%;
-    --input: 202 25% 85%;
-    --ring: 359 83% 65%;
+    --border: 165 35% 85%;
+    --input: 165 35% 85%;
+    --ring: 165 35% 82%;
     
     /* Brand colors using new palette */
-    --wasel-blue: 181 77% 35%;
-    --wasel-green: 181 77% 25%;
-    --wasel-orange: 359 83% 65%;
-    --wasel-purple: 181 77% 30%;
+    --wasel-blue: 177 16% 62%;
+    --wasel-green: 165 35% 82%;
+    --wasel-orange: 177 16% 55%;
+    --wasel-purple: 165 35% 75%;
     
     /* Status colors */
     --status-pending: 45 93% 55%;
-    --status-active: 181 77% 25%;
-    --status-completed: 359 83% 65%;
+    --status-active: 165 35% 82%;
+    --status-completed: 177 16% 62%;
     
     /* Modern gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(359 83% 65%) 0%, hsl(181 77% 25%) 100%);
-    --gradient-success: linear-gradient(135deg, hsl(181 77% 25%) 0%, hsl(181 77% 35%) 100%);
-    --gradient-warning: linear-gradient(135deg, hsl(359 83% 65%) 0%, hsl(45 93% 55%) 100%);
-    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(202 25% 96%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(165 35% 82%) 0%, hsl(177 16% 62%) 100%);
+    --gradient-success: linear-gradient(135deg, hsl(165 35% 82%) 0%, hsl(177 16% 65%) 100%);
+    --gradient-warning: linear-gradient(135deg, hsl(177 16% 55%) 0%, hsl(45 93% 55%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(30 25% 98%) 0%, hsl(165 35% 96%) 100%);
     
     /* Shadows and effects */
-    --shadow-soft: 0 4px 20px -4px hsl(229 12% 17% / 0.1);
-    --shadow-medium: 0 8px 30px -8px hsl(229 12% 17% / 0.15);
-    --shadow-strong: 0 12px 40px -12px hsl(229 12% 17% / 0.2);
+    --shadow-soft: 0 4px 20px -4px hsl(225 11% 38% / 0.1);
+    --shadow-medium: 0 8px 30px -8px hsl(225 11% 38% / 0.15);
+    --shadow-strong: 0 12px 40px -12px hsl(225 11% 38% / 0.2);
 
     --radius: 0.5rem;
 
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 30 25% 98%;
+    --sidebar-foreground: 225 11% 38%;
+    --sidebar-primary: 165 35% 82%;
+    --sidebar-primary-foreground: 225 11% 38%;
+    --sidebar-accent: 165 35% 90%;
+    --sidebar-accent-foreground: 225 11% 38%;
+    --sidebar-border: 165 35% 85%;
+    --sidebar-ring: 165 35% 82%;
   }
 
   .dark {
