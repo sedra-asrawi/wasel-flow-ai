@@ -15,7 +15,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Area
 
 const DashboardPage = () => {
   const driverStats = {
-    name: "Omar Hassan",
+    name: "Mohammed Hassan",
     driverId: "123456",
     rating: 4.8,
     totalDeliveries: 1200,
