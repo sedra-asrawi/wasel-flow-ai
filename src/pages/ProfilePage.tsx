@@ -6,8 +6,6 @@ import { StatsCard } from "@/components/ui/stats-card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { useAuth } from "@/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
 import {
   User,
   Star,
@@ -27,11 +25,6 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 
 const ProfilePage = () => {
-  const { user, userRole, loading, signOut } = useAuth();
-  const navigate = useNavigate();
-  const [driverData, setDriverData] = useState<any>(null);
-  const [dashboardData, setDashboardData] = useState<any>(null);
-  const [loadingData, setLoadingData] = useState(true);
   const [chatMessage, setChatMessage] = useState("");
   const [chatHistory, setChatHistory] = useState<
     { type: "user" | "bot" | "system"; message: string }[]
@@ -39,65 +32,16 @@ const ProfilePage = () => {
   const [isSending, setIsSending] = useState(false);
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
-  // Auth check and redirect
-  useEffect(() => {
-    if (!loading && !user) {
-      navigate("/auth");
-    }
-  }, [user, loading, navigate]);
-
-  // Fetch driver data when user is available
-  useEffect(() => {
-    const fetchDriverData = async () => {
-      if (!user) return;
-      
-      try {
-        console.log('Fetching data for user:', user.id);
-        
-        // Fetch driver info and dashboard data
-        const [driverResponse, dashboardResponse] = await Promise.all([
-          supabase
-            .from('drivers')
-            .select('*')
-            .eq('auth_user_id', user.id)
-            .maybeSingle(),
-          supabase
-            .from('v_driver_self_dashboard')
-            .select('*')
-            .eq('driver_id', (await supabase
-              .from('drivers')
-              .select('driver_id')
-              .eq('auth_user_id', user.id)
-              .maybeSingle()
-            ).data?.driver_id)
-            .maybeSingle()
-        ]);
-
-        console.log('Driver response:', driverResponse);
-        console.log('Dashboard response:', dashboardResponse);
-
-        if (driverResponse.data) {
-          setDriverData(driverResponse.data);
-        }
-        
-        if (dashboardResponse.data) {
-          setDashboardData(dashboardResponse.data);
-        }
-      } catch (error) {
-        console.error('Error fetching driver data:', error);
-      } finally {
-        setLoadingData(false);
-      }
-    };
-
-    if (user) {
-      fetchDriverData();
-    }
-  }, [user]);
-
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [chatHistory]);
+
+  // Mock driver data
+  const displayName = 'Ahmed Hassan';
+  const driverId = '12345';
+  const trustScore = 95;
+  const completedDeliveries = 48;
+  const activeDeliveries = 2;
 
   const handleSendMessage = async () => {
     if (!chatMessage.trim() || isSending) return;
@@ -149,24 +93,6 @@ const ProfilePage = () => {
     }
   };
 
-  if (loading || loadingData) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
-
-  if (!user) {
-    return null; // Will redirect via useEffect
-  }
-
-  const displayName = driverData?.full_name || user?.email?.split('@')[0] || 'Driver';
-  const driverId = driverData?.driver_id || 'N/A';
-  const trustScore = dashboardData?.trust_score || 100;
-  const completedDeliveries = dashboardData?.completed_deliveries || 0;
-  const activeDeliveries = dashboardData?.active_deliveries || 0;
-
   return (
     <div className="min-h-screen bg-background pb-24">
       {/* Header with back button */}
@@ -198,7 +124,7 @@ const ProfilePage = () => {
               <div>
                 <h2 className="text-2xl font-bold text-foreground">{displayName}</h2>
                 <p className="text-sm text-muted-foreground">Driver ID: {driverId}</p>
-                <p className="text-sm text-muted-foreground">{user.email}</p>
+                <p className="text-sm text-muted-foreground">ahmed@jahez.com</p>
               </div>
             </div>
           </ModernCardContent>
@@ -314,7 +240,6 @@ const ProfilePage = () => {
             <Button 
               variant="outline" 
               className="w-full justify-start h-14 rounded-2xl text-destructive hover:text-destructive border-destructive/20"
-              onClick={signOut}
             >
               <User className="h-5 w-5 mr-3" />
               Sign Out
