@@ -1,16 +1,53 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Navigation } from "@/components/ui/navigation";
 import { Button } from "@/components/ui/button";
 import { ModernCard, ModernCardContent, ModernCardHeader, ModernCardTitle } from "@/components/ui/modern-card";
 import { Badge } from "@/components/ui/badge";
 import { ChatInterface } from "@/components/ChatInterface";
+import { useAuth } from "@/hooks/useAuth";
+import { Loader2 } from "lucide-react";
 import { MapPin, Clock, DollarSign, Phone, MessageCircle } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
+  const { user, userRole, loading, signOut } = useAuth();
   const [orderAccepted, setOrderAccepted] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
+
+  useEffect(() => {
+    if (!loading) {
+      if (!user) {
+        navigate("/auth");
+        return;
+      }
+      
+      // Redirect based on role
+      if (userRole === "admin") {
+        navigate("/admin");
+        return;
+      }
+      
+      if (userRole === "wasel") {
+        navigate("/dashboard");
+        return;
+      }
+      
+      // Driver role stays on this page
+    }
+  }, [user, userRole, loading, navigate]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  if (!user || userRole !== "driver") {
+    return null; // Will redirect via useEffect
+  }
 
   const mockOrder = {
     id: "ORD-2024-001",
@@ -46,10 +83,10 @@ const Index = () => {
           </div>
           <Button 
             variant="ghost" 
-            onClick={() => navigate("/auth")}
+            onClick={signOut}
             className="text-white hover:bg-white/20"
           >
-            Login
+            Logout
           </Button>
         </div>
       </header>
