@@ -106,7 +106,6 @@ const ProfilePage = () => {
       {/* Header with back button */}
       <header className="relative bg-background/95 backdrop-blur-lg border-b border-border/20 p-4">
         <div className="max-w-md mx-auto flex items-center justify-center">
-          <ArrowLeft className="absolute left-0 h-6 w-6 text-muted-foreground" />
           <h1 className="text-xl font-bold text-foreground">Driver Profile</h1>
         </div>
       </header>
