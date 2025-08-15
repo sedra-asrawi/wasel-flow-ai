@@ -30,7 +30,7 @@ export const Navigation = () => {
             >
               <Icon className={cn(
                 "h-6 w-6 mb-1 transition-all duration-300 relative z-10",
-                isActive ? "text-primary drop-shadow-[0_0_8px_hsl(var(--secondary))]" : "text-muted-foreground"
+                isActive ? "text-secondary" : "text-muted-foreground"
               )} />
               
               <span className={cn(
