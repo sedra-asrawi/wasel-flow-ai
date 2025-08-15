@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ModernCard, ModernCardContent, ModernCardHeader, ModernCardTitle } from "@/components/ui/modern-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,109 +15,64 @@ import {
   MapPin,
   DollarSign
 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const AdminDashboard = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [driversData, setDriversData] = useState<any[]>([]);
 
-  // Mock data for all drivers
-  const driversData = [
-    {
-      id: 1,
-      name: "Mohammed Hassan",
-      rating: 4.9,
-      totalDeliveries: 847,
-      todayDeliveries: 12,
-      earnings: 2750,
-      status: "active",
-      joinDate: "2023-01-15",
-      location: "Hawalli",
-      vehicle: "Motorcycle",
-      onTimeRate: 96,
-      rank: 1
-    },
-    {
-      id: 2,
-      name: "Ahmed Al-Rashid",
-      rating: 4.8,
-      totalDeliveries: 756,
-      todayDeliveries: 8,
-      earnings: 2420,
-      status: "active",
-      joinDate: "2023-02-20",
-      location: "Kuwait City",
-      vehicle: "Car",
-      onTimeRate: 94,
-      rank: 2
-    },
-    {
-      id: 3,
-      name: "Omar Khalil",
-      rating: 4.7,
-      totalDeliveries: 623,
-      todayDeliveries: 15,
-      earnings: 2020,
-      status: "active",
-      joinDate: "2023-03-10",
-      location: "Salmiya",
-      vehicle: "Motorcycle",
-      onTimeRate: 92,
-      rank: 3
-    },
-    {
-      id: 4,
-      name: "Youssef Ibrahim",
-      rating: 4.6,
-      totalDeliveries: 589,
-      todayDeliveries: 6,
-      earnings: 1815,
-      status: "offline",
-      joinDate: "2023-04-05",
-      location: "Jabriya",
-      vehicle: "Bicycle",
-      onTimeRate: 89,
-      rank: 4
-    },
-    {
-      id: 5,
-      name: "Hassan Ali",
-      rating: 4.5,
-      totalDeliveries: 534,
-      todayDeliveries: 10,
-      earnings: 1615,
-      status: "active",
-      joinDate: "2023-05-12",
-      location: "Farwaniya",
-      vehicle: "Motorcycle",
-      onTimeRate: 87,
-      rank: 5
-    },
-    {
-      id: 6,
-      name: "Khalid Mahmoud",
-      rating: 4.4,
-      totalDeliveries: 467,
-      todayDeliveries: 4,
-      earnings: 1440,
-      status: "break",
-      joinDate: "2023-06-18",
-      location: "Ahmadi",
-      vehicle: "Car",
-      onTimeRate: 85,
-      rank: 6
-    }
-  ];
+  // Fetch drivers data from database
+  useEffect(() => {
+    const fetchDrivers = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('v_admin_dashboard_full')
+          .select('*')
+          .order('rank', { ascending: true });
+        
+        if (error) {
+          console.error('Error fetching drivers:', error);
+          return;
+        }
+        
+        // Transform data to match expected format
+        const transformedData = data?.map((driver: any) => ({
+          id: driver.driver_id,
+          name: driver.name,
+          rating: parseFloat(driver.rating || 0),
+          totalDeliveries: driver.total_deliveries || 0,
+          todayDeliveries: driver.today_deliveries || 0,
+          earnings: driver.earnings || 0,
+          status: driver.status,
+          joinDate: driver.join_date,
+          location: driver.location,
+          vehicle: driver.vehicle,
+          onTimeRate: driver.on_time_rate || 0,
+          rank: driver.rank || 1
+        })) || [];
+        
+        setDriversData(transformedData);
+      } catch (error) {
+        console.error('Error fetching drivers:', error);
+      }
+    };
+
+    fetchDrivers();
+  }, []);
 
   const filteredDrivers = driversData.filter(driver =>
-    driver.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    driver.location.toLowerCase().includes(searchTerm.toLowerCase())
+    driver.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    driver.location?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const totalStats = {
     totalDrivers: driversData.length,
     activeDrivers: driversData.filter(d => d.status === "active").length,
-    totalDeliveries: driversData.reduce((sum, d) => sum + d.totalDeliveries, 0),
-    totalEarnings: driversData.reduce((sum, d) => sum + d.earnings, 0),
-    avgRating: (driversData.reduce((sum, d) => sum + d.rating, 0) / driversData.length).toFixed(1)
+    totalDeliveries: driversData.reduce((sum, d) => sum + (d.totalDeliveries || 0), 0),
+    totalEarnings: driversData.reduce((sum, d) => sum + (d.earnings || 0), 0),
+    avgRating: driversData.length > 0 ? 
+      (driversData.reduce((sum, d) => sum + (d.rating || 0), 0) / driversData.length).toFixed(1) : 
+      '0.0'
   };
 
   const getRankBadge = (rank: number) => {
@@ -140,17 +95,17 @@ const AdminDashboard = () => {
     const reportData = [
       ['Driver Name', 'Rank', 'Rating', 'Total Deliveries', 'Today Deliveries', 'On-time Rate', 'Monthly Earnings', 'Status', 'Location', 'Vehicle', 'Join Date'],
       ...driversData.map(driver => [
-        driver.name,
-        driver.rank,
-        driver.rating,
-        driver.totalDeliveries,
-        driver.todayDeliveries,
-        `${driver.onTimeRate}%`,
-        `KWD ${driver.earnings}`,
-        driver.status,
-        driver.location,
-        driver.vehicle,
-        driver.joinDate
+        driver.name || '',
+        driver.rank || 0,
+        driver.rating || 0,
+        driver.totalDeliveries || 0,
+        driver.todayDeliveries || 0,
+        `${driver.onTimeRate || 0}%`,
+        `KWD ${driver.earnings || 0}`,
+        driver.status || '',
+        driver.location || '',
+        driver.vehicle || '',
+        driver.joinDate || ''
       ])
     ];
 
