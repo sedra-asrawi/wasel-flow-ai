@@ -15,16 +15,21 @@ const QRTestPage = () => {
   const generateQRCode = async (orderType: "pickup" | "delivery") => {
     setIsGenerating(true);
     try {
-      const { data, error } = await supabase.functions.invoke('generate-test-qr', {
-        body: { driverId: 1, orderType }
+      const response = await fetch(`https://exwfohcfjxmouilxfqmy.supabase.co/functions/v1/generate-test-qr`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV4d2ZvaGNmanhtb3VpbHhmcW15Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUxOTQ5NjAsImV4cCI6MjA3MDc3MDk2MH0.wxUgqYdKtjOeurLOGZw3YqjCSPOEcP5FX4SnKp78CP0`,
+        },
+        body: JSON.stringify({ driverId: 1, orderType })
       });
 
-      if (error) {
-        throw error;
+      if (!response.ok) {
+        throw new Error('Failed to generate QR code');
       }
 
-      // Convert the response to a blob and create object URL
-      const blob = new Blob([data], { type: 'image/png' });
+      // Get the blob directly from the response
+      const blob = await response.blob();
       const url = URL.createObjectURL(blob);
       setQrImageUrl(url);
 
