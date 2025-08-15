@@ -84,7 +84,10 @@ const DashboardPage = () => {
           </ModernCard>
           <ModernCard className="text-center">
             <ModernCardContent className="pt-6">
-              <div className="text-3xl font-bold text-wasel-orange">{driverStats.rating}</div>
+              <div className="flex items-center justify-center gap-1 mb-2">
+                <Star className="h-4 w-4 text-yellow-500 fill-current" />
+                <div className="text-3xl font-bold text-wasel-orange">{driverStats.rating}</div>
+              </div>
               <div className="text-sm text-muted-foreground">Average Rating</div>
             </ModernCardContent>
           </ModernCard>
