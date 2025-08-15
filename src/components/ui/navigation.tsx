@@ -28,15 +28,10 @@ export const Navigation = () => {
               to={item.path}
               className="relative flex-1 flex flex-col items-center justify-center h-16 mt-2 rounded-xl transition-colors duration-300 ease-out z-10"
             >
-              <div className={cn(
-                "h-6 w-6 mb-1 transition-all duration-300 relative z-10 flex items-center justify-center",
-                isActive && "bg-gradient-to-r from-primary to-secondary bg-clip-text"
-              )}>
-                <Icon className={cn(
-                  "h-6 w-6 transition-all duration-300",
-                  isActive ? "text-transparent bg-gradient-to-r from-primary to-secondary bg-clip-text" : "text-muted-foreground"
-                )} />
-              </div>
+              <Icon className={cn(
+                "h-6 w-6 mb-1 transition-all duration-300 relative z-10",
+                isActive ? "text-primary drop-shadow-[0_0_8px_hsl(var(--secondary))]" : "text-muted-foreground"
+              )} />
               
               <span className={cn(
                 "text-xs font-medium transition-colors duration-300 relative z-10",
