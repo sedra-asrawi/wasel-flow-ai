@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         .from('user_profiles')
         .select('role')
         .eq('user_id', userId)
-        .single();
+        .maybeSingle(); // Use maybeSingle to handle missing profiles
       
       console.log('fetchUserRole: Query result:', { data, error });
       
@@ -34,9 +34,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         console.error('fetchUserRole: Error fetching user role:', error);
         console.log('fetchUserRole: Setting default role to driver');
         setUserRole('driver'); // Default to driver
+      } else if (data) {
+        console.log('fetchUserRole: User role found:', data.role);
+        setUserRole(data.role || 'driver');
       } else {
-        console.log('fetchUserRole: User role found:', data?.role);
-        setUserRole(data?.role || 'driver');
+        console.log('fetchUserRole: No profile found, setting default role to driver');
+        setUserRole('driver'); // Default to driver when no profile exists
       }
     } catch (error) {
       console.error('fetchUserRole: Exception in fetchUserRole:', error);
