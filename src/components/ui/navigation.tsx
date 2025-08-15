@@ -79,7 +79,7 @@ export const Navigation = ({
           "rounded-xl transition-all duration-300",
           isActive 
             ? getActiveColorClass() 
-            : "hover:bg-muted/50 text-muted-foreground"
+            : "text-muted-foreground"
         );
       default:
         return cn(
