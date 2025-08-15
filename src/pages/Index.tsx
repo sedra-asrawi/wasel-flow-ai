@@ -177,7 +177,12 @@ const Index = () => {
         </div>
       </div>
 
-      <Navigation />
+      <Navigation 
+        activeColor="secondary"
+        variant="filled"
+        size="default"
+        showLabels={true}
+      />
       
       {/* Chat Interface */}
       {chatOpen && (

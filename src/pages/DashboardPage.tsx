@@ -225,7 +225,12 @@ const DashboardPage = () => {
         </ModernCard>
       </div>
 
-      <Navigation />
+      <Navigation 
+        activeColor="secondary"
+        variant="filled"
+        size="default"
+        showLabels={true}
+      />
     </div>
   );
 };
