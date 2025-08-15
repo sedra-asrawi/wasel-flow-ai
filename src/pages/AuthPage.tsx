@@ -184,6 +184,8 @@ const AuthPage = () => {
                     onChange={(e) => setFullName(e.target.value)}
                     required
                     placeholder="Enter your full name"
+                    disabled={isLoading}
+                    autoComplete="name"
                   />
                 </div>
 
@@ -199,6 +201,8 @@ const AuthPage = () => {
                     onChange={(e) => setPhone(e.target.value)}
                     required
                     placeholder="Enter your phone number"
+                    disabled={isLoading}
+                    autoComplete="tel"
                   />
                 </div>
 
@@ -230,6 +234,8 @@ const AuthPage = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="Enter your email"
+                disabled={isLoading}
+                autoComplete="email"
               />
             </div>
 
@@ -246,6 +252,8 @@ const AuthPage = () => {
                 required
                 placeholder="Enter your password"
                 minLength={6}
+                disabled={isLoading}
+                autoComplete="current-password"
               />
             </div>
 
