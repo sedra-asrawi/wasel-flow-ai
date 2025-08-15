@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { ModernCard, ModernCardContent, ModernCardDescription, ModernCardHeader, ModernCardTitle } from "@/components/ui/modern-card";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 import { Loader2, Mail, Lock, User, Phone } from "lucide-react";
 
 const AuthPage = () => {
@@ -18,79 +19,24 @@ const AuthPage = () => {
   const [role, setRole] = useState("driver");
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user, userRole, loading } = useAuth();
 
+  console.log('AuthPage rendered - user:', user?.id, 'role:', userRole, 'loading:', loading);
+
+  // Redirect if user is already logged in
   useEffect(() => {
-    // Check if user is already logged in
-    const checkUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        console.log('User already logged in, redirecting...');
-        await handleSuccessfulAuth(session.user.id);
-      }
-    };
-    checkUser();
-  }, []);
-
-  const handleSuccessfulAuth = async (userId: string) => {
-    try {
-      console.log('Checking role for user:', userId);
-      
-      // Query user_profiles table directly to get role
-      const { data, error } = await (supabase as any)
-        .from('user_profiles')
-        .select('role')
-        .eq('user_id', userId)
-        .maybeSingle(); // Use maybeSingle to avoid errors when no data found
-      
-      console.log('Profile query result:', { data, error });
-
-      let userRole = 'driver'; // Default role
-      
-      if (!error && data) {
-        userRole = data.role;
-        console.log('Found user role:', userRole);
-      } else {
-        console.log('No profile found, using default role: driver');
-        // If no profile exists, treat as driver by default
-        toast({
-          title: "Account Setup",
-          description: "Using default permissions. Contact admin to set up your role.",
-          variant: "default",
-        });
-      }
-
-      // Redirect based on role
+    if (!loading && user && userRole) {
+      console.log('User already logged in, redirecting based on role:', userRole);
       if (userRole === 'admin') {
         navigate('/admin');
-        toast({
-          title: "Welcome Admin!",
-          description: "Redirecting to admin dashboard...",
-        });
       } else if (userRole === 'wasel') {
         navigate('/dashboard');
-        toast({
-          title: "Welcome Wasel Staff!",
-          description: "Redirecting to dashboard...",
-        });
-      } else if (userRole === 'driver') {
-        navigate('/');
-        toast({
-          title: "Welcome Driver!",
-          description: "Redirecting to orders page...",
-        });
       } else {
-        navigate('/dashboard'); // Default fallback
+        navigate('/');
       }
-    } catch (error) {
-      console.error('Error during auth redirect:', error);
-      toast({
-        title: "Authentication error",
-        description: "Unable to verify your account. Redirecting to main page.",
-        variant: "destructive",
-      });
-      navigate('/'); // Go to main page as fallback
     }
-  };
+  }, [user, userRole, loading, navigate]);
+
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -116,7 +62,7 @@ const AuthPage = () => {
           title: "Welcome back!",
           description: "You have been logged in successfully.",
         });
-        await handleSuccessfulAuth(data.user.id);
+        // Redirection will be handled by useAuth hook
       }
     } catch (error) {
       toast({
@@ -166,7 +112,7 @@ const AuthPage = () => {
         });
 
         if (data.user.email_confirmed_at) {
-          await handleSuccessfulAuth(data.user.id);
+          // Redirection will be handled by useAuth hook
         } else {
           setIsLogin(true);
         }
