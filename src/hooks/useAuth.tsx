@@ -20,14 +20,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const fetchUserRole = async (userId: string) => {
     try {
-      // Use the app_current_role function which is already defined in the database
-      const { data: role, error } = await (supabase as any).rpc('app_current_role');
+      // Query user_profiles table directly using raw SQL to avoid type issues
+      const { data, error } = await (supabase as any)
+        .from('user_profiles')
+        .select('role')
+        .eq('user_id', userId)
+        .single();
       
-      if (error || !role) {
+      if (error) {
         console.error('Error fetching user role:', error);
         setUserRole('driver'); // Default to driver
       } else {
-        setUserRole(role);
+        console.log('User role found:', data?.role);
+        setUserRole(data?.role || 'driver');
       }
     } catch (error) {
       console.error('Error in fetchUserRole:', error);

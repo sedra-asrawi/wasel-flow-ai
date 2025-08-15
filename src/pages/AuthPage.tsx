@@ -32,23 +32,42 @@ const AuthPage = () => {
 
   const handleSuccessfulAuth = async (userId: string) => {
     try {
-      // Use the app_current_role function to get user role
-      const { data: role, error } = await (supabase as any).rpc('app_current_role');
+      // Query user_profiles table directly to get role
+      const { data, error } = await (supabase as any)
+        .from('user_profiles')
+        .select('role')
+        .eq('user_id', userId)
+        .single();
       
-      if (error || !role) {
+      if (error) {
         console.error('Error fetching user role:', error);
-        // Default to driver if role fetch fails
+        // Default redirect to dashboard if role fetch fails
         navigate('/dashboard');
         return;
       }
 
+      const userRole = data?.role;
+      console.log('User role on login:', userRole);
+
       // Redirect based on role
-      if (role === 'admin') {
+      if (userRole === 'admin') {
         navigate('/admin');
-      } else if (role === 'wasel') {
+        toast({
+          title: "Welcome Admin!",
+          description: "Redirecting to admin dashboard...",
+        });
+      } else if (userRole === 'wasel') {
         navigate('/dashboard');
-      } else if (role === 'driver') {
-        navigate('/dashboard');
+        toast({
+          title: "Welcome Wasel Staff!",
+          description: "Redirecting to dashboard...",
+        });
+      } else if (userRole === 'driver') {
+        navigate('/');
+        toast({
+          title: "Welcome Driver!",
+          description: "Redirecting to orders page...",
+        });
       } else {
         navigate('/dashboard'); // Default fallback
       }
