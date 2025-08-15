@@ -29,7 +29,8 @@ const ScanPage = () => {
       if (scanType === "pickup") {
         navigate("/confirmation");
       } else {
-        navigate("/");
+        // After delivery scan, go back to confirmation page with delivered status
+        navigate("/confirmation?status=delivered");
       }
     }
   };

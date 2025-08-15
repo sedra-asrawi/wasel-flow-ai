@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Navigation } from "@/components/ui/navigation";
 import { Button } from "@/components/ui/button";
 import { ModernCard, ModernCardContent, ModernCardHeader, ModernCardTitle } from "@/components/ui/modern-card";
@@ -11,7 +11,12 @@ type OrderStatus = "pickup" | "delivery" | "delivered";
 
 const ConfirmationPage = () => {
   const navigate = useNavigate();
-  const [currentStatus, setCurrentStatus] = useState<OrderStatus>("pickup");
+  const [searchParams] = useSearchParams();
+  const [currentStatus, setCurrentStatus] = useState<OrderStatus>(() => {
+    // Check if we're coming from delivery scan with delivered status
+    const status = searchParams.get("status");
+    return status === "delivered" ? "delivered" : "pickup";
+  });
   const [chatOpen, setChatOpen] = useState(false);
 
   // Removed auto-progress - circles stay in their current state
@@ -216,9 +221,9 @@ const ConfirmationPage = () => {
           {currentStatus === "delivered" && (
             <Button 
               onClick={() => navigate('/')}
-              className="w-full h-12 bg-gradient-primary text-white font-semibold"
+              className="w-full h-12 bg-gradient-success text-white font-semibold"
             >
-              Back to Orders
+              Complete Order
             </Button>
           )}
           
