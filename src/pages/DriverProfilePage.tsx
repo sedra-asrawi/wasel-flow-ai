@@ -115,8 +115,8 @@ const DriverProfilePage = () => {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <p className="text-muted-foreground">Driver not found</p>
-          <Button onClick={() => navigate(-1)} className="mt-4">
-            Go Back
+          <Button onClick={() => navigate('/admin')} className="mt-4">
+            Go Back to Admin
           </Button>
         </div>
       </div>
@@ -131,7 +131,7 @@ const DriverProfilePage = () => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => navigate(-1)}
+            onClick={() => navigate('/admin')}
             className="absolute left-0 top-1/2 -translate-y-1/2 text-white hover:bg-white/20"
           >
             <ArrowLeft className="h-4 w-4" />
