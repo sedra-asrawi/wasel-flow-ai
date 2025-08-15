@@ -32,11 +32,33 @@ const AuthPage = () => {
 
   const handleSuccessfulAuth = async (userId: string) => {
     try {
-      // For now, just redirect to dashboard
-      // TODO: Implement role-based routing once user_profiles table is properly typed
-      navigate('/dashboard');
+      // Use the app_current_role function to get user role
+      const { data: role, error } = await (supabase as any).rpc('app_current_role');
+      
+      if (error || !role) {
+        console.error('Error fetching user role:', error);
+        // Default to driver if role fetch fails
+        navigate('/dashboard');
+        return;
+      }
+
+      // Redirect based on role
+      if (role === 'admin') {
+        navigate('/admin');
+      } else if (role === 'wasel') {
+        navigate('/dashboard');
+      } else if (role === 'driver') {
+        navigate('/dashboard');
+      } else {
+        navigate('/dashboard'); // Default fallback
+      }
     } catch (error) {
       console.error('Error during auth redirect:', error);
+      toast({
+        title: "Authentication error",
+        description: "Unable to verify your account. Please try again.",
+        variant: "destructive",
+      });
       navigate('/dashboard');
     }
   };
