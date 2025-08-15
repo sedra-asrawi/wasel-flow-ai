@@ -28,19 +28,14 @@ export const Navigation = () => {
               to={item.path}
               className="relative flex-1 flex flex-col items-center justify-center h-16 mt-2 rounded-xl transition-colors duration-300 ease-out z-10"
             >
-              {/* Background square for active state */}
-              {isActive && (
-                <div className="absolute inset-0 bg-gradient-primary rounded-xl shadow-medium" />
-              )}
-              
               <Icon className={cn(
-                "h-6 w-6 mb-1 transition-colors duration-300 relative z-10",
-                isActive ? "text-white" : "text-muted-foreground"
+                "h-6 w-6 mb-1 transition-all duration-300 relative z-10",
+                isActive ? "text-transparent bg-gradient-primary bg-clip-text" : "text-muted-foreground"
               )} />
               
               <span className={cn(
                 "text-xs font-medium transition-colors duration-300 relative z-10",
-                isActive ? "text-white" : "text-muted-foreground"
+                isActive ? "text-primary" : "text-muted-foreground"
               )}>
                 {item.label}
               </span>
