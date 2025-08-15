@@ -262,7 +262,12 @@ const ProfilePage = () => {
         </PopoverContent>
       </Popover>
 
-      <Navigation />
+      <Navigation 
+        activeColor="secondary"
+        variant="filled"
+        size="default"
+        showLabels={true}
+      />
     </div>
   );
 };
