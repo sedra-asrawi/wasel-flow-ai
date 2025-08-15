@@ -28,7 +28,7 @@ const AuthPage = () => {
     if (!loading && user) {
       console.log('User already logged in, redirecting based on email:', user.email);
       if (user.email === 'ahmed@jahez.com') {
-        navigate('/profile');
+        navigate('/'); // Ahmed goes to order page (Index)
       } else if (user.email === 'nour@wasel.com') {
         navigate('/dashboard');
       } else {
@@ -66,7 +66,7 @@ const AuthPage = () => {
         
         // Redirect based on email
         if (data.user.email === 'ahmed@jahez.com') {
-          navigate('/profile');
+          navigate('/'); // Ahmed goes to order page (Index)
         } else if (data.user.email === 'nour@wasel.com') {
           navigate('/dashboard');
         } else {
@@ -123,7 +123,7 @@ const AuthPage = () => {
         if (data.user.email_confirmed_at) {
           // Redirect based on email
           if (data.user.email === 'ahmed@jahez.com') {
-            navigate('/profile');
+            navigate('/'); // Ahmed goes to order page (Index)
           } else if (data.user.email === 'nour@wasel.com') {
             navigate('/dashboard');
           } else {

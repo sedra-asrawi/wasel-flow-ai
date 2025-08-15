@@ -24,15 +24,11 @@ const Index = () => {
       
       // Redirect based on email
       if (user.email === 'nour@wasel.com') {
-        // nour@wasel.com stays on this page (main dashboard)
+        navigate("/dashboard");
         return;
       }
       
-      // ahmed@jahez.com and others go to profile
-      if (user.email === 'ahmed@jahez.com') {
-        navigate("/profile");
-        return;
-      }
+      // ahmed@jahez.com and others stay on this page (order page)
     }
   }, [user, loading, navigate]);
 
@@ -44,7 +40,7 @@ const Index = () => {
     );
   }
 
-  if (!user || user.email !== 'nour@wasel.com') {
+  if (!user) {
     return null; // Will redirect via useEffect
   }
 
