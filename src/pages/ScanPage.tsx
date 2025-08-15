@@ -190,9 +190,9 @@ const ScanPage = () => {
             
             {scanResult === "success" && (
               <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/30 to-green-600/20 backdrop-blur-sm flex items-center justify-center animate-fade-in">
-                <div className="text-center space-y-6 p-6 bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl border border-green-200/50 max-w-sm mx-4">
+                <div className="text-center space-y-6 p-6 bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl border border-wasel-green/30 max-w-sm mx-4">
                   <div className="relative">
-                    <div className="w-24 h-24 bg-gradient-to-br from-emerald-400 to-green-500 rounded-full flex items-center justify-center mx-auto shadow-lg animate-scale-in">
+                    <div className="w-24 h-24 bg-gradient-to-br from-wasel-green to-status-active rounded-full flex items-center justify-center mx-auto shadow-lg animate-scale-in">
                       <CheckCircle className="h-12 w-12 text-white drop-shadow-sm" />
                     </div>
                     <div className="absolute -inset-2 bg-wasel-green/20 rounded-full animate-ping"></div>
