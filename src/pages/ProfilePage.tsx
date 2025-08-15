@@ -10,6 +10,7 @@ import { StatsCard } from "@/components/ui/stats-card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   User,
   Star,
@@ -23,6 +24,7 @@ import {
   Truck,
   ArrowLeft,
   Award,
+  X,
 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -33,6 +35,7 @@ const ProfilePage = () => {
     { type: "user" | "bot" | "system"; message: string }[]
   >([{ type: "bot", message: "Hello! I'm Wasel AI. How can I help you today?" }]);
   const [isSending, setIsSending] = useState(false);
+  const [isAIChatOpen, setIsAIChatOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -102,7 +105,7 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <div className="h-screen bg-background pb-24 overflow-hidden">
       {/* Header with back button */}
       <header className="relative bg-background/95 backdrop-blur-lg border-b border-border/20 p-4">
         <div className="max-w-md mx-auto flex items-center justify-center">
@@ -110,7 +113,7 @@ const ProfilePage = () => {
         </div>
       </header>
 
-      <div className="max-w-md mx-auto p-4 space-y-6">
+      <div className="max-w-md mx-auto p-4 space-y-6 h-full overflow-y-auto">
         {/* Profile Avatar and Name */}
         <ModernCard className="overflow-hidden">
           <ModernCardContent className="pt-8 pb-6">
@@ -182,16 +185,42 @@ const ProfilePage = () => {
           </ModernCardContent>
         </ModernCard>
 
-        {/* AI Assistant */}
-        <ModernCard>
-          <ModernCardHeader>
-            <ModernCardTitle className="flex items-center gap-2">
-              <Bot className="h-5 w-5 text-primary" />
-              Wasel AI Assistant
-            </ModernCardTitle>
-          </ModernCardHeader>
-          <ModernCardContent className="space-y-4">
-            <div ref={scrollRef} className="space-y-3 max-h-60 overflow-y-auto pr-1">
+      </div>
+
+      {/* Floating AI Chat Button */}
+      <Popover open={isAIChatOpen} onOpenChange={setIsAIChatOpen}>
+        <PopoverTrigger asChild>
+          <Button 
+            size="icon" 
+            className="fixed bottom-32 right-6 h-14 w-14 rounded-full shadow-lg bg-gradient-primary hover:opacity-90 z-50"
+          >
+            <Bot className="h-6 w-6 text-white" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent 
+          className="w-80 p-0 mr-6 mb-4" 
+          side="top" 
+          align="end"
+        >
+          <div className="bg-card rounded-lg border border-border shadow-lg">
+            {/* Chat Header */}
+            <div className="flex items-center justify-between p-4 border-b border-border">
+              <div className="flex items-center gap-2">
+                <Bot className="h-5 w-5 text-primary" />
+                <span className="font-semibold text-foreground">Wasel AI Assistant</span>
+              </div>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => setIsAIChatOpen(false)}
+                className="h-8 w-8"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+
+            {/* Chat Messages */}
+            <div ref={scrollRef} className="h-60 overflow-y-auto p-4 space-y-3">
               {chatHistory.map((chat, index) => (
                 <div key={index} className={`flex ${chat.type === "user" ? "justify-end" : "justify-start"}`}>
                   <div className={`max-w-[80%] p-3 rounded-2xl text-sm transition-all duration-200 ${
@@ -205,52 +234,33 @@ const ProfilePage = () => {
               ))}
             </div>
 
-            <div className="flex gap-2">
-              <Input
-                placeholder="Ask Wasel AI anything..."
-                value={chatMessage}
-                onChange={(e) => setChatMessage(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSendMessage()}
-                disabled={isSending}
-                className="flex-1 rounded-2xl border-2 focus:border-primary"
-              />
-              <Button 
-                size="sm" 
-                onClick={handleSendMessage} 
-                disabled={isSending}
-                className="rounded-2xl px-4"
-              >
-                <Send className="h-4 w-4" />
-              </Button>
+            {/* Chat Input */}
+            <div className="p-4 border-t border-border">
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Ask Wasel AI anything..."
+                  value={chatMessage}
+                  onChange={(e) => setChatMessage(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSendMessage()}
+                  disabled={isSending}
+                  className="flex-1 rounded-2xl border-2 focus:border-primary"
+                />
+                <Button 
+                  size="sm" 
+                  onClick={handleSendMessage} 
+                  disabled={isSending}
+                  className="rounded-2xl px-4"
+                >
+                  <Send className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="text-xs text-muted-foreground text-center mt-2">
+                AI assistant to help with delivery questions and support
+              </div>
             </div>
-
-            <div className="text-xs text-muted-foreground text-center">
-              AI assistant to help with delivery questions, route optimization, and support
-            </div>
-          </ModernCardContent>
-        </ModernCard>
-
-        {/* Quick Actions */}
-        <ModernCard>
-          <ModernCardHeader>
-            <ModernCardTitle>Quick Actions</ModernCardTitle>
-          </ModernCardHeader>
-          <ModernCardContent className="space-y-3">
-            <Button variant="modern" className="w-full justify-start h-14 rounded-2xl">
-              <Settings className="h-5 w-5 mr-3" />
-              Account Settings
-            </Button>
-            <Button variant="modern" className="w-full justify-start h-14 rounded-2xl">
-              <MessageCircle className="h-5 w-5 mr-3" />
-              Contact Support
-            </Button>
-            <Button variant="outline" className="w-full justify-start h-14 rounded-2xl text-destructive hover:text-destructive border-destructive/20">
-              <User className="h-5 w-5 mr-3" />
-              Sign Out
-            </Button>
-          </ModernCardContent>
-        </ModernCard>
-      </div>
+          </div>
+        </PopoverContent>
+      </Popover>
 
       <Navigation />
     </div>
