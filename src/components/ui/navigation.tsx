@@ -119,7 +119,8 @@ export const Navigation = ({
                 <Icon className={cn(
                   "transition-all duration-300",
                   sizeStyles.icon,
-                  showLabels ? "mb-1" : ""
+                  showLabels ? "mb-1" : "",
+                  isActive ? "text-[#82c0cc]" : "text-muted-foreground"
                 )} />
                 
                 {item.badge && (
