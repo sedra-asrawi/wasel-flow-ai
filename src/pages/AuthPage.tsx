@@ -24,7 +24,8 @@ const AuthPage = () => {
     const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
-        handleSuccessfulAuth(session.user.id);
+        console.log('User already logged in, redirecting...');
+        await handleSuccessfulAuth(session.user.id);
       }
     };
     checkUser();
