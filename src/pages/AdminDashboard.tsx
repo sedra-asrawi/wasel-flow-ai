@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { ModernCard, ModernCardContent, ModernCardHeader, ModernCardTitle } from "@/components/ui/modern-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -270,40 +271,59 @@ const AdminDashboard = () => {
                       </div>
                     </div>
 
-                    <div className="text-right">
-                      <p className="text-lg font-bold text-wasel-green">KWD {driver.earnings.toLocaleString()}</p>
-                      <p className="text-xs text-muted-foreground">Monthly Earnings</p>
-                      <Badge variant="outline" className="mt-1">
-                        {driver.vehicle}
-                      </Badge>
-                    </div>
-                  </div>
-                </ModernCard>
-              ))}
-            </div>
-          </ModernCardContent>
-        </ModernCard>
+                     <div className="text-right">
+                       <p className="text-lg font-bold text-wasel-green">KWD {driver.earnings.toLocaleString()}</p>
+                       <p className="text-xs text-muted-foreground">Monthly Earnings</p>
+                       <Badge variant="outline" className="mt-1">
+                         {driver.vehicle}
+                       </Badge>
+                       <div className="flex gap-2 mt-2">
+                         <Link to={`/driver/${driver.id}/profile`}>
+                           <Button size="sm" variant="outline" className="text-xs">
+                             Profile
+                           </Button>
+                         </Link>
+                         <Link to={`/driver/${driver.id}/dashboard`}>
+                           <Button size="sm" variant="outline" className="text-xs">
+                             Dashboard
+                           </Button>
+                         </Link>
+                       </div>
+                     </div>
+                   </div>
+                 </ModernCard>
+               ))}
+             </div>
+           </ModernCardContent>
+         </ModernCard>
 
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <ModernCard>
-            <ModernCardHeader>
-              <ModernCardTitle className="text-lg">Top Performers</ModernCardTitle>
-            </ModernCardHeader>
-            <ModernCardContent>
-              <div className="space-y-3">
-                {driversData.slice(0, 3).map((driver, index) => (
-                  <div key={driver.id} className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      {getRankBadge(index + 1)}
-                      <span className="font-medium">{driver.name}</span>
-                    </div>
-                    <span className="text-sm text-muted-foreground">{driver.totalDeliveries} deliveries</span>
-                  </div>
-                ))}
-              </div>
-            </ModernCardContent>
-          </ModernCard>
+         {/* Quick Actions */}
+         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+           <ModernCard>
+             <ModernCardHeader>
+               <ModernCardTitle className="text-lg">Top Performers</ModernCardTitle>
+             </ModernCardHeader>
+             <ModernCardContent>
+               <div className="space-y-3">
+                 {driversData.slice(0, 3).map((driver, index) => (
+                   <div key={driver.id} className="flex items-center justify-between">
+                     <div className="flex items-center space-x-2">
+                       {getRankBadge(index + 1)}
+                       <span className="font-medium">{driver.name}</span>
+                     </div>
+                     <div className="flex items-center gap-2">
+                       <span className="text-sm text-muted-foreground">{driver.totalDeliveries} deliveries</span>
+                       <Link to={`/driver/${driver.id}/profile`}>
+                         <Button size="sm" variant="ghost" className="text-xs h-6 px-2">
+                           View
+                         </Button>
+                       </Link>
+                     </div>
+                   </div>
+                 ))}
+               </div>
+             </ModernCardContent>
+           </ModernCard>
 
           <ModernCard>
             <ModernCardHeader>
