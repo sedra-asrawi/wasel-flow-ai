@@ -136,6 +136,39 @@ const AdminDashboard = () => {
     }
   };
 
+  const generateReport = () => {
+    const reportData = [
+      ['Driver Name', 'Rank', 'Rating', 'Total Deliveries', 'Today Deliveries', 'On-time Rate', 'Monthly Earnings', 'Status', 'Location', 'Vehicle', 'Join Date'],
+      ...driversData.map(driver => [
+        driver.name,
+        driver.rank,
+        driver.rating,
+        driver.totalDeliveries,
+        driver.todayDeliveries,
+        `${driver.onTimeRate}%`,
+        `KWD ${driver.earnings}`,
+        driver.status,
+        driver.location,
+        driver.vehicle,
+        driver.joinDate
+      ])
+    ];
+
+    const csvContent = reportData.map(row => row.join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `driver_report_${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -350,7 +383,7 @@ const AdminDashboard = () => {
               <Button className="w-full" variant="outline">
                 Send Notifications
               </Button>
-              <Button className="w-full" variant="outline">
+              <Button className="w-full" variant="outline" onClick={generateReport}>
                 Generate Reports
               </Button>
             </ModernCardContent>
