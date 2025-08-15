@@ -195,7 +195,7 @@ const ScanPage = () => {
                     <div className="w-24 h-24 bg-gradient-to-br from-emerald-400 to-green-500 rounded-full flex items-center justify-center mx-auto shadow-lg animate-scale-in">
                       <CheckCircle className="h-12 w-12 text-white drop-shadow-sm" />
                     </div>
-                    <div className="absolute -inset-2 bg-green-400/20 rounded-full animate-ping"></div>
+                    <div className="absolute -inset-2 bg-wasel-green/20 rounded-full animate-ping"></div>
                   </div>
                   <div className="space-y-3">
                     <h3 className="text-xl font-bold text-green-800 animate-fade-in">
