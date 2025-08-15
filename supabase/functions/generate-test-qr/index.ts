@@ -13,10 +13,10 @@ serve(async (req) => {
   }
 
   try {
-    const { driverId = 123456, customerName = "Ahmed Al-Rashid", orderType = "pickup" } = await req.json().catch(() => ({}));
+    const { driverId = 1, customerName = "Ahmed Al-Rashid", orderType = "pickup" } = await req.json().catch(() => ({}));
     
     // Create test QR data that matches what our AI verification expects
-    // Format: DRIVER_ID:123456|ORDER_ID:ORD-2024-001|TYPE:pickup|CUSTOMER:Ahmed Al-Rashid|ADDRESS:123 Main St
+    // Format: DRIVER_ID:1|ORDER_ID:ORD-2024-001|TYPE:pickup|CUSTOMER:Ahmed Al-Rashid|ADDRESS:123 Main St
     const qrData = `DRIVER_ID:${driverId}|ORDER_ID:ORD-2024-001|TYPE:${orderType}|CUSTOMER:${customerName}|ADDRESS:123 Main St`;
     
     console.log('Generating QR code with data:', qrData);

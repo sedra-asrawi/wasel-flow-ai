@@ -19,8 +19,8 @@ const ScanPage = () => {
   const [scannedData, setScannedData] = useState<string>("");
   const [verificationResult, setVerificationResult] = useState<any>(null);
   
-  // Mock driver ID - should match the QR code we're generating (Mohammed Hassan = 123456)
-  const currentDriverId = 123456;
+  // Mock driver ID - should match the database (Mohammed Hassan = 1)
+  const currentDriverId = 1;
 
   const handleQRResult = async (qrData: string) => {
     console.log('QR Code scanned:', qrData);
@@ -280,7 +280,7 @@ const ScanPage = () => {
           <ModernCardContent className="pt-6">
             <div className="flex justify-between items-center text-sm">
               <span className="text-muted-foreground">Current Driver</span>
-              <span className="font-medium">Mohammed Hassan (#123456)</span>
+              <span className="font-medium">Mohammed Hassan (#1)</span>
             </div>
             <div className="flex justify-between items-center text-sm mt-2">
               <span className="text-muted-foreground">Scan Type</span>
