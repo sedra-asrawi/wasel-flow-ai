@@ -215,21 +215,21 @@ const ScanPage = () => {
             )}
             
             {scanResult === "error" && (
-              <div className="absolute inset-0 bg-red-500/20 flex items-center justify-center">
-                <div className="text-center space-y-4 p-4">
-                  <div className="w-20 h-20 bg-destructive rounded-full flex items-center justify-center mx-auto">
-                    <AlertCircle className="h-10 w-10 text-white" />
+              <div className="absolute inset-0 bg-gradient-to-br from-destructive/30 to-destructive/20 backdrop-blur-sm flex items-center justify-center animate-fade-in">
+                <div className="text-center space-y-6 p-6 bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl border border-destructive/30 max-w-sm mx-4">
+                  <div className="relative">
+                    <div className="w-24 h-24 bg-gradient-to-br from-destructive to-destructive/80 rounded-full flex items-center justify-center mx-auto shadow-lg animate-scale-in">
+                      <AlertCircle className="h-12 w-12 text-white drop-shadow-sm" />
+                    </div>
+                    <div className="absolute -inset-2 bg-destructive/20 rounded-full animate-ping"></div>
                   </div>
-                  <div>
-                    <p className="font-semibold text-destructive">Verification Failed</p>
-                    <p className="text-sm text-red-600 max-w-xs mx-auto">
+                  <div className="space-y-3">
+                    <h3 className="text-xl font-bold text-destructive animate-fade-in">
+                      ⚠️ Verification Failed
+                    </h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
                       {verificationResult?.reason || "Invalid QR code. Please try again."}
                     </p>
-                    {scannedData && (
-                      <p className="text-xs text-muted-foreground mt-2 font-mono bg-muted p-2 rounded max-w-xs mx-auto break-all">
-                        Scanned: {scannedData.slice(0, 50)}{scannedData.length > 50 ? '...' : ''}
-                      </p>
-                    )}
                   </div>
                 </div>
               </div>
