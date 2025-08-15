@@ -201,9 +201,6 @@ const ScanPage = () => {
                     <h3 className="text-xl font-bold text-green-800 animate-fade-in">
                       ✅ AI Verification Successful!
                     </h3>
-                    <p className="text-sm text-green-700 leading-relaxed">
-                      {verificationResult?.reason || `${scanType} confirmed`}
-                    </p>
                     {verificationResult?.confidence && (
                       <div className="inline-flex items-center gap-2 px-3 py-1 bg-green-100 rounded-full border border-green-200">
                         <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
