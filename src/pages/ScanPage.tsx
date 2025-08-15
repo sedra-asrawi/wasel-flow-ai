@@ -3,25 +3,111 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { Navigation } from "@/components/ui/navigation";
 import { Button } from "@/components/ui/button";
 import { ModernCard, ModernCardContent, ModernCardHeader, ModernCardTitle } from "@/components/ui/modern-card";
-import { QrCode, CheckCircle, AlertCircle, Camera } from "lucide-react";
+import { QrCode, CheckCircle, AlertCircle, Camera, Brain, Shield } from "lucide-react";
+import { QRScanner } from "@/components/QRScanner";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 const ScanPage = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [searchParams] = useSearchParams();
   const scanType = searchParams.get("type") || "pickup"; // "pickup" or "delivery"
   const [isScanning, setIsScanning] = useState(false);
   const [scanResult, setScanResult] = useState<"success" | "error" | null>(null);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [scannedData, setScannedData] = useState<string>("");
+  const [verificationResult, setVerificationResult] = useState<any>(null);
+  
+  // Mock driver ID - in real app, this would come from auth context
+  const currentDriverId = 1;
+
+  const handleQRResult = async (qrData: string) => {
+    console.log('QR Code scanned:', qrData);
+    setScannedData(qrData);
+    setIsScanning(false);
+    setIsVerifying(true);
+
+    try {
+      toast({
+        title: "QR Code Detected",
+        description: "Verifying with AI...",
+      });
+
+      // Call our Supabase edge function for AI verification
+      const { data, error } = await supabase.functions.invoke('qr-ai-verification', {
+        body: {
+          qrData: qrData,
+          driverId: currentDriverId,
+          scanType: scanType
+        }
+      });
+
+      setIsVerifying(false);
+
+      if (error) {
+        console.error('Verification error:', error);
+        setScanResult("error");
+        setVerificationResult({
+          reason: error.message || 'Verification failed',
+          confidence: 0
+        });
+        toast({
+          title: "Verification Failed",
+          description: error.message || 'Could not verify QR code',
+          variant: "destructive",
+        });
+        return;
+      }
+
+      console.log('Verification result:', data);
+      setVerificationResult(data);
+
+      if (data.isValid) {
+        setScanResult("success");
+        toast({
+          title: "QR Code Verified ✓",
+          description: `Valid ${scanType} QR code (${data.confidence}% confidence)`,
+        });
+      } else {
+        setScanResult("error");
+        toast({
+          title: "Invalid QR Code",
+          description: data.reason || 'QR code verification failed',
+          variant: "destructive",
+        });
+      }
+
+    } catch (error) {
+      console.error('Verification error:', error);
+      setIsVerifying(false);
+      setScanResult("error");
+      setVerificationResult({
+        reason: 'System error during verification',
+        confidence: 0
+      });
+      toast({
+        title: "System Error",
+        description: "Could not verify QR code. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleQRError = (error: string) => {
+    console.error('QR Scanner error:', error);
+    toast({
+      title: "Camera Error",
+      description: error,
+      variant: "destructive",
+    });
+  };
 
   const handleScan = () => {
     setIsScanning(true);
     setScanResult(null);
-    
-    // Simulate scanning process - increased duration for better UX
-    setTimeout(() => {
-      setIsScanning(false);
-      // Random success/error for demo
-      setScanResult(Math.random() > 0.2 ? "success" : "error");
-    }, 5000); // Changed from 2000 to 5000 (5 seconds)
+    setVerificationResult(null);
+    setScannedData("");
   };
 
   const handleContinue = () => {
@@ -37,6 +123,8 @@ const ScanPage = () => {
 
   const handleRetry = () => {
     setScanResult(null);
+    setVerificationResult(null);
+    setScannedData("");
   };
 
   return (
@@ -44,9 +132,12 @@ const ScanPage = () => {
       {/* Header */}
       <header className="bg-gradient-primary text-white p-4">
         <div className="max-w-md mx-auto">
-          <h1 className="text-2xl font-bold">Scan QR Code</h1>
+          <div className="flex items-center gap-2 mb-2">
+            <h1 className="text-2xl font-bold">AI-Powered QR Scanner</h1>
+            <Brain className="h-6 w-6" />
+          </div>
           <p className="text-blue-100">
-            {scanType === "delivery" ? "Confirm delivery completion" : "Verify order pickup"}
+            {scanType === "delivery" ? "AI-verified delivery confirmation" : "AI-verified order pickup"}
           </p>
         </div>
       </header>
@@ -56,96 +147,101 @@ const ScanPage = () => {
         <ModernCard>
           <ModernCardHeader>
             <ModernCardTitle className="text-lg flex items-center gap-2">
-              <QrCode className="h-5 w-5 text-primary" />
-              Order Verification
+              <Shield className="h-5 w-5 text-primary" />
+              AI-Powered Verification
             </ModernCardTitle>
           </ModernCardHeader>
           <ModernCardContent>
             <p className="text-sm text-muted-foreground">
               {scanType === "delivery" 
-                ? "Scan the QR code to confirm successful delivery to the customer. This completes the order process."
-                : "Scan the QR code on the receipt to verify that you're picking up the correct order. This ensures order accuracy and prevents mix-ups."
+                ? "Scan the QR code to confirm delivery. Our AI will verify the code matches your driver ID and validates the delivery information."
+                : "Scan the QR code to verify order pickup. Our AI will check if the code is valid for your driver profile and contains correct order information."
               }
             </p>
+            <div className="mt-3 p-3 bg-muted/50 rounded-lg">
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <Brain className="h-4 w-4" />
+                <span>Powered by Gemini AI for enhanced security</span>
+              </div>
+            </div>
           </ModernCardContent>
         </ModernCard>
 
         {/* Scanner Area */}
         <ModernCard className="relative overflow-hidden">
           <ModernCardContent className="p-0">
-            <div className="aspect-square bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center relative">
-              {!isScanning && !scanResult && (
-                <div className="text-center space-y-4">
-                  <div className="w-20 h-20 border-4 border-dashed border-primary rounded-lg flex items-center justify-center mx-auto">
-                    <Camera className="h-8 w-8 text-primary" />
+            <QRScanner
+              onResult={handleQRResult}
+              onError={handleQRError}
+              isActive={isScanning}
+            />
+            
+            {isVerifying && (
+              <div className="absolute inset-0 bg-black/80 flex items-center justify-center">
+                <div className="text-center text-white space-y-4">
+                  <div className="w-16 h-16 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto"></div>
+                  <div className="space-y-2">
+                    <p className="font-semibold">AI Verification in Progress</p>
+                    <p className="text-sm opacity-80">Analyzing QR code with Gemini AI...</p>
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    Point camera at QR code
-                  </p>
                 </div>
-              )}
-              
-              {scanResult === "success" && (
+              </div>
+            )}
+            
+            {scanResult === "success" && (
+              <div className="absolute inset-0 bg-green-500/20 flex items-center justify-center">
                 <div className="text-center space-y-4">
                   <div className="w-20 h-20 bg-gradient-success rounded-full flex items-center justify-center mx-auto">
                     <CheckCircle className="h-10 w-10 text-white" />
                   </div>
                   <div>
-                    <p className="font-semibold text-accent">Scan Successful!</p>
-                    <p className="text-sm text-muted-foreground">
-                      {scanType === "delivery" ? "Delivery confirmed" : "Order verified"}
+                    <p className="font-semibold text-green-700">AI Verification Successful!</p>
+                    <p className="text-sm text-green-600">
+                      {verificationResult?.reason || `${scanType} confirmed`}
                     </p>
+                    {verificationResult?.confidence && (
+                      <p className="text-xs text-green-500 mt-1">
+                        Confidence: {verificationResult.confidence}%
+                      </p>
+                    )}
                   </div>
                 </div>
-              )}
-              
-              {scanResult === "error" && (
-                <div className="text-center space-y-4">
+              </div>
+            )}
+            
+            {scanResult === "error" && (
+              <div className="absolute inset-0 bg-red-500/20 flex items-center justify-center">
+                <div className="text-center space-y-4 p-4">
                   <div className="w-20 h-20 bg-destructive rounded-full flex items-center justify-center mx-auto">
                     <AlertCircle className="h-10 w-10 text-white" />
                   </div>
                   <div>
-                    <p className="font-semibold text-destructive">Scan Failed</p>
-                    <p className="text-sm text-muted-foreground">
-                      Invalid QR code. Please try again.
+                    <p className="font-semibold text-destructive">Verification Failed</p>
+                    <p className="text-sm text-red-600 max-w-xs mx-auto">
+                      {verificationResult?.reason || "Invalid QR code. Please try again."}
                     </p>
+                    {scannedData && (
+                      <p className="text-xs text-muted-foreground mt-2 font-mono bg-muted p-2 rounded max-w-xs mx-auto break-all">
+                        Scanned: {scannedData.slice(0, 50)}{scannedData.length > 50 ? '...' : ''}
+                      </p>
+                    )}
                   </div>
                 </div>
-              )}
-              
-              {isScanning && (
-                <div className="text-center">
-                  <div className="w-20 h-20 border-4 border-primary rounded-full flex items-center justify-center mx-auto animate-pulse">
-                    <QrCode className="h-8 w-8 text-primary" />
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-4">
-                    Scanning...
-                  </p>
-                </div>
-              )}
-              
-              {isScanning && (
-                <div className="absolute inset-4 border-2 border-primary rounded-lg">
-                  <div className="absolute top-0 left-0 w-6 h-6 border-l-4 border-t-4 border-primary rounded-tl-lg"></div>
-                  <div className="absolute top-0 right-0 w-6 h-6 border-r-4 border-t-4 border-primary rounded-tr-lg"></div>
-                  <div className="absolute bottom-0 left-0 w-6 h-6 border-l-4 border-b-4 border-primary rounded-bl-lg"></div>
-                  <div className="absolute bottom-0 right-0 w-6 h-6 border-r-4 border-b-4 border-primary rounded-br-lg"></div>
-                </div>
-              )}
-            </div>
+              </div>
+            )}
           </ModernCardContent>
         </ModernCard>
 
         {/* Action Buttons */}
         <div className="space-y-3">
-          {!isScanning && !scanResult && (
+          {!isScanning && !scanResult && !isVerifying && (
             <Button 
               onClick={handleScan} 
               className="w-full h-12 bg-gradient-primary text-white font-semibold"
               size="lg"
             >
               <QrCode className="h-5 w-5 mr-2" />
-              Start Scanning
+              Start AI-Powered Scanning
             </Button>
           )}
           
@@ -155,6 +251,7 @@ const ScanPage = () => {
               className="w-full h-12 bg-gradient-success text-white font-semibold"
               size="lg"
             >
+              <CheckCircle className="h-5 w-5 mr-2" />
               Continue
             </Button>
           )}
@@ -182,13 +279,19 @@ const ScanPage = () => {
         <ModernCard>
           <ModernCardContent className="pt-6">
             <div className="flex justify-between items-center text-sm">
-              <span className="text-muted-foreground">Current Order</span>
-              <span className="font-medium">ORD-2024-001</span>
+              <span className="text-muted-foreground">Current Driver</span>
+              <span className="font-medium">Mohammed Hassan (#1)</span>
             </div>
             <div className="flex justify-between items-center text-sm mt-2">
-              <span className="text-muted-foreground">Restaurant</span>
-              <span className="font-medium">Al-Boom Steak House</span>
+              <span className="text-muted-foreground">Scan Type</span>
+              <span className="font-medium capitalize">{scanType}</span>
             </div>
+            {verificationResult?.extractedOrderId && (
+              <div className="flex justify-between items-center text-sm mt-2">
+                <span className="text-muted-foreground">Detected Order</span>
+                <span className="font-medium">{verificationResult.extractedOrderId}</span>
+              </div>
+            )}
           </ModernCardContent>
         </ModernCard>
       </div>
