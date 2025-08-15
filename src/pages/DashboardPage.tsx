@@ -61,10 +61,12 @@ const DashboardPage = () => {
       {/* Header */}
       <header className="bg-gradient-primary text-white p-6">
         <div className="max-w-md mx-auto text-center">
-          <div className="w-20 h-20 bg-white/20 rounded-full mx-auto mb-4 flex items-center justify-center">
-            <span className="text-2xl font-bold text-white">
-              {driverStats.name.split(" ").map(n => n[0]).join("")}
-            </span>
+          <div className="w-20 h-20 rounded-full mx-auto mb-4 overflow-hidden border-2 border-white/30">
+            <img 
+              src="/lovable-uploads/a2f8743f-cb0a-4c08-9af7-c52f2f351a2d.png" 
+              alt="Driver Avatar"
+              className="w-full h-full object-cover"
+            />
           </div>
           <h1 className="text-xl font-bold">{driverStats.name}</h1>
           <p className="text-sm opacity-90">Driver ID: {driverStats.driverId}</p>

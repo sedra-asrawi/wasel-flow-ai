@@ -118,7 +118,7 @@ const ProfilePage = () => {
             <div className="flex flex-col items-center text-center space-y-4">
               <div className="relative">
                 <Avatar className="h-24 w-24 ring-4 ring-primary/20">
-                  <AvatarImage src="/placeholder-avatar.jpg" />
+                  <AvatarImage src="/lovable-uploads/a2f8743f-cb0a-4c08-9af7-c52f2f351a2d.png" />
                   <AvatarFallback className="bg-gradient-primary text-white text-2xl">
                     {driverProfile.name.split(" ").map((n) => n[0]).join("")}
                   </AvatarFallback>
