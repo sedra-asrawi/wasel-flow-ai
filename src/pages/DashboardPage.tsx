@@ -57,12 +57,12 @@ const DashboardPage = () => {
   ];
 
   return (
-    <main className="min-h-screen-mobile max-w-screen overflow-x-hidden bg-background text-foreground">
+    <main className="min-h-[100dvh] max-w-screen overflow-x-hidden bg-background text-foreground">
       <div className="safe-pads">
         {/* Header */}
-        <header className="bg-gradient-primary text-white px-4 py-6">
+        <header className="bg-gradient-primary text-white px-4 py-8 pt-safe">
           <div className="max-w-md mx-auto text-center">
-            <div className="w-20 h-20 rounded-2xl mx-auto mb-4 overflow-hidden border-2 border-white/30 shadow-lg">
+            <div className="w-20 h-20 rounded-2xl mx-auto mb-4 overflow-hidden border-2 border-white/30 shadow-medium">
               <img 
                 src="/lovable-uploads/ebbd92cb-f1c4-41e5-8075-503b91b8b3e5.png" 
                 alt="Driver Avatar"
@@ -74,17 +74,17 @@ const DashboardPage = () => {
           </div>
         </header>
 
-        <div className="max-w-md mx-auto px-4 py-6 space-y-6">
+        <div className="max-w-md mx-auto px-4 py-6 space-y-6 pb-24">
           {/* Key Metrics */}
           <div className="grid grid-cols-2 gap-4">
-            <ModernCard className="text-center rounded-2xl shadow-md">
-              <ModernCardContent className="pt-6">
+            <ModernCard className="text-center shadow-medium">
+              <ModernCardContent className="pt-6 pb-6">
                 <div className="text-3xl font-bold text-primary">{driverStats.totalDeliveries}</div>
-                <div className="text-sm text-muted-foreground">Total Deliveries</div>
+                <div className="text-sm text-muted-foreground mt-1">Total Deliveries</div>
               </ModernCardContent>
             </ModernCard>
-            <ModernCard className="text-center rounded-2xl shadow-md">
-              <ModernCardContent className="pt-6">
+            <ModernCard className="text-center shadow-medium">
+              <ModernCardContent className="pt-6 pb-6">
                 <div className="flex items-center justify-center gap-1 mb-2">
                   <Star className="h-4 w-4 text-yellow-500 fill-current" />
                   <div className="text-3xl font-bold text-wasel-orange">{driverStats.rating}</div>
@@ -95,15 +95,15 @@ const DashboardPage = () => {
           </div>
 
           {/* Earnings */}
-          <ModernCard className="text-center rounded-2xl shadow-md">
-            <ModernCardContent className="pt-6">
+          <ModernCard className="text-center shadow-medium">
+            <ModernCardContent className="pt-6 pb-6">
               <div className="text-3xl font-bold text-wasel-green">KWD {driverStats.earnings.total}</div>
-              <div className="text-sm text-muted-foreground">Earnings</div>
+              <div className="text-sm text-muted-foreground mt-1">Earnings</div>
             </ModernCardContent>
           </ModernCard>
 
           {/* Performance Overview */}
-          <ModernCard className="rounded-2xl shadow-md">
+          <ModernCard className="shadow-medium">
             <ModernCardHeader>
               <ModernCardTitle>Performance Overview</ModernCardTitle>
             </ModernCardHeader>
@@ -148,22 +148,22 @@ const DashboardPage = () => {
 
           {/* Points & Completion Rate */}
           <div className="grid grid-cols-2 gap-4">
-            <ModernCard className="text-center rounded-2xl shadow-md">
-              <ModernCardContent className="pt-6">
+            <ModernCard className="text-center shadow-medium">
+              <ModernCardContent className="pt-6 pb-6">
                 <div className="text-2xl font-bold text-primary">{driverStats.points}</div>
-                <div className="text-sm text-muted-foreground">Points</div>
+                <div className="text-sm text-muted-foreground mt-1">Points</div>
               </ModernCardContent>
             </ModernCard>
-            <ModernCard className="text-center rounded-2xl shadow-md">
-              <ModernCardContent className="pt-6">
+            <ModernCard className="text-center shadow-medium">
+              <ModernCardContent className="pt-6 pb-6">
                 <div className="text-2xl font-bold text-wasel-green">{driverStats.performance.completionRate}%</div>
-                <div className="text-sm text-muted-foreground">Completion Rate</div>
+                <div className="text-sm text-muted-foreground mt-1">Completion Rate</div>
               </ModernCardContent>
             </ModernCard>
           </div>
 
           {/* Recent Activity */}
-          <ModernCard className="rounded-2xl shadow-md">
+          <ModernCard className="shadow-medium">
             <ModernCardHeader>
               <ModernCardTitle className="flex items-center gap-2">
                 <Package className="h-5 w-5 text-primary" />
@@ -173,7 +173,7 @@ const DashboardPage = () => {
             <ModernCardContent>
               <div className="space-y-3">
                 {recentActivity.map((activity, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 rounded-xl border gap-4">
+                  <div key={index} className="flex items-center justify-between p-4 rounded-2xl border gap-4 min-h-[44px] bg-muted/20 hover:bg-muted/40 transition-colors">
                     <div className="flex items-center gap-3 min-w-0 flex-1">
                       <Package className="h-5 w-5 text-muted-foreground flex-shrink-0" />
                       <div className="min-w-0">
@@ -181,7 +181,7 @@ const DashboardPage = () => {
                         <p className="text-xs text-muted-foreground">{activity.time}</p>
                       </div>
                     </div>
-                    <Badge variant="secondary" className="text-xs flex-shrink-0">
+                    <Badge variant="secondary" className="text-xs flex-shrink-0 rounded-xl">
                       Completed
                     </Badge>
                   </div>
@@ -191,7 +191,7 @@ const DashboardPage = () => {
           </ModernCard>
 
           {/* Driver Rankings */}
-          <ModernCard className="rounded-2xl shadow-md">
+          <ModernCard className="shadow-medium">
             <ModernCardHeader>
               <ModernCardTitle className="flex items-center gap-2">
                 <Trophy className="h-5 w-5 text-wasel-orange" />
@@ -201,9 +201,9 @@ const DashboardPage = () => {
             <ModernCardContent>
               <div className="space-y-3">
                 {driverRankings.map((driver, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 rounded-xl border gap-4">
+                  <div key={index} className="flex items-center justify-between p-4 rounded-2xl border gap-4 min-h-[44px] bg-muted/20 hover:bg-muted/40 transition-colors">
                     <div className="flex items-center gap-3 min-w-0 flex-1">
-                      <div className="w-8 h-8 bg-gradient-primary rounded-full flex items-center justify-center flex-shrink-0">
+                      <div className="w-10 h-10 bg-gradient-primary rounded-full flex items-center justify-center flex-shrink-0 shadow-soft">
                         <span className="text-xs font-bold text-white">
                           {driver.name.split(" ").map(n => n[0]).join("")}
                         </span>

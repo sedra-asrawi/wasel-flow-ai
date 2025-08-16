@@ -128,23 +128,24 @@ const ScanPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-20">
-      {/* Header */}
-      <header className="bg-gradient-primary text-white p-4">
-        <div className="max-w-md mx-auto">
-          <div className="flex items-center gap-2 mb-2">
-            <h1 className="text-2xl font-bold">AI-Powered QR Scanner</h1>
-            <Brain className="h-6 w-6" />
+    <main className="min-h-[100dvh] max-w-screen overflow-x-hidden bg-background">
+      <div className="safe-pads">
+        {/* Header */}
+        <header className="bg-gradient-primary text-white px-4 py-6 pt-safe">
+          <div className="max-w-md mx-auto">
+            <div className="flex items-center gap-2 mb-2">
+              <h1 className="text-2xl font-bold truncate">AI-Powered QR Scanner</h1>
+              <Brain className="h-6 w-6 flex-shrink-0" />
+            </div>
+            <p className="text-blue-100 text-sm">
+              {scanType === "delivery" ? "AI-verified delivery confirmation" : "AI-verified order pickup"}
+            </p>
           </div>
-          <p className="text-blue-100">
-            {scanType === "delivery" ? "AI-verified delivery confirmation" : "AI-verified order pickup"}
-          </p>
-        </div>
-      </header>
+        </header>
 
-      <div className="max-w-md mx-auto p-4 space-y-6">
+        <div className="max-w-md mx-auto px-4 py-6 space-y-6 pb-24">
         {/* Instructions */}
-        <ModernCard>
+        <ModernCard className="shadow-medium">
           <ModernCardHeader>
             <ModernCardTitle className="text-lg flex items-center gap-2">
               <Shield className="h-5 w-5 text-primary" />
@@ -152,13 +153,13 @@ const ScanPage = () => {
             </ModernCardTitle>
           </ModernCardHeader>
           <ModernCardContent>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground leading-relaxed">
               {scanType === "delivery" 
                 ? "Scan the QR code to confirm delivery. Our AI will verify the code matches your driver ID and validates the delivery information."
                 : "Scan the QR code to verify order pickup. Our AI will check if the code is valid for your driver profile and contains correct order information."
               }
             </p>
-            <div className="mt-3 p-3 bg-muted/50 rounded-lg">
+            <div className="mt-4 p-4 bg-muted/50 rounded-2xl">
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
                 <Brain className="h-4 w-4" />
                 <span>Powered by Gemini AI for enhanced security</span>
@@ -168,7 +169,7 @@ const ScanPage = () => {
         </ModernCard>
 
         {/* Scanner Area */}
-        <ModernCard className="relative overflow-hidden">
+        <ModernCard className="relative overflow-hidden shadow-medium">
           <ModernCardContent className="p-0">
             <QRScanner
               onResult={handleQRResult}
@@ -239,7 +240,7 @@ const ScanPage = () => {
           {!isScanning && !scanResult && !isVerifying && (
             <Button 
               onClick={handleScan} 
-              className="w-full h-12 bg-gradient-primary text-white font-semibold"
+              className="w-full h-12 bg-gradient-primary text-white font-semibold rounded-2xl shadow-medium"
               size="lg"
             >
               <QrCode className="h-5 w-5 mr-2" />
@@ -250,7 +251,7 @@ const ScanPage = () => {
           {scanResult === "success" && (
             <Button 
               onClick={handleContinue}
-              className="w-full h-12 bg-gradient-success text-white font-semibold"
+              className="w-full h-12 bg-gradient-success text-white font-semibold rounded-2xl shadow-medium"
               size="lg"
             >
               <CheckCircle className="h-5 w-5 mr-2" />
@@ -261,7 +262,7 @@ const ScanPage = () => {
           {scanResult === "error" && (
             <Button 
               onClick={handleRetry}
-              className="w-full h-12 bg-gradient-primary text-white font-semibold"
+              className="w-full h-12 bg-gradient-primary text-white font-semibold rounded-2xl shadow-medium"
               size="lg"
             >
               Try Again
@@ -270,7 +271,7 @@ const ScanPage = () => {
           
           <Button 
             variant="ghost" 
-            className="w-full"
+            className="w-full h-12 rounded-2xl"
             onClick={() => navigate("/")}
           >
             Back to Orders
@@ -278,7 +279,7 @@ const ScanPage = () => {
         </div>
 
         {/* Order Info */}
-        <ModernCard>
+        <ModernCard className="shadow-medium">
           <ModernCardContent className="pt-6">
             <div className="flex justify-between items-center text-sm">
               <span className="text-muted-foreground">Current Driver</span>
@@ -298,8 +299,16 @@ const ScanPage = () => {
         </ModernCard>
       </div>
 
-      <Navigation />
-    </div>
+      </div>
+      
+      <Navigation 
+        activeColor="secondary"
+        variant="filled"
+        size="default"
+        showLabels={true}
+        className="pb-safe"
+      />
+    </main>
   );
 };
 

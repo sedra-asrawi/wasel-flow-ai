@@ -105,21 +105,22 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="h-screen bg-background pb-24 overflow-hidden">
-      {/* Header with back button */}
-      <header className="relative bg-background/95 backdrop-blur-lg border-b border-border/20 p-4">
-        <div className="max-w-md mx-auto flex items-center justify-center">
-          <h1 className="text-xl font-bold text-foreground">Driver Profile</h1>
-        </div>
-      </header>
+    <main className="min-h-[100dvh] max-w-screen overflow-x-hidden bg-background">
+      <div className="safe-pads">
+        {/* Header with back button */}
+        <header className="relative bg-background/95 backdrop-blur-lg border-b border-border/20 px-4 py-4 pt-safe">
+          <div className="max-w-md mx-auto flex items-center justify-center">
+            <h1 className="text-xl font-bold text-foreground">Driver Profile</h1>
+          </div>
+        </header>
 
-      <div className="max-w-md mx-auto p-4 space-y-6 h-full overflow-y-auto">
+        <div className="max-w-md mx-auto px-4 py-6 space-y-6 pb-24 overflow-y-auto">
         {/* Profile Avatar and Name */}
-        <ModernCard className="overflow-hidden">
+        <ModernCard className="overflow-hidden shadow-medium">
           <ModernCardContent className="pt-8 pb-6">
             <div className="flex flex-col items-center text-center space-y-4">
               <div className="relative">
-                <Avatar className="h-24 w-24 ring-4 ring-primary/20 overflow-hidden">
+                <Avatar className="h-24 w-24 ring-4 ring-primary/20 overflow-hidden shadow-soft">
                   <AvatarImage 
                     src="/lovable-uploads/ebbd92cb-f1c4-41e5-8075-503b91b8b3e5.png"
                     className="object-cover"
@@ -128,7 +129,7 @@ const ProfilePage = () => {
                     {driverProfile.name.split(" ").map((n) => n[0]).join("")}
                   </AvatarFallback>
                 </Avatar>
-                <div className="absolute -bottom-2 -right-2 bg-green-500 rounded-full p-1">
+                <div className="absolute -bottom-2 -right-2 bg-green-500 rounded-full p-1 shadow-soft">
                   <div className="w-3 h-3 bg-white rounded-full"></div>
                 </div>
               </div>
@@ -148,14 +149,14 @@ const ProfilePage = () => {
         </div>
 
         {/* Activity Section */}
-        <ModernCard>
+        <ModernCard className="shadow-medium">
           <ModernCardHeader>
             <ModernCardTitle>Activity</ModernCardTitle>
           </ModernCardHeader>
           <ModernCardContent className="space-y-4">
             <div className="space-y-3">
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/50 hover:bg-muted/70 transition-colors">
-                <div className="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center">
+              <div className="flex items-center gap-3 p-4 rounded-2xl bg-muted/50 hover:bg-muted/70 transition-colors min-h-[44px]">
+                <div className="w-10 h-10 bg-primary/20 rounded-2xl flex items-center justify-center shadow-soft">
                   <Truck className="h-5 w-5 text-primary" />
                 </div>
                 <div className="flex-1">
@@ -163,8 +164,8 @@ const ProfilePage = () => {
                   <div className="text-xs text-muted-foreground">10:00 AM - 11:00 AM</div>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/50 hover:bg-muted/70 transition-colors">
-                <div className="w-10 h-10 bg-secondary/20 rounded-lg flex items-center justify-center">
+              <div className="flex items-center gap-3 p-4 rounded-2xl bg-muted/50 hover:bg-muted/70 transition-colors min-h-[44px]">
+                <div className="w-10 h-10 bg-secondary/20 rounded-2xl flex items-center justify-center shadow-soft">
                   <Truck className="h-5 w-5 text-secondary" />
                 </div>
                 <div className="flex-1">
@@ -172,8 +173,8 @@ const ProfilePage = () => {
                   <div className="text-xs text-muted-foreground">11:30 AM - 12:30 PM</div>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/50 hover:bg-muted/70 transition-colors">
-                <div className="w-10 h-10 bg-accent/20 rounded-lg flex items-center justify-center">
+              <div className="flex items-center gap-3 p-4 rounded-2xl bg-muted/50 hover:bg-muted/70 transition-colors min-h-[44px]">
+                <div className="w-10 h-10 bg-accent/20 rounded-2xl flex items-center justify-center shadow-soft">
                   <Truck className="h-5 w-5 text-accent" />
                 </div>
                 <div className="flex-1">
@@ -187,12 +188,14 @@ const ProfilePage = () => {
 
       </div>
 
+      </div>
+      
       {/* Floating AI Chat Button */}
       <Popover open={isAIChatOpen} onOpenChange={setIsAIChatOpen}>
         <PopoverTrigger asChild>
           <Button 
             size="icon" 
-            className="fixed bottom-32 right-6 h-14 w-14 rounded-full shadow-lg bg-gradient-primary hover:opacity-90 z-50"
+            className="fixed bottom-32 right-6 h-14 w-14 rounded-full shadow-medium bg-gradient-primary hover:opacity-90 z-50"
           >
             <Bot className="h-6 w-6 text-white" />
           </Button>
@@ -223,10 +226,10 @@ const ProfilePage = () => {
             <div ref={scrollRef} className="h-60 overflow-y-auto p-4 space-y-3">
               {chatHistory.map((chat, index) => (
                 <div key={index} className={`flex ${chat.type === "user" ? "justify-end" : "justify-start"}`}>
-                  <div className={`max-w-[80%] p-3 rounded-2xl text-sm transition-all duration-200 ${
+                  <div className={`max-w-[80%] p-4 rounded-2xl text-sm transition-all duration-200 ${
                     chat.type === "user" 
                       ? "bg-gradient-primary text-white shadow-soft" 
-                      : "bg-muted text-foreground"
+                      : "bg-muted text-foreground shadow-soft"
                   }`}>
                     {chat.message}
                   </div>
@@ -243,13 +246,13 @@ const ProfilePage = () => {
                   onChange={(e) => setChatMessage(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSendMessage()}
                   disabled={isSending}
-                  className="flex-1 rounded-2xl border-2 focus:border-primary"
+                  className="flex-1 rounded-2xl border-2 focus:border-primary min-h-[44px] text-base"
                 />
                 <Button 
                   size="sm" 
                   onClick={handleSendMessage} 
                   disabled={isSending}
-                  className="rounded-2xl px-4"
+                  className="rounded-2xl px-4 min-h-[44px] min-w-[44px] shadow-soft"
                 >
                   <Send className="h-4 w-4" />
                 </Button>
@@ -267,8 +270,9 @@ const ProfilePage = () => {
         variant="filled"
         size="default"
         showLabels={true}
+        className="pb-safe"
       />
-    </div>
+    </main>
   );
 };
 
