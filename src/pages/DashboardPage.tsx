@@ -60,7 +60,7 @@ const DashboardPage = () => {
     <main className="min-h-[100dvh] max-w-screen overflow-x-hidden bg-background text-foreground">
       <div className="safe-pads">
         {/* Header */}
-        <header className="bg-gradient-primary text-white px-4 py-8 pt-safe">
+        <header className="bg-gradient-primary text-white px-4 py-12 pt-safe">
           <div className="max-w-md mx-auto text-center">
             <div className="w-20 h-20 rounded-2xl mx-auto mb-4 overflow-hidden border-2 border-white/30 shadow-medium">
               <img 
