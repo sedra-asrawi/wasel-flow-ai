@@ -22,12 +22,12 @@ const Index = () => {
     items: [
       { name: "Grilled Salmon", quantity: 1, price: 8.5 },
       { name: "Caesar Salad", quantity: 1, price: 3.25 },
-      { name: "Chocolate Cake", quantity: 1, price: 2.75 }
+      { name: "Chocolate Cake", quantity: 1, price: 2.75 },
     ],
     total: 14.5,
     deliveryFee: 1.5,
     estimatedTime: "25-30 mins",
-    priority: "high" as const
+    priority: "high" as const,
   };
 
   const handlePickup = () => {
@@ -36,22 +36,25 @@ const Index = () => {
   };
 
   return (
-    <main className="min-h-[100dvh] max-w-screen bg-background text-foreground">
-      <div className="safe-pads flex flex-col">
-        {/* Gradient text instead of header */}
+    <main className="flex flex-col min-h-screen max-w-screen bg-background text-foreground">
+      {/* Page content (pushes nav to bottom) */}
+      <div className="safe-pads flex-1 flex flex-col">
+        {/* Gradient text (left + a bit down) */}
         <div className="px-6 pt-6">
           <p className="text-lg font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
             New order available
           </p>
         </div>
 
-        {/* Content */}
-        <div className="max-w-md mx-auto px-4 py-6 space-y-6">
+        {/* Scrollable content */}
+        <div className="max-w-md mx-auto px-4 py-6 space-y-6 pb-24">
           <ModernCard className="animate-slide-up shadow-medium">
             <ModernCardHeader className="pb-3">
               <div className="flex justify-between items-start gap-4">
                 <div className="min-w-0 flex-1">
-                  <ModernCardTitle className="text-lg truncate">{mockOrder.restaurant}</ModernCardTitle>
+                  <ModernCardTitle className="text-lg truncate">
+                    {mockOrder.restaurant}
+                  </ModernCardTitle>
                   <p className="text-sm text-muted-foreground">Order #{mockOrder.id}</p>
                 </div>
                 <Badge
@@ -68,7 +71,9 @@ const Index = () => {
               <div className="space-y-2">
                 <h3 className="font-semibold text-sm">Customer</h3>
                 <div className="flex items-center justify-between gap-4">
-                  <span className="text-sm min-w-0 flex-1 truncate">{mockOrder.customerName}</span>
+                  <span className="text-sm min-w-0 flex-1 truncate">
+                    {mockOrder.customerName}
+                  </span>
                   <div className="flex gap-2 flex-shrink-0">
                     <Button
                       variant="ghost"
@@ -162,10 +167,8 @@ const Index = () => {
               >
                 {/* Animated background overlay */}
                 <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
                 {/* Shimmer effect */}
                 <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12" />
-
                 {/* Button content */}
                 <div className="relative flex items-center justify-center gap-3">
                   <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center group-hover:rotate-180 transition-transform duration-500">
@@ -173,7 +176,6 @@ const Index = () => {
                   </div>
                   <span className="tracking-wide">Start Pickup</span>
                 </div>
-
                 {/* Glow effect */}
                 <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-primary to-accent opacity-0 group-hover:opacity-30 blur-xl scale-110 transition-all duration-300" />
               </button>
@@ -187,7 +189,7 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Bottom Navigation (sticky) */}
+      {/* Bottom Navigation (always at bottom) */}
       <Navigation
         activeColor="secondary"
         variant="filled"
