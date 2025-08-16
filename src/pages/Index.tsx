@@ -38,10 +38,14 @@ const Index = () => {
   return (
     <main className="h-[100dvh] max-w-screen overflow-hidden bg-background text-foreground">
       <div className="safe-pads h-full flex flex-col">
-        {/* Simple text instead of header */}
-        <div className="text-center py-4">
-          <p className="text-primary font-semibold text-lg">New order available</p>
+
+        {/* Gradient text instead of header */}
+        <div className="px-6 pt-6">
+          <p className="text-lg font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            New order available
+          </p>
         </div>
+
 
 
         {/* Order Details */}
