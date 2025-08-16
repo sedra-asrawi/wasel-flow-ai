@@ -96,11 +96,11 @@ export const Navigation = ({
   return (
     <nav className={cn(
       positionClasses,
-      "bg-card/95 backdrop-blur-lg border-t border-border/50 shadow-strong z-40",
+      "bg-card/95 backdrop-blur-lg border-t border-border/50 shadow-lg z-40",
       position === "top" && "border-b border-t-0",
       className
     )}>
-      <div className={cn("flex max-w-md mx-auto", sizeStyles.nav)}>
+      <div className={cn("flex max-w-md mx-auto px-4", sizeStyles.nav)}>
         {items.map((item) => {
           const Icon = item.icon;
           const isActive = location.pathname === item.path;
@@ -110,7 +110,7 @@ export const Navigation = ({
               key={item.path}
               to={item.path}
               className={cn(
-                "relative flex-1 flex flex-col items-center justify-center mt-2",
+                "relative flex-1 flex flex-col items-center justify-center tap-target rounded-xl transition-all duration-300",
                 sizeStyles.item,
                 getVariantClasses(isActive)
               )}

@@ -57,172 +57,174 @@ const DashboardPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background pb-20 pt-safe">
-      {/* Header */}
-      <header className="bg-gradient-primary text-white p-6 pt-safe">
-        <div className="max-w-md mx-auto text-center">
-          <div className="w-20 h-20 rounded-full mx-auto mb-4 overflow-hidden border-2 border-white/30">
-            <img 
-              src="/lovable-uploads/ebbd92cb-f1c4-41e5-8075-503b91b8b3e5.png" 
-              alt="Driver Avatar"
-              className="w-full h-full object-cover"
-            />
+    <main className="min-h-screen-mobile max-w-screen overflow-x-hidden bg-background text-foreground">
+      <div className="safe-pads">
+        {/* Header */}
+        <header className="bg-gradient-primary text-white px-4 py-6">
+          <div className="max-w-md mx-auto text-center">
+            <div className="w-20 h-20 rounded-2xl mx-auto mb-4 overflow-hidden border-2 border-white/30 shadow-lg">
+              <img 
+                src="/lovable-uploads/ebbd92cb-f1c4-41e5-8075-503b91b8b3e5.png" 
+                alt="Driver Avatar"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <h1 className="text-xl font-bold truncate">{driverStats.name}</h1>
+            <p className="text-sm opacity-90">Driver ID: {driverStats.driverId}</p>
           </div>
-          <h1 className="text-xl font-bold">{driverStats.name}</h1>
-          <p className="text-sm opacity-90">Driver ID: {driverStats.driverId}</p>
-        </div>
-      </header>
+        </header>
 
-      <div className="max-w-md mx-auto p-4 space-y-6">
-        {/* Key Metrics */}
-        <div className="grid grid-cols-2 gap-4">
-          <ModernCard className="text-center">
+        <div className="max-w-md mx-auto px-4 py-6 space-y-6">
+          {/* Key Metrics */}
+          <div className="grid grid-cols-2 gap-4">
+            <ModernCard className="text-center rounded-2xl shadow-md">
+              <ModernCardContent className="pt-6">
+                <div className="text-3xl font-bold text-primary">{driverStats.totalDeliveries}</div>
+                <div className="text-sm text-muted-foreground">Total Deliveries</div>
+              </ModernCardContent>
+            </ModernCard>
+            <ModernCard className="text-center rounded-2xl shadow-md">
+              <ModernCardContent className="pt-6">
+                <div className="flex items-center justify-center gap-1 mb-2">
+                  <Star className="h-4 w-4 text-yellow-500 fill-current" />
+                  <div className="text-3xl font-bold text-wasel-orange">{driverStats.rating}</div>
+                </div>
+                <div className="text-sm text-muted-foreground">Average Rating</div>
+              </ModernCardContent>
+            </ModernCard>
+          </div>
+
+          {/* Earnings */}
+          <ModernCard className="text-center rounded-2xl shadow-md">
             <ModernCardContent className="pt-6">
-              <div className="text-3xl font-bold text-primary">{driverStats.totalDeliveries}</div>
-              <div className="text-sm text-muted-foreground">Total Deliveries</div>
+              <div className="text-3xl font-bold text-wasel-green">KWD {driverStats.earnings.total}</div>
+              <div className="text-sm text-muted-foreground">Earnings</div>
             </ModernCardContent>
           </ModernCard>
-          <ModernCard className="text-center">
-            <ModernCardContent className="pt-6">
-              <div className="flex items-center justify-center gap-1 mb-2">
-                <Star className="h-4 w-4 text-yellow-500 fill-current" />
-                <div className="text-3xl font-bold text-wasel-orange">{driverStats.rating}</div>
-              </div>
-              <div className="text-sm text-muted-foreground">Average Rating</div>
-            </ModernCardContent>
-          </ModernCard>
-        </div>
 
-        {/* Earnings */}
-        <ModernCard className="text-center">
-          <ModernCardContent className="pt-6">
-            <div className="text-3xl font-bold text-wasel-green">KWD {driverStats.earnings.total}</div>
-            <div className="text-sm text-muted-foreground">Earnings</div>
-          </ModernCardContent>
-        </ModernCard>
-
-        {/* Performance Overview */}
-        <ModernCard>
-          <ModernCardHeader>
-            <ModernCardTitle>Performance Overview</ModernCardTitle>
-          </ModernCardHeader>
-          <ModernCardContent>
-            <div className="space-y-4">
-              <div>
-                <h4 className="font-semibold mb-2">Deliveries Over Time</h4>
-                <div className="text-2xl font-bold">{driverStats.totalDeliveries}</div>
-                <div className="text-sm text-muted-foreground">Last 30 Days +15%</div>
-                <div className="mt-4 h-32">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={chartData}>
-                      <defs>
-                        <linearGradient id="colorDeliveries" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
-                          <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0.05}/>
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.3} />
-                      <XAxis 
-                        dataKey="day" 
-                        axisLine={false}
-                        tickLine={false}
-                        tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
-                      />
-                      <YAxis hide />
-                      <Area
-                        type="monotone"
-                        dataKey="deliveries"
-                        stroke="hsl(var(--primary))"
-                        fillOpacity={1}
-                        fill="url(#colorDeliveries)"
-                        strokeWidth={2}
-                      />
-                    </AreaChart>
-                  </ResponsiveContainer>
+          {/* Performance Overview */}
+          <ModernCard className="rounded-2xl shadow-md">
+            <ModernCardHeader>
+              <ModernCardTitle>Performance Overview</ModernCardTitle>
+            </ModernCardHeader>
+            <ModernCardContent>
+              <div className="space-y-4">
+                <div>
+                  <h4 className="font-semibold mb-2">Deliveries Over Time</h4>
+                  <div className="text-2xl font-bold">{driverStats.totalDeliveries}</div>
+                  <div className="text-sm text-muted-foreground">Last 30 Days +15%</div>
+                  <div className="mt-4 h-32">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart data={chartData}>
+                        <defs>
+                          <linearGradient id="colorDeliveries" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
+                            <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0.05}/>
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.3} />
+                        <XAxis 
+                          dataKey="day" 
+                          axisLine={false}
+                          tickLine={false}
+                          tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
+                        />
+                        <YAxis hide />
+                        <Area
+                          type="monotone"
+                          dataKey="deliveries"
+                          stroke="hsl(var(--primary))"
+                          fillOpacity={1}
+                          fill="url(#colorDeliveries)"
+                          strokeWidth={2}
+                        />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </div>
                 </div>
               </div>
-            </div>
-          </ModernCardContent>
-        </ModernCard>
-
-        {/* Points & Completion Rate */}
-        <div className="grid grid-cols-2 gap-4">
-          <ModernCard className="text-center">
-            <ModernCardContent className="pt-6">
-              <div className="text-2xl font-bold text-primary">{driverStats.points}</div>
-              <div className="text-sm text-muted-foreground">Points</div>
             </ModernCardContent>
           </ModernCard>
-          <ModernCard className="text-center">
-            <ModernCardContent className="pt-6">
-              <div className="text-2xl font-bold text-wasel-green">{driverStats.performance.completionRate}%</div>
-              <div className="text-sm text-muted-foreground">Completion Rate</div>
+
+          {/* Points & Completion Rate */}
+          <div className="grid grid-cols-2 gap-4">
+            <ModernCard className="text-center rounded-2xl shadow-md">
+              <ModernCardContent className="pt-6">
+                <div className="text-2xl font-bold text-primary">{driverStats.points}</div>
+                <div className="text-sm text-muted-foreground">Points</div>
+              </ModernCardContent>
+            </ModernCard>
+            <ModernCard className="text-center rounded-2xl shadow-md">
+              <ModernCardContent className="pt-6">
+                <div className="text-2xl font-bold text-wasel-green">{driverStats.performance.completionRate}%</div>
+                <div className="text-sm text-muted-foreground">Completion Rate</div>
+              </ModernCardContent>
+            </ModernCard>
+          </div>
+
+          {/* Recent Activity */}
+          <ModernCard className="rounded-2xl shadow-md">
+            <ModernCardHeader>
+              <ModernCardTitle className="flex items-center gap-2">
+                <Package className="h-5 w-5 text-primary" />
+                Recent Activity
+              </ModernCardTitle>
+            </ModernCardHeader>
+            <ModernCardContent>
+              <div className="space-y-3">
+                {recentActivity.map((activity, index) => (
+                  <div key={index} className="flex items-center justify-between p-3 rounded-xl border gap-4">
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                      <Package className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                      <div className="min-w-0">
+                        <p className="font-medium text-sm truncate">Order #{activity.id}</p>
+                        <p className="text-xs text-muted-foreground">{activity.time}</p>
+                      </div>
+                    </div>
+                    <Badge variant="secondary" className="text-xs flex-shrink-0">
+                      Completed
+                    </Badge>
+                  </div>
+                ))}
+              </div>
+            </ModernCardContent>
+          </ModernCard>
+
+          {/* Driver Rankings */}
+          <ModernCard className="rounded-2xl shadow-md">
+            <ModernCardHeader>
+              <ModernCardTitle className="flex items-center gap-2">
+                <Trophy className="h-5 w-5 text-wasel-orange" />
+                Driver Rankings
+              </ModernCardTitle>
+            </ModernCardHeader>
+            <ModernCardContent>
+              <div className="space-y-3">
+                {driverRankings.map((driver, index) => (
+                  <div key={index} className="flex items-center justify-between p-3 rounded-xl border gap-4">
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                      <div className="w-8 h-8 bg-gradient-primary rounded-full flex items-center justify-center flex-shrink-0">
+                        <span className="text-xs font-bold text-white">
+                          {driver.name.split(" ").map(n => n[0]).join("")}
+                        </span>
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-medium text-sm truncate">{driver.name}</p>
+                        <p className="text-xs text-muted-foreground">{driver.deliveries} Deliveries, {driver.rating} Rating</p>
+                      </div>
+                    </div>
+                    <div className="text-right flex-shrink-0">
+                      <div className="flex items-center gap-1">
+                        <Star className="h-3 w-3 text-yellow-500 fill-current" />
+                        <span className="text-xs font-medium">{driver.rating}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </ModernCardContent>
           </ModernCard>
         </div>
-
-        {/* Recent Activity */}
-        <ModernCard>
-          <ModernCardHeader>
-            <ModernCardTitle className="flex items-center gap-2">
-              <Package className="h-5 w-5 text-primary" />
-              Recent Activity
-            </ModernCardTitle>
-          </ModernCardHeader>
-          <ModernCardContent>
-            <div className="space-y-3">
-              {recentActivity.map((activity, index) => (
-                <div key={index} className="flex items-center justify-between p-3 rounded-lg border">
-                  <div className="flex items-center gap-3">
-                    <Package className="h-5 w-5 text-muted-foreground" />
-                    <div>
-                      <p className="font-medium text-sm">Order #{activity.id}</p>
-                      <p className="text-xs text-muted-foreground">{activity.time}</p>
-                    </div>
-                  </div>
-                  <Badge variant="secondary" className="text-xs">
-                    Completed
-                  </Badge>
-                </div>
-              ))}
-            </div>
-          </ModernCardContent>
-        </ModernCard>
-
-        {/* Driver Rankings */}
-        <ModernCard>
-          <ModernCardHeader>
-            <ModernCardTitle className="flex items-center gap-2">
-              <Trophy className="h-5 w-5 text-wasel-orange" />
-              Driver Rankings
-            </ModernCardTitle>
-          </ModernCardHeader>
-          <ModernCardContent>
-            <div className="space-y-3">
-              {driverRankings.map((driver, index) => (
-                <div key={index} className="flex items-center justify-between p-3 rounded-lg border">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-gradient-primary rounded-full flex items-center justify-center">
-                      <span className="text-xs font-bold text-white">
-                        {driver.name.split(" ").map(n => n[0]).join("")}
-                      </span>
-                    </div>
-                    <div>
-                      <p className="font-medium text-sm">{driver.name}</p>
-                      <p className="text-xs text-muted-foreground">{driver.deliveries} Deliveries, {driver.rating} Rating</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="flex items-center gap-1">
-                      <Star className="h-3 w-3 text-yellow-500 fill-current" />
-                      <span className="text-xs font-medium">{driver.rating}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </ModernCardContent>
-        </ModernCard>
       </div>
 
       <Navigation 
@@ -230,8 +232,9 @@ const DashboardPage = () => {
         variant="filled"
         size="default"
         showLabels={true}
+        className="pb-safe"
       />
-    </div>
+    </main>
   );
 };
 
