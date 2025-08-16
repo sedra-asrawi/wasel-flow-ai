@@ -57,9 +57,9 @@ const DashboardPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-background pb-20 pt-safe">
       {/* Header */}
-      <header className="bg-gradient-primary text-white p-6">
+      <header className="bg-gradient-primary text-white p-6 pt-safe">
         <div className="max-w-md mx-auto text-center">
           <div className="w-20 h-20 rounded-full mx-auto mb-4 overflow-hidden border-2 border-white/30">
             <img 

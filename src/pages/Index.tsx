@@ -36,9 +36,9 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-background pb-20 pt-safe">
       {/* Header */}
-      <header className="bg-gradient-primary text-white p-4">
+      <header className="bg-gradient-primary text-white p-4 pt-safe">
         <div className="max-w-md mx-auto">
           <h1 className="text-2xl font-bold">Wasel Driver</h1>
           <p className="text-blue-100">New order available</p>
