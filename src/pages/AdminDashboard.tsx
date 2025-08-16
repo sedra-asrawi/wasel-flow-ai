@@ -128,7 +128,7 @@ const AdminDashboard = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-gradient-primary text-white p-6">
+      <header className="bg-gradient-primary text-white p-6 pt-safe">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-3xl font-bold">Wasel Admin Dashboard</h1>
           <p className="text-blue-100 mt-2">Monitor driver performance and delivery operations</p>

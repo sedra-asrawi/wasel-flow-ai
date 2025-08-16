@@ -40,7 +40,7 @@ const Index = () => {
       <div className="safe-pads h-full flex flex-col">
         {/* Header */}
         <header className="bg-gradient-primary text-white px-4 pt-safe flex-shrink-0 flex flex-col justify-end h-32 pb-4">
-          <div className="max-w-md mx-auto w-full">
+          <div className="max-w-md mx-auto w-full text-center">
             <h1 className="text-2xl font-bold">Wasel Driver</h1>
             <p className="text-blue-100">New order available</p>
           </div>

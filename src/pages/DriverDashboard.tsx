@@ -142,7 +142,7 @@ const DriverDashboard = () => {
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
-      <header className="bg-gradient-primary text-white p-6">
+      <header className="bg-gradient-primary text-white p-6 pt-safe">
         <div className="max-w-md mx-auto">
           <Button
             variant="ghost"
