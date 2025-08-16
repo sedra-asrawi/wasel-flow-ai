@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ModernCard, ModernCardContent, ModernCardHeader, ModernCardTitle } from "@/components/ui/modern-card";
 import { Badge } from "@/components/ui/badge";
 import { ChatInterface } from "@/components/ChatInterface";
-import { MapPin, Clock, DollarSign, Phone, MessageCircle } from "lucide-react";
+import { MapPin, Clock, Phone, MessageCircle } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -20,12 +20,12 @@ const Index = () => {
     restaurantAddress: "Sharq, Kuwait City, Kuwait",
     deliveryAddress: "Salmiya, Block 12, Building 45, Apt 3A",
     items: [
-      { name: "Grilled Salmon", quantity: 1, price: 8.500 },
-      { name: "Caesar Salad", quantity: 1, price: 3.250 },
-      { name: "Chocolate Cake", quantity: 1, price: 2.750 }
+      { name: "Grilled Salmon", quantity: 1, price: 8.5 },
+      { name: "Caesar Salad", quantity: 1, price: 3.25 },
+      { name: "Chocolate Cake", quantity: 1, price: 2.75 }
     ],
-    total: 14.500,
-    deliveryFee: 1.500,
+    total: 14.5,
+    deliveryFee: 1.5,
     estimatedTime: "25-30 mins",
     priority: "high" as const
   };
@@ -36,9 +36,8 @@ const Index = () => {
   };
 
   return (
-    <main className="h-[100dvh] max-w-screen overflow-hidden bg-background text-foreground">
-      <div className="safe-pads h-full flex flex-col">
-
+    <main className="min-h-[100dvh] max-w-screen bg-background text-foreground">
+      <div className="safe-pads flex flex-col">
         {/* Gradient text instead of header */}
         <div className="px-6 pt-6">
           <p className="text-lg font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
@@ -46,10 +45,8 @@ const Index = () => {
           </p>
         </div>
 
-
-
-        {/* Order Details */}
-        <div className="max-w-md mx-auto px-4 py-6 space-y-6 flex-1 overflow-hidden">
+        {/* Content */}
+        <div className="max-w-md mx-auto px-4 py-6 space-y-6">
           <ModernCard className="animate-slide-up shadow-medium">
             <ModernCardHeader className="pb-3">
               <div className="flex justify-between items-start gap-4">
@@ -57,7 +54,7 @@ const Index = () => {
                   <ModernCardTitle className="text-lg truncate">{mockOrder.restaurant}</ModernCardTitle>
                   <p className="text-sm text-muted-foreground">Order #{mockOrder.id}</p>
                 </div>
-                <Badge 
+                <Badge
                   variant={mockOrder.priority === "high" ? "destructive" : "secondary"}
                   className="animate-pulse-glow flex-shrink-0"
                 >
@@ -65,7 +62,7 @@ const Index = () => {
                 </Badge>
               </div>
             </ModernCardHeader>
-          
+
             <ModernCardContent className="space-y-4">
               {/* Customer Info */}
               <div className="space-y-2">
@@ -73,12 +70,19 @@ const Index = () => {
                 <div className="flex items-center justify-between gap-4">
                   <span className="text-sm min-w-0 flex-1 truncate">{mockOrder.customerName}</span>
                   <div className="flex gap-2 flex-shrink-0">
-                    <Button variant="ghost" size="sm" className="tap-target rounded-2xl min-h-[44px] min-w-[44px] shadow-soft">
-                      <Phone className="h-4 w-4" />
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="tap-target rounded-2xl min-h-[44px] min-w-[44px] shadow-soft"
+                      asChild
+                    >
+                      <a href={`tel:${mockOrder.customerPhone}`} aria-label="Call customer">
+                        <Phone className="h-4 w-4" />
+                      </a>
                     </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
+                    <Button
+                      variant="ghost"
+                      size="sm"
                       className="tap-target rounded-2xl min-h-[44px] min-w-[44px] shadow-soft"
                       onClick={() => setChatOpen(true)}
                     >
@@ -116,8 +120,10 @@ const Index = () => {
                 <div className="space-y-1">
                   {mockOrder.items.map((item, index) => (
                     <div key={index} className="flex justify-between text-sm gap-4">
-                      <span className="min-w-0 flex-1 truncate">{item.quantity}x {item.name}</span>
-                      <span className="flex-shrink-0">KWD {item.price}</span>
+                      <span className="min-w-0 flex-1 truncate">
+                        {item.quantity}x {item.name}
+                      </span>
+                      <span className="flex-shrink-0">KWD {item.price.toFixed(3)}</span>
                     </div>
                   ))}
                 </div>
@@ -127,15 +133,15 @@ const Index = () => {
               <div className="border-t pt-3 space-y-1">
                 <div className="flex justify-between text-sm">
                   <span>Subtotal</span>
-                  <span>KWD {mockOrder.total}</span>
+                  <span>KWD {mockOrder.total.toFixed(3)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span>Delivery Fee</span>
-                  <span>KWD {mockOrder.deliveryFee}</span>
+                  <span>KWD {mockOrder.deliveryFee.toFixed(3)}</span>
                 </div>
                 <div className="flex justify-between font-semibold">
                   <span>Total</span>
-                  <span>KWD {mockOrder.total + mockOrder.deliveryFee}</span>
+                  <span>KWD {(mockOrder.total + mockOrder.deliveryFee).toFixed(3)}</span>
                 </div>
               </div>
 
@@ -149,46 +155,47 @@ const Index = () => {
 
           {/* Action Button */}
           <div className="space-y-3">
-              {!orderAccepted ? (
-                <button 
-                  onClick={handlePickup} 
-                  className="group relative w-full tap-target min-h-[56px] bg-gradient-to-r from-primary via-primary to-accent rounded-2xl font-bold text-lg text-white shadow-medium hover:shadow-strong transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.98] overflow-hidden"
-                >
-                  {/* Animated background overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  
-                  {/* Shimmer effect */}
-                  <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12" />
-                  
-                  {/* Button content */}
-                  <div className="relative flex items-center justify-center gap-3">
-                    <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center group-hover:rotate-180 transition-transform duration-500">
-                      <MapPin className="h-4 w-4" />
-                    </div>
-                    <span className="tracking-wide">Start Pickup</span>
+            {!orderAccepted ? (
+              <button
+                onClick={handlePickup}
+                className="group relative w-full tap-target min-h-[56px] bg-gradient-to-r from-primary via-primary to-accent rounded-2xl font-bold text-lg text-white shadow-medium hover:shadow-strong transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.98] overflow-hidden"
+              >
+                {/* Animated background overlay */}
+                <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                {/* Shimmer effect */}
+                <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12" />
+
+                {/* Button content */}
+                <div className="relative flex items-center justify-center gap-3">
+                  <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center group-hover:rotate-180 transition-transform duration-500">
+                    <MapPin className="h-4 w-4" />
                   </div>
-                  
-                  {/* Glow effect */}
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-primary to-accent opacity-0 group-hover:opacity-30 blur-xl scale-110 transition-all duration-300" />
-                </button>
-              ) : (
-                <div className="text-center p-6 bg-gradient-success/10 rounded-2xl border border-accent/20 backdrop-blur-sm shadow-medium">
-                  <p className="text-accent font-medium">Order Accepted!</p>
-                  <p className="text-sm text-muted-foreground">Proceed to scan QR code</p>
+                  <span className="tracking-wide">Start Pickup</span>
                 </div>
-              )}
+
+                {/* Glow effect */}
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-primary to-accent opacity-0 group-hover:opacity-30 blur-xl scale-110 transition-all duration-300" />
+              </button>
+            ) : (
+              <div className="text-center p-6 bg-gradient-success/10 rounded-2xl border border-accent/20 backdrop-blur-sm shadow-medium">
+                <p className="text-accent font-medium">Order Accepted!</p>
+                <p className="text-sm text-muted-foreground">Proceed to scan QR code</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      <Navigation 
+      {/* Bottom Navigation (sticky) */}
+      <Navigation
         activeColor="secondary"
         variant="filled"
         size="default"
         showLabels={true}
-        className="pb-safe"
+        className="sticky bottom-0 pb-safe bg-background border-t"
       />
-      
+
       {/* Chat Interface */}
       {chatOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 safe-pads">
