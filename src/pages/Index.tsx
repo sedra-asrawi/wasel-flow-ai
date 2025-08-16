@@ -39,7 +39,7 @@ const Index = () => {
     <main className="h-[100dvh] max-w-screen overflow-hidden bg-background text-foreground">
       <div className="safe-pads h-full flex flex-col">
         {/* Header */}
-        <header className="bg-gradient-primary text-white px-4 pt-safe flex-shrink-0 flex flex-col justify-end h-80 pb-8">
+        <header className="bg-gradient-primary text-white px-4 pt-safe flex-shrink-0 flex flex-col justify-end h-48 pb-6">
           <div className="max-w-md mx-auto w-full">
             <h1 className="text-2xl font-bold">Wasel Driver</h1>
             <p className="text-blue-100">New order available</p>
