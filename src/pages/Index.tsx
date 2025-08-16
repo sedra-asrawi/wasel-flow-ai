@@ -36,10 +36,10 @@ const Index = () => {
   };
 
   return (
-    <main className="min-h-[100dvh] max-w-screen overflow-x-hidden bg-background text-foreground">
-      <div className="safe-pads">
+    <main className="h-[100dvh] max-w-screen overflow-hidden bg-background text-foreground">
+      <div className="safe-pads h-full flex flex-col">
         {/* Header */}
-        <header className="bg-gradient-primary text-white px-4 py-8 pt-safe">
+        <header className="bg-gradient-primary text-white px-4 py-8 pt-safe flex-shrink-0">
           <div className="max-w-md mx-auto">
             <h1 className="text-2xl font-bold">Wasel Driver</h1>
             <p className="text-blue-100">New order available</p>
@@ -47,7 +47,7 @@ const Index = () => {
         </header>
 
         {/* Order Details */}
-        <div className="max-w-md mx-auto px-4 py-6 space-y-6 pb-24">
+        <div className="max-w-md mx-auto px-4 py-6 space-y-6 flex-1 overflow-hidden">
           <ModernCard className="animate-slide-up shadow-medium">
             <ModernCardHeader className="pb-3">
               <div className="flex justify-between items-start gap-4">
